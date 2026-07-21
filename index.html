@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Emoji Legends: Shadow Survival v0.1</title>
+<style>
+body{margin:0;background:#0b0b12;color:#fff;font-family:Arial;overflow:hidden}
+#ui{position:fixed;top:10px;left:10px;background:#1118;padding:10px;border:1px solid #444}
+#game{display:block}
+</style></head><body>
+<canvas id="game"></canvas><div id="ui">❤️ <span id=h>100</span><br>🪙 <span id=c>0</span><br>Use WASD. Shift placeholder.</div>
+<script>
+const cv=document.getElementById('game'),ctx=cv.getContext('2d');
+function rs(){cv.width=innerWidth;cv.height=innerHeight}onresize=rs;rs();
+let p={x:0,y:0,s:220},k={};
+onkeydown=e=>k[e.key.toLowerCase()]=1;
+onkeyup=e=>k[e.key.toLowerCase()]=0;
+function loop(t){requestAnimationFrame(loop);
+let dt=1/60;
+if(k.w)p.y-=p.s*dt;if(k.s)p.y+=p.s*dt;if(k.a)p.x-=p.s*dt;if(k.d)p.x+=p.s*dt;
+ctx.fillStyle="#0b0b12";ctx.fillRect(0,0,cv.width,cv.height);
+ctx.strokeStyle="#222";
+for(let x=-2000;x<=2000;x+=64){ctx.beginPath();ctx.moveTo(cv.width/2+(x-p.x),0);ctx.lineTo(cv.width/2+(x-p.x),cv.height);ctx.stroke();}
+for(let y=-2000;y<=2000;y+=64){ctx.beginPath();ctx.moveTo(0,cv.height/2+(y-p.y));ctx.lineTo(cv.width,cv.height/2+(y-p.y));ctx.stroke();}
+ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";
+ctx.fillText("😀",cv.width/2,cv.height/2);
+}
+requestAnimationFrame(loop);
+</script></body></html>
