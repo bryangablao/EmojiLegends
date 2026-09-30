@@ -1,619 +1,1182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Emoji Legends: Shadow Survival</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Legends: Elemental Realm ARPG</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #08070d;
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
 
-<style>
+        /* Glassmorphism UI Style */
+        .glass-panel {
+            background: rgba(18, 16, 28, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
 
-body{
-margin:0;
-overflow:hidden;
-background:#090914;
-font-family:Arial;
-color:white;
-}
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-canvas{
-display:block;
-}
+        .glass-btn:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 100%);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
 
+        .glass-btn:active {
+            transform: translateY(0);
+        }
 
-#hud{
-position:fixed;
-top:15px;
-left:15px;
-background:#111c;
-padding:15px;
-border-radius:15px;
-border:1px solid #555;
-font-size:18px;
-}
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
 
-
-#menuBtn{
-
-position:fixed;
-right:20px;
-top:20px;
-
-background:#4b7cff;
-padding:15px;
-border-radius:50%;
-font-size:30px;
-cursor:pointer;
-
-}
-
-
-
-#menu{
-
-position:fixed;
-right:20px;
-top:90px;
-
-background:#171722;
-padding:20px;
-border-radius:15px;
-
-display:none;
-
-}
-
-
-button{
-
-display:block;
-width:180px;
-margin:10px;
-padding:10px;
-
-background:#333;
-color:white;
-
-border:none;
-border-radius:10px;
-
-cursor:pointer;
-
-}
-
-
-
-#popup{
-
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
-background:#151522;
-
-padding:30px;
-
-border-radius:20px;
-
-display:none;
-
-}
-
-</style>
-
+        /* Animated Pulse Glow */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.8); }
+        }
+        .glow-gold { animation: pulse-glow 2s infinite; }
+    </style>
 </head>
-
-
-<body>
-
-
-<canvas id="game"></canvas>
-
-
-<div id="hud">
-
-❤️ <span id="hp">100</span><br>
-
-🪙 <span id="coins">0</span><br>
-
-⚔️ Damage:
-<span id="damage">10</span><br>
-
-⭐ Level:
-<span id="level">1</span>
-
-
-</div>
-
-
-
-<div id="menuBtn">
-☰
-</div>
-
-
-<div id="menu">
-
-<button onclick="openPanel('Shop')">
-🏪 Shop
-</button>
-
-<button onclick="openPanel('Inventory')">
-🎒 Inventory
-</button>
-
-
-<button onclick="openPanel('Magic')">
-🔮 Wands & Magic
-</button>
-
-
-<button onclick="openPanel('Settings')">
-⚙️ Settings
-</button>
-
-
-<button onclick="openPanel('How')">
-📜 How To Play
-</button>
-
-
-</div>
-
-
-
-<div id="popup">
-
-<h2 id="title"></h2>
-
-<p id="text"></p>
-
-<button onclick="closePanel()">
-Close
-</button>
-
-</div>
-
-
-
-<script>
-
-
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-
-
-function resize(){
-
-canvas.width=innerWidth;
-canvas.height=innerHeight;
-
-}
-
-resize();
-onresize=resize;
-
-
-
-let keys={};
-
-
-onkeydown=e=>keys[e.key.toLowerCase()]=true;
-onkeyup=e=>keys[e.key.toLowerCase()]=false;
-
-
-
-let player={
-
-x:0,
-y:0,
-
-speed:250,
-
-hp:100,
-
-max:100,
-
-damage:10,
-
-coins:0,
-
-level:1,
-
-strength:0,
-
-emoji:"😀",
-
-attack:false,
-
-cool:0
-
-};
-
-
-
-let weapon={
-
-name:"Wood Wand",
-
-damage:10,
-
-magic:"🔥 Fire Bolt"
-
-};
-
-
-
-let enemies=[];
-
-
-function spawnEnemy(){
-
-enemies.push({
-
-x:Math.random()*1200-600,
-
-y:Math.random()*800-400,
-
-hp:40,
-
-speed:70
-
-});
-
-}
-
-
-setInterval(spawnEnemy,2000);
-
-
-
-function distance(a,b){
-
-return Math.hypot(
-a.x-b.x,
-a.y-b.y
-);
-
-}
-
-
-
-function update(){
-
-
-if(keys.w)player.y-=player.speed/60;
-if(keys.s)player.y+=player.speed/60;
-if(keys.a)player.x-=player.speed/60;
-if(keys.d)player.x+=player.speed/60;
-
-
-
-if(keys.shift){
-
-player.speed=400;
-
-}
-
-else{
-
-player.speed=250;
-
-}
-
-
-
-if(player.cool>0)
-player.cool--;
-
-
-
-// emoji evolution
-
-
-if(player.hp<25)
-player.emoji="😨";
-
-else if(player.hp<60)
-player.emoji="😟";
-
-else if(player.strength>=10)
-player.emoji="👑";
-
-else if(player.strength>=5)
-player.emoji="😈";
-
-else
-player.emoji="😀";
-
-
-
-
-// enemy logic
-
-
-enemies.forEach((e,i)=>{
-
-
-let dx=player.x-e.x;
-let dy=player.y-e.y;
-
-let d=Math.hypot(dx,dy);
-
-
-if(d>20){
-
-e.x+=dx/d*e.speed/60;
-e.y+=dy/d*e.speed/60;
-
-}
-
-
-// collision
-
-
-if(d<40){
-
-player.hp-=0.3;
-
-}
-
-
-
-});
-
-
-
-
-// attack
-
-
-if(keys.space && player.cool<=0){
-
-
-player.cool=30;
-
-
-enemies.forEach((e,i)=>{
-
-
-if(distance(player,e)<150){
-
-
-e.hp-=player.damage;
-
-
-}
-
-
-if(e.hp<=0){
-
-
-player.coins+=10;
-
-player.strength++;
-
-player.level=Math.floor(player.strength/5)+1;
-
-
-enemies.splice(i,1);
-
-
-}
-
-
-});
-
-
-}
-
-
-
-document.getElementById("hp").innerHTML=Math.floor(player.hp);
-
-document.getElementById("coins").innerHTML=player.coins;
-
-document.getElementById("damage").innerHTML=player.damage;
-
-document.getElementById("level").innerHTML=player.level;
-
-
-
-}
-
-
-
-
-
-function draw(){
-
-
-ctx.fillStyle="#090914";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-
-
-// grid
-
-ctx.strokeStyle="#202033";
-
-
-for(let x=0;x<canvas.width;x+=50){
-
-ctx.beginPath();
-ctx.moveTo(x,0);
-ctx.lineTo(x,canvas.height);
-ctx.stroke();
-
-}
-
-
-
-for(let y=0;y<canvas.height;y+=50){
-
-ctx.beginPath();
-ctx.moveTo(0,y);
-ctx.lineTo(canvas.width,y);
-ctx.stroke();
-
-}
-
-
-
-
-
-// enemies
-
-
-ctx.font="45px serif";
-ctx.textAlign="center";
-
-
-enemies.forEach(e=>{
-
-
-let sx=e.x-player.x+canvas.width/2;
-let sy=e.y-player.y+canvas.height/2;
-
-
-ctx.fillText("👹",sx,sy);
-
-
-ctx.fillStyle="red";
-
-ctx.fillRect(
-sx-20,
-sy-35,
-40*(e.hp/40),
-5
-);
-
-
-});
-
-
-
-
-
-// player
-
-
-ctx.fillStyle="white";
-
-
-ctx.fillText(
-
-player.emoji,
-
-canvas.width/2,
-
-canvas.height/2
-
-);
-
-
-
-
-
-requestAnimationFrame(loop);
-
-}
-
-
-
-function loop(){
-
-update();
-draw();
-
-}
-
-
-
-loop();
-
-
-
-
-
-// MENU
-
-
-menuBtn.onclick=()=>{
-
-menu.style.display=
-menu.style.display=="block"
-?"none":"block";
-
-}
-
-
-
-
-
-function openPanel(type){
-
-
-popup.style.display="block";
-
-title.innerHTML=type;
-
-
-if(type=="Shop"){
-
-text.innerHTML=
-"🔥 Upgrade Damage<br><br>⚔️ Buy Legendary Weapons<br><br>🪙 Coins required";
-
-}
-
-
-if(type=="Inventory"){
-
-text.innerHTML=
-"Weapon: "+weapon.name+
-"<br>Magic: "+weapon.magic;
-
-}
-
-
-if(type=="Magic"){
-
-text.innerHTML=
-"🔥 Fire Bolt<br>❄ Ice Storm<br>⚡ Thunder Strike";
-
-}
-
-
-if(type=="How"){
-
-text.innerHTML=
-"WASD Move<br>SPACE Attack<br>SHIFT Speed Boost";
-
-}
-
-
-
-if(type=="Settings"){
-
-text.innerHTML=
-"Sound: ON<br>Difficulty: Normal";
-
-}
-
-
-}
-
-
-
-function closePanel(){
-
-popup.style.display="none";
-
-}
-
-
-
-</script>
-
-
+<body class="bg-gray-950 text-white select-none">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- FLOATING HUD OVERLAY -->
+    <div id="hud" class="fixed top-0 left-0 w-full p-4 pointer-events-none flex justify-between items-start z-10">
+        <!-- Player Stats Panel -->
+        <div class="glass-panel rounded-2xl p-4 min-w-[280px] sm:min-w-[340px] pointer-events-auto flex flex-col gap-2.5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span id="playerAvatar" class="text-3xl filter drop-shadow">🙂</span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 id="hudName" class="font-bold font-cinzel text-amber-400 text-base leading-tight">Hero</h3>
+                            <span id="hudLevelBadge" class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 font-semibold">Lvl 1</span>
+                        </div>
+                        <p id="hudStateText" class="text-xs text-gray-400">Status: Normal</p>
+                    </div>
+                </div>
+                <!-- Coins Display -->
+                <div class="flex items-center gap-1.5 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-xl">
+                    <span class="text-xl">🪙</span>
+                    <span id="hudCoins" class="font-black text-amber-300 text-base tracking-wider">0</span>
+                </div>
+            </div>
+
+            <!-- Health Bar -->
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs font-semibold px-0.5">
+                    <span class="text-red-400 flex items-center gap-1">❤️ Health</span>
+                    <span id="hudHpText" class="text-gray-300">100 / 100</span>
+                </div>
+                <div class="w-full h-3 bg-gray-900/80 rounded-full overflow-hidden border border-red-950/60 p-0.5">
+                    <div id="hudHpBar" class="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-200" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Mana / Stamina Bar -->
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs font-semibold px-0.5">
+                    <span class="text-cyan-400 flex items-center gap-1">🧪 Mana / Stamina</span>
+                    <span id="hudManaText" class="text-gray-300">50 / 50</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-900/80 rounded-full overflow-hidden border border-cyan-950/60 p-0.5">
+                    <div id="hudManaBar" class="h-full bg-gradient-to-r from-cyan-600 to-blue-400 rounded-full transition-all duration-200" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- XP Progress Bar -->
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs font-semibold px-0.5">
+                    <span class="text-purple-400 flex items-center gap-1">✨ Experience</span>
+                    <span id="hudXpText" class="text-gray-300">0 / 100</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-900/80 rounded-full overflow-hidden border border-purple-950/60">
+                    <div id="hudXpBar" class="h-full bg-gradient-to-r from-purple-600 to-fuchsia-400 rounded-full transition-all duration-200" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Right Actions & Radar HUD -->
+        <div class="flex flex-col items-end gap-3 pointer-events-auto">
+            <!-- Floating Menu Toggle Button -->
+            <button id="btnOpenMenu" class="glass-btn px-4 py-2.5 rounded-2xl flex items-center gap-2 font-bold text-amber-300 hover:text-amber-200">
+                <span class="text-xl">📜</span>
+                <span>MENU</span>
+                <span class="text-xs bg-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">[ESC / M]</span>
+            </button>
+
+            <!-- Active Wave Badge -->
+            <div id="hudWaveContainer" class="glass-panel px-4 py-2 rounded-2xl flex items-center gap-3">
+                <span class="text-2xl animate-pulse">💀</span>
+                <div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Current Threat</div>
+                    <div id="hudWaveText" class="font-cinzel text-sm font-bold text-red-400">Wave 1: Goblin Scouts</div>
+                </div>
+            </div>
+
+            <!-- Equipped Quick Bar -->
+            <div class="glass-panel p-2 rounded-2xl flex gap-2">
+                <div id="slotWeapon" class="w-12 h-12 rounded-xl bg-gray-800/80 border border-amber-500/40 flex flex-col items-center justify-center relative cursor-pointer hover:border-amber-400">
+                    <span class="text-xl" id="hudSlotIcon">⚔️</span>
+                    <span class="text-[9px] text-amber-300 font-bold mt-0.5" id="hudSlotName">Sword</span>
+                    <span class="absolute -top-1.5 -left-1.5 bg-amber-500 text-gray-950 font-black text-[9px] px-1 rounded-full">1</span>
+                </div>
+                <div id="slotSpecial" class="w-12 h-12 rounded-xl bg-gray-800/80 border border-cyan-500/40 flex flex-col items-center justify-center relative cursor-pointer hover:border-cyan-400">
+                    <span class="text-xl">💥</span>
+                    <span class="text-[9px] text-cyan-300 font-bold mt-0.5">Nova</span>
+                    <span class="absolute -top-1.5 -left-1.5 bg-cyan-500 text-gray-950 font-black text-[9px] px-1 rounded-full">SPACE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menuModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl flex flex-col overflow-hidden border border-white/20 shadow-2xl">
+            
+            <!-- Modal Header Tabs -->
+            <div class="p-4 sm:p-6 bg-gray-900/60 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">⚔️</span>
+                    <h2 class="font-cinzel text-xl sm:text-2xl font-black text-amber-400">EMOJI LEGENDS</h2>
+                </div>
+                
+                <!-- Nav Tabs -->
+                <div class="flex items-center gap-1 sm:gap-2 bg-black/40 p-1 rounded-2xl border border-white/10">
+                    <button class="menu-tab-btn active px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="shop">🛒 Shop</button>
+                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="inventory">🎒 Inventory</button>
+                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="howTo">📜 How to Play</button>
+                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="settings">⚙️ Settings</button>
+                </div>
+
+                <button id="btnCloseMenu" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-lg hover:bg-red-500/30 hover:border-red-500/50">✕</button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+                
+                <!-- SHOP TAB -->
+                <div id="tabShop" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center bg-amber-950/20 p-4 rounded-2xl border border-amber-500/20">
+                        <div>
+                            <h3 class="font-cinzel font-bold text-amber-300 text-lg">Merchant Guild Shop</h3>
+                            <p class="text-xs text-gray-400">Purchase legendary weapons, magic wands, and ancient elixirs.</p>
+                        </div>
+                        <div class="flex items-center gap-2 text-xl font-bold text-amber-300 bg-black/40 px-4 py-2 rounded-xl border border-amber-500/30">
+                            <span>🪙</span>
+                            <span id="shopCoins">0</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shopItemsGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- INVENTORY TAB -->
+                <div id="tabInventory" class="tab-content hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Stats Summary -->
+                        <div class="glass-panel p-4 rounded-2xl border border-white/10 space-y-3">
+                            <h3 class="font-cinzel font-bold text-amber-400 text-base border-b border-white/10 pb-2">Hero Stats</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between text-gray-300"><span>🗡️ Attack Power:</span> <span id="statAtk" class="font-bold text-amber-300">10</span></div>
+                                <div class="flex justify-between text-gray-300"><span>🪄 Magic Power:</span> <span id="statMag" class="font-bold text-cyan-300">10</span></div>
+                                <div class="flex justify-between text-gray-300"><span>🛡️ Armor Defense:</span> <span id="statDef" class="font-bold text-blue-300">0</span></div>
+                                <div class="flex justify-between text-gray-300"><span>⚡ Move Speed:</span> <span id="statSpd" class="font-bold text-emerald-300">240</span></div>
+                                <div class="flex justify-between text-gray-300"><span>💪 Max Strength:</span> <span id="statStr" class="font-bold text-rose-300">1.0x</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Slots -->
+                        <div class="md:col-span-2 space-y-3">
+                            <h3 class="font-cinzel font-bold text-amber-400 text-base border-b border-white/10 pb-2">Equipment & Wand Stash</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="inventoryItemsGrid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HOW TO PLAY TAB -->
+                <div id="tabHowTo" class="tab-content hidden space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>🎯</span> Movement</div>
+                            <p class="text-xs text-gray-300 leading-relaxed"><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">W A S D</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Arrow Keys</kbd> to move your Emoji Champion.</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚡</span> Dash / Sprint</div>
+                            <p class="text-xs text-gray-300 leading-relaxed">Hold <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SHIFT</kbd> to sprint fast! Watch out for Mana/Stamina drain.</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚔️</span> Attack & Cast</div>
+                            <p class="text-xs text-gray-300 leading-relaxed">Press <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Left Click</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">J</kbd> to attack with your equipped weapon or wand.</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>💥</span> Special Elemental Nova</div>
+                            <p class="text-xs text-gray-300 leading-relaxed">Press <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SPACE</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">K</kbd> to unleash a powerful 360-degree magic spell explosion.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-2xl space-y-2 border border-amber-500/20">
+                        <h4 class="font-bold text-amber-300 text-sm">✨ Dynamic Character State Emojis:</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                            <div class="p-2 bg-black/30 rounded-xl">🙂 Normal State</div>
+                            <div class="p-2 bg-black/30 rounded-xl">⚡ Sprinting Fast</div>
+                            <div class="p-2 bg-black/30 rounded-xl">😵 Hit / Hurt</div>
+                            <div class="p-2 bg-black/30 rounded-xl">😤 Max Strength</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS TAB -->
+                <div id="tabSettings" class="tab-content hidden space-y-6">
+                    <div class="glass-panel p-4 rounded-2xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-sm text-gray-200">Synthesized Sound Effects</div>
+                                <div class="text-xs text-gray-400">Audio synthesized live using Web Audio API</div>
+                            </div>
+                            <input type="checkbox" id="settingSfx" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
+                        </div>
+                        <div class="flex justify-between items-center border-t border-white/10 pt-4">
+                            <div>
+                                <div class="font-bold text-sm text-gray-200">Particle Quality Effects</div>
+                                <div class="text-xs text-gray-400">Enable hit sparks, magic dust, and coin particles</div>
+                            </div>
+                            <input type="checkbox" id="settingParticles" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER OVERLAY -->
+    <div id="gameOverModal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden flex flex-col items-center justify-center p-4">
+        <div class="text-center space-y-4 max-w-md">
+            <span class="text-7xl animate-bounce inline-block">💀</span>
+            <h2 class="font-cinzel text-4xl font-black text-red-500 tracking-wider">YOU DIED</h2>
+            <p class="text-gray-300 text-sm">The dark legion overran your stronghold in the realm!</p>
+            <div class="glass-panel p-4 rounded-2xl my-4 space-y-2 text-sm">
+                <div class="flex justify-between text-gray-400"><span>Enemies Slain:</span> <span id="goSlain" class="text-amber-300 font-bold">0</span></div>
+                <div class="flex justify-between text-gray-400"><span>Coins Harvested:</span> <span id="goCoins" class="text-amber-300 font-bold">0</span></div>
+            </div>
+            <button id="btnRestart" class="glass-btn px-8 py-3.5 rounded-2xl font-black text-amber-300 text-lg glow-gold w-full">RESPAWN HERO ⚔️</button>
+        </div>
+    </div>
+
+    <script>
+    // --- AUDIO SYNTHESIZER (Web Audio API) ---
+    class SoundFX {
+        constructor() {
+            this.ctx = null;
+            this.enabled = true;
+        }
+
+        init() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        play(type) {
+            if (!this.enabled) return;
+            this.init();
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            if (type === 'hit') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'swing') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'magic') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'coin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(987.77, now); // B5
+                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'levelup') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(261.63, now); // C4
+                osc.frequency.setValueAtTime(329.63, now + 0.1); // E4
+                osc.frequency.setValueAtTime(392.00, now + 0.2); // G4
+                osc.frequency.setValueAtTime(523.25, now + 0.3); // C5
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'buy') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+    }
+
+    const sfx = new SoundFX();
+
+    // --- GAME DATA & CONFIGURATIONS ---
+    const WEAPONS = {
+        sword: { name: 'Iron Sword', type: 'melee', icon: '⚔️', dmg: 22, range: 75, cooldown: 0.3, cost: 0, desc: 'Reliable iron blade for close combat.' },
+        axe: { name: 'Battle Axe', type: 'melee', icon: '🪓', dmg: 40, range: 85, cooldown: 0.6, cost: 80, desc: 'Heavy greataxe that packs massive damage.' },
+        fireWand: { name: 'Fireball Wand', type: 'wand', icon: '🪄', spellIcon: '💥', dmg: 28, speed: 500, cooldown: 0.35, cost: 120, desc: 'Shoots explosive fiery magic projectiles.' },
+        iceWand: { name: 'Frost Staff', type: 'wand', icon: '❄️', spellIcon: '🧊', dmg: 20, speed: 450, cooldown: 0.25, cost: 180, desc: 'Fast icy projectiles that slow down foes.' },
+        thunderWand: { name: 'Storm Rod', type: 'wand', icon: '⚡', spellIcon: '⚡', dmg: 55, speed: 700, cooldown: 0.5, cost: 300, desc: 'High speed lightning magic bolts.' }
+    };
+
+    const SHOP_POTIONS = [
+        { id: 'healPotion', name: 'Health Elixir', icon: '🧪', cost: 25, desc: 'Restores 50 HP immediately.' },
+        { id: 'strTonic', name: 'Strength Tonic', icon: '💪', cost: 50, desc: 'Boosts attack power by +25% permanently.' },
+        { id: 'speedTonic', name: 'Swiftness Elixir', icon: '🏎️', cost: 40, desc: 'Increases movement speed by +15%.' }
+    ];
+
+    // --- GAME ENGINE STATE ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let screenWidth = innerWidth;
+    let screenHeight = innerHeight;
+
+    function resizeCanvas() {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+        screenWidth = innerWidth;
+        screenHeight = innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Key input listener
+    const keys = {};
+    let mousePos = { x: screenWidth / 2, y: screenHeight / 2 };
+
+    window.addEventListener('keydown', e => {
+        keys[e.key.toLowerCase()] = true;
+        if (e.key === 'Escape' || e.key.toLowerCase() === 'm') toggleMenu();
+        if (e.key === ' ' || e.key.toLowerCase() === 'k') castNova();
+        if (e.key === '1') equipWeapon('sword');
+        if (e.key === '2') equipWeapon('fireWand');
+    });
+
+    window.addEventListener('keyup', e => {
+        keys[e.key.toLowerCase()] = false;
+    });
+
+    window.addEventListener('mousemove', e => {
+        mousePos.x = e.clientX;
+        mousePos.y = e.clientY;
+    });
+
+    window.addEventListener('mousedown', e => {
+        if (e.button === 0 && !isMenuOpen && !isGameOver) {
+            sfx.init();
+            playerAttack();
+        }
+    });
+
+    // Game Variables
+    let isMenuOpen = false;
+    let isGameOver = false;
+    let screenShake = 0;
+    let particlesEnabled = true;
+    let enemiesKilled = 0;
+    let waveNumber = 1;
+
+    // Camera Object
+    const camera = { x: 0, y: 0 };
+
+    // Player Object
+    const player = {
+        x: 0,
+        y: 0,
+        radius: 26,
+        hp: 100,
+        maxHp: 100,
+        mana: 50,
+        maxMana: 50,
+        coins: 0,
+        xp: 0,
+        maxXp: 100,
+        level: 1,
+        baseSpeed: 240,
+        speed: 240,
+        attackPowerMultiplier: 1.0,
+        defense: 0,
+        
+        equippedWeaponKey: 'sword',
+        ownedWeapons: ['sword'],
+        
+        // Emojis based on state
+        state: 'normal', // 'normal', 'sprinting', 'hit', 'buffed'
+        hitTimer: 0,
+        attackCooldown: 0,
+        novaCooldown: 0,
+        facingAngle: 0,
+
+        getEmoji() {
+            if (this.hitTimer > 0) return '😵';
+            if (keys['shift'] && (keys['w'] || keys['a'] || keys['s'] || keys['d'])) return '⚡';
+            if (this.attackPowerMultiplier > 1.2) return '😤';
+            if (this.equippedWeaponKey.includes('Wand') || this.equippedWeaponKey.includes('Staff') || this.equippedWeaponKey.includes('Rod')) return '🧙‍♂️';
+            return '🙂';
+        }
+    };
+
+    // Lists
+    let enemies = [];
+    let projectiles = [];
+    let particles = [];
+    let floatingTexts = [];
+    let coinsList = [];
+
+    // --- GAME INITIALIZATION & RESET ---
+    function initGame() {
+        player.x = 0;
+        player.y = 0;
+        player.hp = 100;
+        player.maxHp = 100;
+        player.mana = 50;
+        player.coins = 0;
+        player.xp = 0;
+        player.maxXp = 100;
+        player.level = 1;
+        player.attackPowerMultiplier = 1.0;
+        player.equippedWeaponKey = 'sword';
+        player.ownedWeapons = ['sword'];
+        
+        enemies = [];
+        projectiles = [];
+        particles = [];
+        floatingTexts = [];
+        coinsList = [];
+        enemiesKilled = 0;
+        waveNumber = 1;
+        isGameOver = false;
+
+        document.getElementById('gameOverModal').classList.add('hidden');
+        updateUI();
+        spawnWave();
+    }
+
+    // --- STREAMING_CHUNK:Wave Spawner and Enemy AI logic ---
+    function spawnWave() {
+        const enemyCount = 8 + waveNumber * 4;
+        const enemyTypes = [
+            { type: 'goblin', icon: '👹', hp: 45, speed: 110, dmg: 8, coinVal: 5, size: 22 },
+            { type: 'skeleton', icon: '💀', hp: 70, speed: 90, dmg: 14, coinVal: 10, size: 24 },
+            { type: 'demon', icon: '👿', hp: 120, speed: 130, dmg: 20, coinVal: 20, size: 28 }
+        ];
+
+        // Wave Boss every 3 waves
+        if (waveNumber % 3 === 0) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 600;
+            enemies.push({
+                x: player.x + Math.cos(angle) * dist,
+                y: player.y + Math.sin(angle) * dist,
+                type: 'dragon',
+                icon: '🐲',
+                hp: 400 + waveNumber * 100,
+                maxHp: 400 + waveNumber * 100,
+                speed: 70,
+                dmg: 35,
+                coinVal: 150,
+                size: 48,
+                hitTimer: 0,
+                isBoss: true
+            });
+        }
+
+        for (let i = 0; i < enemyCount; i++) {
+            const template = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 500 + Math.random() * 400;
+
+            enemies.push({
+                x: player.x + Math.cos(angle) * dist,
+                y: player.y + Math.sin(angle) * dist,
+                type: template.type,
+                icon: template.icon,
+                hp: template.hp + waveNumber * 10,
+                maxHp: template.hp + waveNumber * 10,
+                speed: template.speed,
+                dmg: template.dmg,
+                coinVal: template.coinVal,
+                size: template.size,
+                hitTimer: 0,
+                isBoss: false
+            });
+        }
+
+        document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: ${waveNumber % 3 === 0 ? '🐲 Dragon Boss Attack!' : 'Dark Horde Spawning'}`;
+    }
+
+    // --- COMBAT ACTIONS ---
+    function playerAttack() {
+        if (player.attackCooldown > 0) return;
+
+        const wep = WEAPONS[player.equippedWeaponKey];
+        player.attackCooldown = wep.cooldown;
+
+        // Calculate aim direction relative to center screen
+        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
+        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
+        const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
+        player.facingAngle = angle;
+
+        if (wep.type === 'melee') {
+            sfx.play('swing');
+            // Slash effect particles
+            for (let i = -0.5; i <= 0.5; i += 0.2) {
+                const pAngle = angle + i;
+                particles.push({
+                    x: player.x + Math.cos(pAngle) * 45,
+                    y: player.y + Math.sin(pAngle) * 45,
+                    vx: Math.cos(pAngle) * 100,
+                    vy: Math.sin(pAngle) * 100,
+                    life: 0.2,
+                    maxLife: 0.2,
+                    color: '#f59e0b',
+                    size: 6
+                });
+            }
+
+            // Hit detection in arc
+            enemies.forEach(e => {
+                const dist = Math.hypot(e.x - player.x, e.y - player.y);
+                if (dist <= wep.range + e.size) {
+                    const enemyAngle = Math.atan2(e.y - player.y, e.x - player.x);
+                    let diff = Math.abs(angle - enemyAngle);
+                    if (diff > Math.PI) diff = Math.PI * 2 - diff;
+
+                    if (diff < 1.1) {
+                        const damage = Math.round(wep.dmg * player.attackPowerMultiplier);
+                        damageEnemy(e, damage);
+                    }
+                }
+            });
+        } else if (wep.type === 'wand') {
+            sfx.play('magic');
+            // Shoot spell projectile
+            projectiles.push({
+                x: player.x,
+                y: player.y,
+                vx: Math.cos(angle) * wep.speed,
+                vy: Math.sin(angle) * wep.speed,
+                dmg: Math.round(wep.dmg * player.attackPowerMultiplier),
+                icon: wep.spellIcon,
+                life: 1.8,
+                radius: 12,
+                isPlayer: true
+            });
+        }
+    }
+
+    function castNova() {
+        if (player.novaCooldown > 0 || player.mana < 20) return;
+        player.mana -= 20;
+        player.novaCooldown = 4.0;
+        sfx.play('magic');
+        screenShake = 12;
+
+        const count = 16;
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 / count) * i;
+            projectiles.push({
+                x: player.x,
+                y: player.y,
+                vx: Math.cos(angle) * 400,
+                vy: Math.sin(angle) * 400,
+                dmg: Math.round(35 * player.attackPowerMultiplier),
+                icon: '💥',
+                life: 1.2,
+                radius: 14,
+                isPlayer: true
+            });
+        }
+        spawnFloatingText(player.x, player.y - 40, "ELEMENTAL NOVA!", "#06b6d4");
+    }
+
+    function damageEnemy(e, dmg) {
+        e.hp -= dmg;
+        e.hitTimer = 0.15;
+        sfx.play('hit');
+        spawnFloatingText(e.x, e.y, `-${dmg}`, "#ef4444");
+
+        // Spawn hit spark particles
+        for (let i = 0; i < 5; i++) {
+            particles.push({
+                x: e.x,
+                y: e.y,
+                vx: (Math.random() - 0.5) * 200,
+                vy: (Math.random() - 0.5) * 200,
+                life: 0.3,
+                maxLife: 0.3,
+                color: '#f87171',
+                size: 4
+            });
+        }
+
+        if (e.hp <= 0) {
+            // Enemy Defeated
+            enemiesKilled++;
+            player.xp += e.isBoss ? 100 : 25;
+            
+            // Drop Coins
+            const coinAmount = Math.floor(e.coinVal * (0.8 + Math.random() * 0.4));
+            coinsList.push({
+                x: e.x,
+                y: e.y,
+                value: coinAmount,
+                life: 15
+            });
+
+            // Check XP Level Up
+            if (player.xp >= player.maxXp) {
+                player.level++;
+                player.xp -= player.maxXp;
+                player.maxXp = Math.round(player.maxXp * 1.5);
+                player.maxHp += 20;
+                player.hp = player.maxHp;
+                sfx.play('levelup');
+                spawnFloatingText(player.x, player.y - 60, "LEVEL UP! ⭐", "#eab308");
+            }
+        }
+    }
+
+    function spawnFloatingText(x, y, text, color = '#ffffff') {
+        floatingTexts.push({
+            x, y, text, color, life: 1.0, maxLife: 1.0
+        });
+    }
+
+    // --- STREAMING_CHUNK:Updating physics, collisions, particle trails, and HUD ---
+    function update(dt) {
+        if (isGameOver || isMenuOpen) return;
+
+        // Player Movement Logic
+        let moveX = 0;
+        let moveY = 0;
+        if (keys['w'] || keys['arrowup']) moveY -= 1;
+        if (keys['s'] || keys['arrowdown']) moveY += 1;
+        if (keys['a'] || keys['arrowleft']) moveX -= 1;
+        if (keys['d'] || keys['arrowright']) moveX += 1;
+
+        // Normalize movement vector
+        if (moveX !== 0 && moveY !== 0) {
+            moveX *= 0.7071;
+            moveY *= 0.7071;
+        }
+
+        let currentSpeed = player.speed;
+        if (keys['shift'] && player.mana > 2 && (moveX !== 0 || moveY !== 0)) {
+            currentSpeed *= 1.6;
+            player.mana -= 12 * dt;
+            // Trail particles
+            if (particlesEnabled && Math.random() < 0.4) {
+                particles.push({
+                    x: player.x, y: player.y,
+                    vx: -moveX * 50, vy: -moveY * 50,
+                    life: 0.25, maxLife: 0.25, color: '#38bdf8', size: 5
+                });
+            }
+        } else {
+            // Mana Regeneration
+            player.mana = Math.min(player.maxMana, player.mana + 8 * dt);
+        }
+
+        player.x += moveX * currentSpeed * dt;
+        player.y += moveY * currentSpeed * dt;
+
+        // Cooldown Timers
+        if (player.attackCooldown > 0) player.attackCooldown -= dt;
+        if (player.novaCooldown > 0) player.novaCooldown -= dt;
+        if (player.hitTimer > 0) player.hitTimer -= dt;
+        if (screenShake > 0) screenShake -= dt * 30;
+
+        // Camera Tracking Player Smoothly
+        camera.x += (player.x - camera.x) * 0.1;
+        camera.y += (player.y - camera.y) * 0.1;
+
+        // Update Projectiles
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            const p = projectiles[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= dt;
+
+            // Projectile - Enemy Collision
+            if (p.isPlayer) {
+                enemies.forEach(e => {
+                    if (Math.hypot(e.x - p.x, e.y - p.y) < e.size + p.radius) {
+                        damageEnemy(e, p.dmg);
+                        p.life = 0; // Destroy projectile
+                    }
+                });
+            }
+
+            if (p.life <= 0) {
+                projectiles.splice(i, 1);
+            }
+        }
+
+        // Update Enemies
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            const e = enemies[i];
+            if (e.hitTimer > 0) e.hitTimer -= dt;
+
+            // Simple AI: Move towards player
+            const angle = Math.atan2(player.y - e.y, player.x - e.x);
+            e.x += Math.cos(angle) * e.speed * dt;
+            e.y += Math.sin(angle) * e.speed * dt;
+
+            // Enemy - Player Collision (Damage Player)
+            const distToPlayer = Math.hypot(player.x - e.x, player.y - e.y);
+            if (distToPlayer < player.radius + e.size) {
+                player.hp -= e.dmg * dt;
+                player.hitTimer = 0.2;
+                screenShake = 6;
+                if (Math.random() < 0.1) sfx.play('hit');
+
+                if (player.hp <= 0) {
+                    player.hp = 0;
+                    isGameOver = true;
+                    document.getElementById('goSlain').innerText = enemiesKilled;
+                    document.getElementById('goCoins').innerText = player.coins;
+                    document.getElementById('gameOverModal').classList.remove('hidden');
+                }
+            }
+
+            if (e.hp <= 0) {
+                enemies.splice(i, 1);
+            }
+        }
+
+        // Auto Next Wave Spawner
+        if (enemies.length === 0) {
+            waveNumber++;
+            spawnWave();
+        }
+
+        // Coin Pickup Magnet Physics
+        for (let i = coinsList.length - 1; i >= 0; i--) {
+            const coin = coinsList[i];
+            const dist = Math.hypot(player.x - coin.x, player.y - coin.y);
+            if (dist < 150) {
+                // Magnetize towards player
+                const angle = Math.atan2(player.y - coin.y, player.x - coin.x);
+                coin.x += Math.cos(angle) * 320 * dt;
+                coin.y += Math.sin(angle) * 320 * dt;
+
+                if (dist < player.radius + 10) {
+                    player.coins += coin.value;
+                    sfx.play('coin');
+                    spawnFloatingText(coin.x, coin.y, `+${coin.value}🪙`, "#f59e0b");
+                    coinsList.splice(i, 1);
+                }
+            }
+        }
+
+        // Update Particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= dt;
+            if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        // Update Floating Texts
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            const ft = floatingTexts[i];
+            ft.y -= 30 * dt;
+            ft.life -= dt;
+            if (ft.life <= 0) floatingTexts.splice(i, 1);
+        }
+
+        updateUI();
+    }
+
+    // --- STREAMING_CHUNK:Canvas Rendering Engine: Map Tiles, Shadows, Entities, and FX ---
+    function render() {
+        ctx.save();
+        ctx.fillStyle = '#0a0914';
+        ctx.fillRect(0, 0, screenWidth, screenHeight);
+
+        // Screen Shake offset
+        let shakeX = (Math.random() - 0.5) * screenShake;
+        let shakeY = (Math.random() - 0.5) * screenShake;
+
+        // Camera Offset Matrix
+        ctx.translate(screenWidth / 2 - camera.x + shakeX, screenHeight / 2 - camera.y + shakeY);
+
+        // Render Fantasy Grid Arena Background
+        const tileSize = 64;
+        const startX = Math.floor((camera.x - screenWidth) / tileSize) * tileSize;
+        const endX = Math.ceil((camera.x + screenWidth) / tileSize) * tileSize;
+        const startY = Math.floor((camera.y - screenHeight) / tileSize) * tileSize;
+        const endY = Math.ceil((camera.y + screenHeight) / tileSize) * tileSize;
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        for (let x = startX; x <= endX; x += tileSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, endY);
+            ctx.stroke();
+        }
+        for (let y = startY; y <= endY; y += tileSize) {
+            ctx.beginPath();
+            ctx.moveTo(startX, y);
+            ctx.lineTo(endX, y);
+            ctx.stroke();
+        }
+
+        // Render Dropped Coins
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        coinsList.forEach(c => {
+            ctx.font = '20px serif';
+            ctx.fillText('🪙', c.x, c.y);
+        });
+
+        // Render Enemies & Health Bars
+        enemies.forEach(e => {
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(e.x, e.y + e.size * 0.7, e.size * 0.8, e.size * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Enemy Emoji
+            ctx.font = `${e.size * 1.6}px serif`;
+            ctx.fillText(e.icon, e.x, e.y);
+
+            // Enemy Mini Health Bar
+            const barW = e.size * 1.5;
+            const barH = 5;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(e.x - barW / 2, e.y - e.size - 8, barW, barH);
+            ctx.fillStyle = e.isBoss ? '#ef4444' : '#f87171';
+            ctx.fillRect(e.x - barW / 2, e.y - e.size - 8, barW * (e.hp / e.maxHp), barH);
+        });
+
+        // Render Projectiles
+        projectiles.forEach(p => {
+            ctx.font = `${p.radius * 2}px serif`;
+            ctx.fillText(p.icon, p.x, p.y);
+        });
+
+        // Render Player
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.beginPath();
+        ctx.ellipse(player.x, player.y + 20, 22, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Aura effect if buffed
+        if (player.attackPowerMultiplier > 1.2) {
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, 34, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Player Dynamic Emoji
+        ctx.font = '42px serif';
+        ctx.fillText(player.getEmoji(), player.x, player.y);
+
+        // Render Particles
+        particles.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.life / p.maxLife;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+        });
+
+        // Render Floating Combat Text
+        floatingTexts.forEach(ft => {
+            ctx.fillStyle = ft.color;
+            ctx.font = 'bold 16px Outfit, sans-serif';
+            ctx.globalAlpha = ft.life / ft.maxLife;
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.globalAlpha = 1.0;
+        });
+
+        ctx.restore();
+    }
+
+    // --- MAIN GAME LOOP ---
+    let lastTime = performance.now();
+    function gameLoop(now) {
+        const dt = Math.min((now - lastTime) / 1000, 0.1);
+        lastTime = now;
+
+        update(dt);
+        render();
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // --- STREAMING_CHUNK:UI Updates, Shop Engine, and Modal Handlers ---
+    function updateUI() {
+        document.getElementById('hudAvatar').innerText = player.getEmoji();
+        document.getElementById('hudCoins').innerText = player.coins;
+        document.getElementById('hudHpText').innerText = `${Math.ceil(player.hp)} / ${player.maxHp}`;
+        document.getElementById('hudHpBar').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
+        
+        document.getElementById('hudManaText').innerText = `${Math.ceil(player.mana)} / ${player.maxMana}`;
+        document.getElementById('hudManaBar').style.width = `${Math.max(0, (player.mana / player.maxMana) * 100)}%`;
+
+        document.getElementById('hudXpText').innerText = `${player.xp} / ${player.maxXp}`;
+        document.getElementById('hudXpBar').style.width = `${(player.xp / player.maxXp) * 100}%`;
+
+        document.getElementById('hudLevelBadge').innerText = `Lvl ${player.level}`;
+
+        const activeWep = WEAPONS[player.equippedWeaponKey];
+        document.getElementById('hudSlotIcon').innerText = activeWep.icon;
+        document.getElementById('hudSlotName').innerText = activeWep.name.split(' ')[0];
+
+        // Stats Panel
+        document.getElementById('statAtk').innerText = WEAPONS[player.equippedWeaponKey].dmg;
+        document.getElementById('statMag').innerText = Math.round(10 * player.attackPowerMultiplier);
+        document.getElementById('statSpd').innerText = Math.round(player.speed);
+        document.getElementById('statStr').innerText = `${player.attackPowerMultiplier.toFixed(1)}x`;
+
+        document.getElementById('shopCoins').innerText = player.coins;
+    }
+
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        const modal = document.getElementById('menuModal');
+        if (isMenuOpen) {
+            modal.classList.remove('hidden');
+            renderShopItems();
+            renderInventoryItems();
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function equipWeapon(key) {
+        if (player.ownedWeapons.includes(key)) {
+            player.equippedWeaponKey = key;
+            updateUI();
+            if (isMenuOpen) renderInventoryItems();
+        }
+    }
+
+    function renderShopItems() {
+        const grid = document.getElementById('shopItemsGrid');
+        grid.innerHTML = '';
+
+        // Render Weapons & Wands
+        Object.keys(WEAPONS).forEach(key => {
+            const wep = WEAPONS[key];
+            const isOwned = player.ownedWeapons.includes(key);
+
+            const card = document.createElement('div');
+            card.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between border border-white/10';
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl bg-black/40 p-2.5 rounded-xl border border-white/10">${wep.icon}</span>
+                    <div>
+                        <h4 class="font-bold text-amber-300 text-sm">${wep.name}</h4>
+                        <p class="text-xs text-gray-400 max-w-[180px]">${wep.desc}</p>
+                        <div class="text-xs text-cyan-400 font-semibold mt-1">Dmg: ${wep.dmg}</div>
+                    </div>
+                </div>
+                <div>
+                    ${isOwned 
+                        ? `<button class="px-3 py-1.5 rounded-xl bg-gray-800 text-gray-400 text-xs font-bold border border-white/5" disabled>Owned</button>`
+                        : `<button onclick="buyWeapon('${key}')" class="glass-btn px-4 py-2 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
+                             <span>🪙</span> ${wep.cost}
+                           </button>`
+                    }
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Render Potions
+        SHOP_POTIONS.forEach(pot => {
+            const card = document.createElement('div');
+            card.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between border border-white/10';
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl bg-black/40 p-2.5 rounded-xl border border-white/10">${pot.icon}</span>
+                    <div>
+                        <h4 class="font-bold text-emerald-300 text-sm">${pot.name}</h4>
+                        <p class="text-xs text-gray-400 max-w-[180px]">${pot.desc}</p>
+                    </div>
+                </div>
+                <button onclick="buyPotion('${pot.id}')" class="glass-btn px-4 py-2 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
+                    <span>🪙</span> ${pot.cost}
+                </button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function buyWeapon(key) {
+        const wep = WEAPONS[key];
+        if (player.coins >= wep.cost && !player.ownedWeapons.includes(key)) {
+            player.coins -= wep.cost;
+            player.ownedWeapons.push(key);
+            player.equippedWeaponKey = key;
+            sfx.play('buy');
+            renderShopItems();
+            updateUI();
+        }
+    }
+
+    function buyPotion(id) {
+        const pot = SHOP_POTIONS.find(p => p.id === id);
+        if (pot && player.coins >= pot.cost) {
+            player.coins -= pot.cost;
+            sfx.play('buy');
+            if (id === 'healPotion') {
+                player.hp = Math.min(player.maxHp, player.hp + 50);
+            } else if (id === 'strTonic') {
+                player.attackPowerMultiplier += 0.25;
+            } else if (id === 'speedTonic') {
+                player.speed += 30;
+            }
+            renderShopItems();
+            updateUI();
+        }
+    }
+
+    function renderInventoryItems() {
+        const grid = document.getElementById('inventoryItemsGrid');
+        grid.innerHTML = '';
+
+        player.ownedWeapons.forEach(key => {
+            const wep = WEAPONS[key];
+            const isEquipped = player.equippedWeaponKey === key;
+
+            const item = document.createElement('div');
+            item.className = `glass-panel p-3 rounded-2xl flex flex-col items-center justify-between text-center border ${isEquipped ? 'border-amber-400 bg-amber-500/10' : 'border-white/10'}`;
+            item.innerHTML = `
+                <span class="text-3xl my-1">${wep.icon}</span>
+                <div class="text-xs font-bold text-amber-300">${wep.name}</div>
+                <div class="text-[10px] text-gray-400">Dmg: ${wep.dmg}</div>
+                <button onclick="equipWeapon('${key}')" class="mt-2 w-full py-1 rounded-xl text-xs font-bold ${isEquipped ? 'bg-amber-500 text-gray-950' : 'glass-btn text-gray-300'}">
+                    ${isEquipped ? 'EQUIPPED' : 'EQUIP'}
+                </button>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    // Modal Tabs Navigation
+    document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+            btn.classList.add('active', 'bg-amber-500', 'text-gray-950');
+            const tabId = btn.getAttribute('data-tab');
+            document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.remove('hidden');
+
+            if (tabId === 'shop') renderShopItems();
+            if (tabId === 'inventory') renderInventoryItems();
+        });
+    });
+
+    document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
+    document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
+    document.getElementById('btnRestart').addEventListener('click', initGame);
+
+    document.getElementById('settingSfx').addEventListener('change', e => {
+        sfx.enabled = e.target.checked;
+    });
+
+    document.getElementById('settingParticles').addEventListener('change', e => {
+        particlesEnabled = e.target.checked;
+    });
+
+    // Start Game
+    window.onload = () => {
+        initGame();
+        requestAnimationFrame(gameLoop);
+    };
+    </script>
 </body>
 </html>
