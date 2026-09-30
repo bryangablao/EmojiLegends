@@ -388,6 +388,9 @@
 
     const sfx = new SoundFX();
 
+    // Cross-platform Emoji Font Stack Definition
+    const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif';
+
     // --- GAME DATA & CONFIGURATIONS ---
     const WEAPONS = {
         sword: { name: 'Iron Sword', type: 'melee', icon: '⚔️', dmg: 22, range: 75, cooldown: 0.3, cost: 0, desc: 'Reliable iron blade for close combat.' },
@@ -480,7 +483,7 @@
         ownedWeapons: ['sword'],
         
         // Emojis based on state
-        state: 'normal', // 'normal', 'sprinting', 'hit', 'buffed'
+        state: 'normal',
         hitTimer: 0,
         attackCooldown: 0,
         novaCooldown: 0,
@@ -531,13 +534,12 @@
         spawnWave();
     }
 
-    // --- STREAMING_CHUNK:Wave Spawner and Enemy AI logic ---
     function spawnWave() {
         const enemyCount = 8 + waveNumber * 4;
         const enemyTypes = [
-            { type: 'goblin', icon: '👹', hp: 45, speed: 110, dmg: 8, coinVal: 5, size: 22 },
-            { type: 'skeleton', icon: '💀', hp: 70, speed: 90, dmg: 14, coinVal: 10, size: 24 },
-            { type: 'demon', icon: '👿', hp: 120, speed: 130, dmg: 20, coinVal: 20, size: 28 }
+            { type: 'goblin', icon: '👹', color: '#16a34a', hp: 45, speed: 110, dmg: 8, coinVal: 5, size: 22 },
+            { type: 'skeleton', icon: '💀', color: '#94a3b8', hp: 70, speed: 90, dmg: 14, coinVal: 10, size: 24 },
+            { type: 'demon', icon: '👿', color: '#dc2626', hp: 120, speed: 130, dmg: 20, coinVal: 20, size: 28 }
         ];
 
         // Wave Boss every 3 waves
@@ -549,6 +551,7 @@
                 y: player.y + Math.sin(angle) * dist,
                 type: 'dragon',
                 icon: '🐲',
+                color: '#ea580c',
                 hp: 400 + waveNumber * 100,
                 maxHp: 400 + waveNumber * 100,
                 speed: 70,
@@ -570,6 +573,7 @@
                 y: player.y + Math.sin(angle) * dist,
                 type: template.type,
                 icon: template.icon,
+                color: template.color,
                 hp: template.hp + waveNumber * 10,
                 maxHp: template.hp + waveNumber * 10,
                 speed: template.speed,
@@ -591,7 +595,6 @@
         const wep = WEAPONS[player.equippedWeaponKey];
         player.attackCooldown = wep.cooldown;
 
-        // Calculate aim direction relative to center screen
         const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
         const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
         const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
@@ -599,7 +602,6 @@
 
         if (wep.type === 'melee') {
             sfx.play('swing');
-            // Slash effect particles
             for (let i = -0.5; i <= 0.5; i += 0.2) {
                 const pAngle = angle + i;
                 particles.push({
@@ -614,7 +616,6 @@
                 });
             }
 
-            // Hit detection in arc
             enemies.forEach(e => {
                 const dist = Math.hypot(e.x - player.x, e.y - player.y);
                 if (dist <= wep.range + e.size) {
@@ -630,7 +631,6 @@
             });
         } else if (wep.type === 'wand') {
             sfx.play('magic');
-            // Shoot spell projectile
             projectiles.push({
                 x: player.x,
                 y: player.y,
@@ -638,6 +638,7 @@
                 vy: Math.sin(angle) * wep.speed,
                 dmg: Math.round(wep.dmg * player.attackPowerMultiplier),
                 icon: wep.spellIcon,
+                color: '#38bdf8',
                 life: 1.8,
                 radius: 12,
                 isPlayer: true
@@ -662,6 +663,7 @@
                 vy: Math.sin(angle) * 400,
                 dmg: Math.round(35 * player.attackPowerMultiplier),
                 icon: '💥',
+                color: '#06b6d4',
                 life: 1.2,
                 radius: 14,
                 isPlayer: true
@@ -676,7 +678,6 @@
         sfx.play('hit');
         spawnFloatingText(e.x, e.y, `-${dmg}`, "#ef4444");
 
-        // Spawn hit spark particles
         for (let i = 0; i < 5; i++) {
             particles.push({
                 x: e.x,
@@ -691,11 +692,9 @@
         }
 
         if (e.hp <= 0) {
-            // Enemy Defeated
             enemiesKilled++;
             player.xp += e.isBoss ? 100 : 25;
             
-            // Drop Coins
             const coinAmount = Math.floor(e.coinVal * (0.8 + Math.random() * 0.4));
             coinsList.push({
                 x: e.x,
@@ -704,7 +703,6 @@
                 life: 15
             });
 
-            // Check XP Level Up
             if (player.xp >= player.maxXp) {
                 player.level++;
                 player.xp -= player.maxXp;
@@ -723,11 +721,9 @@
         });
     }
 
-    // --- STREAMING_CHUNK:Updating physics, collisions, particle trails, and HUD ---
     function update(dt) {
         if (isGameOver || isMenuOpen) return;
 
-        // Player Movement Logic
         let moveX = 0;
         let moveY = 0;
         if (keys['w'] || keys['arrowup']) moveY -= 1;
@@ -735,7 +731,6 @@
         if (keys['a'] || keys['arrowleft']) moveX -= 1;
         if (keys['d'] || keys['arrowright']) moveX += 1;
 
-        // Normalize movement vector
         if (moveX !== 0 && moveY !== 0) {
             moveX *= 0.7071;
             moveY *= 0.7071;
@@ -745,7 +740,6 @@
         if (keys['shift'] && player.mana > 2 && (moveX !== 0 || moveY !== 0)) {
             currentSpeed *= 1.6;
             player.mana -= 12 * dt;
-            // Trail particles
             if (particlesEnabled && Math.random() < 0.4) {
                 particles.push({
                     x: player.x, y: player.y,
@@ -754,36 +748,31 @@
                 });
             }
         } else {
-            // Mana Regeneration
             player.mana = Math.min(player.maxMana, player.mana + 8 * dt);
         }
 
         player.x += moveX * currentSpeed * dt;
         player.y += moveY * currentSpeed * dt;
 
-        // Cooldown Timers
         if (player.attackCooldown > 0) player.attackCooldown -= dt;
         if (player.novaCooldown > 0) player.novaCooldown -= dt;
         if (player.hitTimer > 0) player.hitTimer -= dt;
         if (screenShake > 0) screenShake -= dt * 30;
 
-        // Camera Tracking Player Smoothly
         camera.x += (player.x - camera.x) * 0.1;
         camera.y += (player.y - camera.y) * 0.1;
 
-        // Update Projectiles
         for (let i = projectiles.length - 1; i >= 0; i--) {
             const p = projectiles[i];
             p.x += p.vx * dt;
             p.y += p.vy * dt;
             p.life -= dt;
 
-            // Projectile - Enemy Collision
             if (p.isPlayer) {
                 enemies.forEach(e => {
                     if (Math.hypot(e.x - p.x, e.y - p.y) < e.size + p.radius) {
                         damageEnemy(e, p.dmg);
-                        p.life = 0; // Destroy projectile
+                        p.life = 0;
                     }
                 });
             }
@@ -793,17 +782,14 @@
             }
         }
 
-        // Update Enemies
         for (let i = enemies.length - 1; i >= 0; i--) {
             const e = enemies[i];
             if (e.hitTimer > 0) e.hitTimer -= dt;
 
-            // Simple AI: Move towards player
             const angle = Math.atan2(player.y - e.y, player.x - e.x);
             e.x += Math.cos(angle) * e.speed * dt;
             e.y += Math.sin(angle) * e.speed * dt;
 
-            // Enemy - Player Collision (Damage Player)
             const distToPlayer = Math.hypot(player.x - e.x, player.y - e.y);
             if (distToPlayer < player.radius + e.size) {
                 player.hp -= e.dmg * dt;
@@ -825,18 +811,15 @@
             }
         }
 
-        // Auto Next Wave Spawner
         if (enemies.length === 0) {
             waveNumber++;
             spawnWave();
         }
 
-        // Coin Pickup Magnet Physics
         for (let i = coinsList.length - 1; i >= 0; i--) {
             const coin = coinsList[i];
             const dist = Math.hypot(player.x - coin.x, player.y - coin.y);
             if (dist < 150) {
-                // Magnetize towards player
                 const angle = Math.atan2(player.y - coin.y, player.x - coin.x);
                 coin.x += Math.cos(angle) * 320 * dt;
                 coin.y += Math.sin(angle) * 320 * dt;
@@ -850,7 +833,6 @@
             }
         }
 
-        // Update Particles
         for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
             p.x += p.vx * dt;
@@ -859,7 +841,6 @@
             if (p.life <= 0) particles.splice(i, 1);
         }
 
-        // Update Floating Texts
         for (let i = floatingTexts.length - 1; i >= 0; i--) {
             const ft = floatingTexts[i];
             ft.y -= 30 * dt;
@@ -870,17 +851,14 @@
         updateUI();
     }
 
-    // --- STREAMING_CHUNK:Canvas Rendering Engine: Map Tiles, Shadows, Entities, and FX ---
     function render() {
         ctx.save();
         ctx.fillStyle = '#0a0914';
         ctx.fillRect(0, 0, screenWidth, screenHeight);
 
-        // Screen Shake offset
         let shakeX = (Math.random() - 0.5) * screenShake;
         let shakeY = (Math.random() - 0.5) * screenShake;
 
-        // Camera Offset Matrix
         ctx.translate(screenWidth / 2 - camera.x + shakeX, screenHeight / 2 - camera.y + shakeY);
 
         // Render Fantasy Grid Arena Background
@@ -905,24 +883,43 @@
             ctx.stroke();
         }
 
-        // Render Dropped Coins
+        // Render Dropped Coins (with Gold Circle Fallback)
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         coinsList.forEach(c => {
-            ctx.font = '20px serif';
+            // Gold Circle Visual Fallback
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Emoji Text Overlay
+            ctx.font = `16px ${EMOJI_FONT_STACK}`;
             ctx.fillText('🪙', c.x, c.y);
         });
 
-        // Render Enemies & Health Bars
+        // Render Enemies & Health Bars (with Visual Shape Fallbacks)
         enemies.forEach(e => {
-            // Shadow
+            // Drop Shadow
             ctx.fillStyle = 'rgba(0,0,0,0.3)';
             ctx.beginPath();
             ctx.ellipse(e.x, e.y + e.size * 0.7, e.size * 0.8, e.size * 0.3, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Enemy Emoji
-            ctx.font = `${e.size * 1.6}px serif`;
+            // Colored Body Circle Fallback
+            ctx.fillStyle = e.hitTimer > 0 ? '#ffffff' : (e.color || '#ef4444');
+            ctx.beginPath();
+            ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Enemy Emoji Overlay
+            ctx.font = `${e.size * 1.4}px ${EMOJI_FONT_STACK}`;
             ctx.fillText(e.icon, e.x, e.y);
 
             // Enemy Mini Health Bar
@@ -936,7 +933,12 @@
 
         // Render Projectiles
         projectiles.forEach(p => {
-            ctx.font = `${p.radius * 2}px serif`;
+            ctx.fillStyle = p.color || '#06b6d4';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = `${p.radius * 2}px ${EMOJI_FONT_STACK}`;
             ctx.fillText(p.icon, p.x, p.y);
         });
 
@@ -947,6 +949,15 @@
         ctx.ellipse(player.x, player.y + 20, 22, 9, 0, 0, Math.PI * 2);
         ctx.fill();
 
+        // Player Circle Base Fallback (Amber Glow/Hero Orb)
+        ctx.fillStyle = player.hitTimer > 0 ? '#ef4444' : '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
         // Aura effect if buffed
         if (player.attackPowerMultiplier > 1.2) {
             ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
@@ -956,8 +967,8 @@
             ctx.stroke();
         }
 
-        // Player Dynamic Emoji
-        ctx.font = '42px serif';
+        // Player Dynamic Emoji Overlay
+        ctx.font = `36px ${EMOJI_FONT_STACK}`;
         ctx.fillText(player.getEmoji(), player.x, player.y);
 
         // Render Particles
@@ -973,7 +984,7 @@
         // Render Floating Combat Text
         floatingTexts.forEach(ft => {
             ctx.fillStyle = ft.color;
-            ctx.font = 'bold 16px Outfit, sans-serif';
+            ctx.font = `bold 16px Outfit, ${EMOJI_FONT_STACK}`;
             ctx.globalAlpha = ft.life / ft.maxLife;
             ctx.fillText(ft.text, ft.x, ft.y);
             ctx.globalAlpha = 1.0;
@@ -994,9 +1005,8 @@
         requestAnimationFrame(gameLoop);
     }
 
-    // --- STREAMING_CHUNK:UI Updates, Shop Engine, and Modal Handlers ---
     function updateUI() {
-        document.getElementById('hudAvatar').innerText = player.getEmoji();
+        document.getElementById('playerAvatar').innerText = player.getEmoji();
         document.getElementById('hudCoins').innerText = player.coins;
         document.getElementById('hudHpText').innerText = `${Math.ceil(player.hp)} / ${player.maxHp}`;
         document.getElementById('hudHpBar').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
@@ -1046,7 +1056,6 @@
         const grid = document.getElementById('shopItemsGrid');
         grid.innerHTML = '';
 
-        // Render Weapons & Wands
         Object.keys(WEAPONS).forEach(key => {
             const wep = WEAPONS[key];
             const isOwned = player.ownedWeapons.includes(key);
@@ -1074,7 +1083,6 @@
             grid.appendChild(card);
         });
 
-        // Render Potions
         SHOP_POTIONS.forEach(pot => {
             const card = document.createElement('div');
             card.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between border border-white/10';
