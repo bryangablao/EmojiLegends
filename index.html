@@ -2,20 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emoji Legends: Elemental Realm ARPG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Emoji Legends: Mythic Realms</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #08070d;
-            font-family: 'Outfit', sans-serif;
+        * {
+            box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #06050a;
+            font-family: 'Outfit', sans-serif;
         }
         .font-cinzel { font-family: 'Cinzel', serif; }
         
@@ -25,26 +30,26 @@
             height: 100vh;
         }
 
-        /* Glassmorphism UI Style */
+        /* Glassmorphism Styles */
         .glass-panel {
-            background: rgba(18, 16, 28, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(15, 13, 25, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
         }
 
         .glass-btn {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.18);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-btn:hover {
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 100%);
-            border-color: rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 100%);
+            border-color: rgba(255,255,255,0.35);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
         .glass-btn:active {
@@ -52,57 +57,107 @@
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        /* Rarity Border Colors & Glows */
+        .rarity-common { border-color: #9ca3af !important; color: #e5e7eb; }
+        .rarity-uncommon { border-color: #22c55e !important; color: #4ade80; }
+        .rarity-epic { border-color: #3b82f6 !important; color: #60a5fa; }
+        .rarity-legendary { border-color: #a855f7 !important; color: #c084fc; box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); }
+        .rarity-mythic { 
+            border-color: #eab308 !important; 
+            color: #fde047; 
+            animation: mythic-pulse 2s infinite alternate; 
+            box-shadow: 0 0 18px rgba(234, 179, 8, 0.5);
         }
 
-        /* Animated Pulse Glow */
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
-            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.8); }
+        @keyframes mythic-pulse {
+            0% { border-color: #eab308; box-shadow: 0 0 12px rgba(234, 179, 8, 0.4); }
+            50% { border-color: #ef4444; box-shadow: 0 0 22px rgba(239, 68, 68, 0.7); }
+            100% { border-color: #eab308; box-shadow: 0 0 12px rgba(234, 179, 8, 0.4); }
         }
-        .glow-gold { animation: pulse-glow 2s infinite; }
+
+        .glow-gold { animation: gold-glow 2s infinite; }
+        @keyframes gold-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 32px rgba(234, 179, 8, 0.85); }
+        }
+
+        /* Coin Icon styling using SVG background */
+        .coin-icon {
+            display: inline-block;
+            width: 1.2em;
+            height: 1.2em;
+            vertical-align: -0.2em;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23eab308' stroke='%23fef08a' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='7' fill='%23ca8a04'/%3E%3Ctext x='12' y='16' font-size='11' font-weight='bold' text-anchor='middle' fill='%23fef08a' font-family='sans-serif'%3EG%3C/text%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-white select-none">
 
+    <!-- GAME CANVAS -->
     <canvas id="gameCanvas"></canvas>
+
+    <!-- START SCREEN OVERLAY -->
+    <div id="startScreenModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl max-w-lg w-full text-center space-y-6 border border-amber-500/30 glow-gold">
+            <div class="space-y-2">
+                <span class="text-6xl inline-block transform hover:scale-110 transition-transform">👑</span>
+                <h1 class="font-cinzel text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600">
+                    EMOJI LEGENDS
+                </h1>
+                <p class="text-xs uppercase tracking-widest text-amber-200/80 font-semibold">Mythic Realms ARPG</p>
+            </div>
+
+            <p class="text-sm text-gray-300 leading-relaxed">
+                Venture into elemental dungeons, collect legendary & mythic weapons, equip divine armors, and slay terrifying boss hordes!
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 text-left text-xs bg-black/40 p-4 rounded-2xl border border-white/10">
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">WASD / Arrow Keys</span> <span>Move Hero</span></div>
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">Left Click / J</span> <span>Attack / Cast</span></div>
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">SHIFT</span> <span>Sprint Dash</span></div>
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">SPACE / K</span> <span>Elemental Nova</span></div>
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">P / Pause Button</span> <span>Pause Game</span></div>
+                <div class="flex items-center gap-2"><span class="text-amber-400 font-bold">ESC / M</span> <span>Open Shop & Gear</span></div>
+            </div>
+
+            <button id="btnPlayGame" class="w-full glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
+                ⚔️ ENTER REALM (PLAY) ⚔️
+            </button>
+        </div>
+    </div>
 
     <!-- FLOATING HUD OVERLAY -->
     <div id="hud" class="fixed top-0 left-0 w-full p-4 pointer-events-none flex justify-between items-start z-10">
         <!-- Player Stats Panel -->
-        <div class="glass-panel rounded-2xl p-4 min-w-[280px] sm:min-w-[340px] pointer-events-auto flex flex-col gap-2.5">
+        <div class="glass-panel rounded-2xl p-4 min-w-[280px] sm:min-w-[340px] pointer-events-auto flex flex-col gap-2 border-white/10">
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span id="playerAvatar" class="text-3xl filter drop-shadow">🙂</span>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 id="hudName" class="font-bold font-cinzel text-amber-400 text-base leading-tight">Hero</h3>
+                            <h3 id="hudName" class="font-bold font-cinzel text-amber-400 text-sm leading-tight">Mythic Champion</h3>
                             <span id="hudLevelBadge" class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 font-semibold">Lvl 1</span>
                         </div>
-                        <p id="hudStateText" class="text-xs text-gray-400">Status: Normal</p>
+                        <p id="hudStateText" class="text-[11px] text-gray-400">Status: Normal</p>
                     </div>
                 </div>
                 <!-- Coins Display -->
-                <div class="flex items-center gap-1.5 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-xl">
-                    <span class="text-xl">🪙</span>
+                <div class="flex items-center gap-2 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-xl">
+                    <span class="coin-icon"></span>
                     <span id="hudCoins" class="font-black text-amber-300 text-base tracking-wider">0</span>
                 </div>
             </div>
 
             <!-- Health Bar -->
             <div class="space-y-1">
-                <div class="flex justify-between text-xs font-semibold px-0.5">
+                <div class="flex justify-between text-[11px] font-semibold px-0.5">
                     <span class="text-red-400 flex items-center gap-1">❤️ Health</span>
                     <span id="hudHpText" class="text-gray-300">100 / 100</span>
                 </div>
@@ -111,10 +166,10 @@
                 </div>
             </div>
 
-            <!-- Mana / Stamina Bar -->
+            <!-- Mana / Capacity Bar -->
             <div class="space-y-1">
-                <div class="flex justify-between text-xs font-semibold px-0.5">
-                    <span class="text-cyan-400 flex items-center gap-1">🧪 Mana / Stamina</span>
+                <div class="flex justify-between text-[11px] font-semibold px-0.5">
+                    <span class="text-cyan-400 flex items-center gap-1">🧪 Mana Capacity</span>
                     <span id="hudManaText" class="text-gray-300">50 / 50</span>
                 </div>
                 <div class="w-full h-2.5 bg-gray-900/80 rounded-full overflow-hidden border border-cyan-950/60 p-0.5">
@@ -122,9 +177,9 @@
                 </div>
             </div>
 
-            <!-- XP Progress Bar -->
+            <!-- Experience Progress Bar -->
             <div class="space-y-1">
-                <div class="flex justify-between text-xs font-semibold px-0.5">
+                <div class="flex justify-between text-[11px] font-semibold px-0.5">
                     <span class="text-purple-400 flex items-center gap-1">✨ Experience</span>
                     <span id="hudXpText" class="text-gray-300">0 / 100</span>
                 </div>
@@ -134,25 +189,32 @@
             </div>
         </div>
 
-        <!-- Top Right Actions & Radar HUD -->
-        <div class="flex flex-col items-end gap-3 pointer-events-auto">
-            <!-- Floating Menu Toggle Button -->
-            <button id="btnOpenMenu" class="glass-btn px-4 py-2.5 rounded-2xl flex items-center gap-2 font-bold text-amber-300 hover:text-amber-200">
-                <span class="text-xl">📜</span>
-                <span>MENU</span>
-                <span class="text-xs bg-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">[ESC / M]</span>
-            </button>
+        <!-- Top Right Actions, Waves & Pause Control -->
+        <div class="flex flex-col items-end gap-2.5 pointer-events-auto">
+            <div class="flex items-center gap-2">
+                <!-- Pause Toggle Button -->
+                <button id="btnPauseToggle" class="glass-btn px-3.5 py-2 rounded-2xl flex items-center gap-1.5 font-bold text-cyan-300 hover:text-cyan-100">
+                    <span id="pauseIcon" class="text-lg">⏸️</span>
+                    <span id="pauseText" class="text-xs font-semibold">PAUSE</span>
+                </button>
 
-            <!-- Active Wave Badge -->
-            <div id="hudWaveContainer" class="glass-panel px-4 py-2 rounded-2xl flex items-center gap-3">
-                <span class="text-2xl animate-pulse">💀</span>
+                <!-- Floating Menu Toggle Button -->
+                <button id="btnOpenMenu" class="glass-btn px-4 py-2 rounded-2xl flex items-center gap-2 font-bold text-amber-300 hover:text-amber-200">
+                    <span class="text-lg">📜</span>
+                    <span class="text-xs sm:text-sm">MENU & GEAR</span>
+                </button>
+            </div>
+
+            <!-- Wave & Boss Alert Badge -->
+            <div id="hudWaveContainer" class="glass-panel px-4 py-2 rounded-2xl flex items-center gap-3 border-red-500/20">
+                <span id="hudWaveIcon" class="text-2xl animate-pulse">💀</span>
                 <div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Current Threat</div>
-                    <div id="hudWaveText" class="font-cinzel text-sm font-bold text-red-400">Wave 1: Goblin Scouts</div>
+                    <div class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Threat Level</div>
+                    <div id="hudWaveText" class="font-cinzel text-xs sm:text-sm font-bold text-red-400">Wave 1: Goblin Vanguard</div>
                 </div>
             </div>
 
-            <!-- Equipped Quick Bar -->
+            <!-- Equipped Quick Slot Bar -->
             <div class="glass-panel p-2 rounded-2xl flex gap-2">
                 <div id="slotWeapon" class="w-12 h-12 rounded-xl bg-gray-800/80 border border-amber-500/40 flex flex-col items-center justify-center relative cursor-pointer hover:border-amber-400">
                     <span class="text-xl" id="hudSlotIcon">⚔️</span>
@@ -168,119 +230,188 @@
         </div>
     </div>
 
-    <div id="menuModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <!-- PAUSE OVERLAY INDICATOR -->
+    <div id="pauseOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden flex items-center justify-center pointer-events-none">
+        <div class="glass-panel px-8 py-4 rounded-3xl border border-cyan-500/40 text-center animate-pulse">
+            <span class="text-4xl">⏸️</span>
+            <h2 class="font-cinzel text-2xl font-black text-cyan-300 tracking-wider">GAME PAUSED</h2>
+            <p class="text-xs text-gray-300 mt-1">Press P or click Pause to Resume</p>
+        </div>
+    </div>
+
+    <!-- MENU MODAL (Shop, Equipment, How to Play, Settings) -->
+    <div id="menuModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl flex flex-col overflow-hidden border border-white/20 shadow-2xl">
             
             <!-- Modal Header Tabs -->
-            <div class="p-4 sm:p-6 bg-gray-900/60 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div class="p-4 sm:p-5 bg-gray-900/80 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                    <span class="text-3xl">⚔️</span>
-                    <h2 class="font-cinzel text-xl sm:text-2xl font-black text-amber-400">EMOJI LEGENDS</h2>
+                    <span class="text-2xl sm:text-3xl">⚔️</span>
+                    <h2 class="font-cinzel text-lg sm:text-xl font-black text-amber-400">MYTHIC REALMS SANCTUARY</h2>
                 </div>
                 
                 <!-- Nav Tabs -->
-                <div class="flex items-center gap-1 sm:gap-2 bg-black/40 p-1 rounded-2xl border border-white/10">
-                    <button class="menu-tab-btn active px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="shop">🛒 Shop</button>
-                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="inventory">🎒 Inventory</button>
-                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="howTo">📜 How to Play</button>
+                <div class="flex items-center gap-1 sm:gap-2 bg-black/50 p-1 rounded-2xl border border-white/10">
+                    <button class="menu-tab-btn active px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="shop">🛍️ Shop</button>
+                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="inventory">🎒 Gear & Armors</button>
+                    <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="howTo">📜 Guide</button>
                     <button class="menu-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all" data-tab="settings">⚙️ Settings</button>
                 </div>
 
-                <button id="btnCloseMenu" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-lg hover:bg-red-500/30 hover:border-red-500/50">✕</button>
+                <button id="btnCloseMenu" class="glass-btn w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-red-500/30">✕</button>
             </div>
 
             <!-- Modal Content Body -->
-            <div class="p-6 overflow-y-auto flex-1">
+            <div class="p-5 overflow-y-auto flex-1">
                 
                 <!-- SHOP TAB -->
-                <div id="tabShop" class="tab-content space-y-6">
+                <div id="tabShop" class="tab-content space-y-5">
                     <div class="flex justify-between items-center bg-amber-950/20 p-4 rounded-2xl border border-amber-500/20">
                         <div>
-                            <h3 class="font-cinzel font-bold text-amber-300 text-lg">Merchant Guild Shop</h3>
-                            <p class="text-xs text-gray-400">Purchase legendary weapons, magic wands, and ancient elixirs.</p>
+                            <h3 class="font-cinzel font-bold text-amber-300 text-base">Grand Merchant Guild</h3>
+                            <p class="text-xs text-gray-400">Acquire Rare, Legendary, and Mythic gear across all equipment slots!</p>
                         </div>
-                        <div class="flex items-center gap-2 text-xl font-bold text-amber-300 bg-black/40 px-4 py-2 rounded-xl border border-amber-500/30">
-                            <span>🪙</span>
+                        <div class="flex items-center gap-2 text-lg font-bold text-amber-300 bg-black/50 px-4 py-2 rounded-xl border border-amber-500/30">
+                            <span class="coin-icon"></span>
                             <span id="shopCoins">0</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shopItemsGrid">
-                        <!-- Populated by JS -->
+                    <!-- Filter Tabs for Shop Items -->
+                    <div class="flex gap-2 overflow-x-auto pb-1" id="shopFilterContainer">
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-gray-950" data-filter="all">All Items</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="weapon">Weapons</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="head">Headwear</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="chest">Chestplates</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="legs">Leggings</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="boots">Boots</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="potion">Elixirs</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="shopItemsGrid">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
 
-                <!-- INVENTORY TAB -->
+                <!-- INVENTORY & GEAR TAB -->
                 <div id="tabInventory" class="tab-content hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Stats Summary -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Hero Stats & Attributes Summary -->
                         <div class="glass-panel p-4 rounded-2xl border border-white/10 space-y-3">
-                            <h3 class="font-cinzel font-bold text-amber-400 text-base border-b border-white/10 pb-2">Hero Stats</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between text-gray-300"><span>🗡️ Attack Power:</span> <span id="statAtk" class="font-bold text-amber-300">10</span></div>
-                                <div class="flex justify-between text-gray-300"><span>🪄 Magic Power:</span> <span id="statMag" class="font-bold text-cyan-300">10</span></div>
-                                <div class="flex justify-between text-gray-300"><span>🛡️ Armor Defense:</span> <span id="statDef" class="font-bold text-blue-300">0</span></div>
-                                <div class="flex justify-between text-gray-300"><span>⚡ Move Speed:</span> <span id="statSpd" class="font-bold text-emerald-300">240</span></div>
-                                <div class="flex justify-between text-gray-300"><span>💪 Max Strength:</span> <span id="statStr" class="font-bold text-rose-300">1.0x</span></div>
+                            <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2 flex items-center justify-between">
+                                <span>Hero Attributes</span>
+                                <span id="summaryRarityRank" class="text-xs px-2 py-0.5 rounded-full border rarity-common font-sans">Common Grade</span>
+                            </h3>
+
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between text-gray-300"><span>🗡️ Total Attack Power:</span> <span id="statAtk" class="font-bold text-amber-300">10</span></div>
+                                <div class="flex justify-between text-gray-300"><span>🪄 Spell Magic Power:</span> <span id="statMag" class="font-bold text-cyan-300">10</span></div>
+                                <div class="flex justify-between text-gray-300"><span>🛡️ Armor Defense Red:</span> <span id="statDef" class="font-bold text-blue-300">0%</span></div>
+                                <div class="flex justify-between text-gray-300"><span>⚡ Movement Speed:</span> <span id="statSpd" class="font-bold text-emerald-300">240</span></div>
+                                <div class="flex justify-between text-gray-300"><span>🧪 Mana Capacity:</span> <span id="statManaCap" class="font-bold text-cyan-400">50</span></div>
+                                <div class="flex justify-between text-gray-300"><span>❤️ Health Regeneration:</span> <span id="statHpReg" class="font-bold text-rose-300">1/s</span></div>
+                            </div>
+
+                            <div class="p-3 bg-black/40 rounded-xl border border-amber-500/20 text-[11px] text-gray-300 space-y-1">
+                                <div class="font-bold text-amber-400">⭐ Mana Scaling Perk:</div>
+                                <p>Every 5 levels (5, 10, 15...), your hero unlocks <span class="text-cyan-300 font-bold">+25 Mana Capacity</span> and double MP regen!</p>
                             </div>
                         </div>
 
-                        <!-- Inventory Slots -->
-                        <div class="md:col-span-2 space-y-3">
-                            <h3 class="font-cinzel font-bold text-amber-400 text-base border-b border-white/10 pb-2">Equipment & Wand Stash</h3>
+                        <!-- Equippable Slots (4 Armors + Weapon) -->
+                        <div class="lg:col-span-2 space-y-4">
+                            <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2">Currently Equipped Gear</h3>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="equippedSlotsGrid">
+                                <!-- Head Slot -->
+                                <div id="slotEqHead" class="glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-center border text-center cursor-pointer min-h-[100px]">
+                                    <span class="text-2xl">🪖</span>
+                                    <span class="text-[10px] text-gray-400 font-bold mt-1 uppercase">Headwear</span>
+                                    <span id="eqHeadName" class="text-xs font-bold text-gray-300 mt-0.5">None</span>
+                                </div>
+                                <!-- Chest Slot -->
+                                <div id="slotEqChest" class="glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-center border text-center cursor-pointer min-h-[100px]">
+                                    <span class="text-2xl">👕</span>
+                                    <span class="text-[10px] text-gray-400 font-bold mt-1 uppercase">Chestplate</span>
+                                    <span id="eqChestName" class="text-xs font-bold text-gray-300 mt-0.5">None</span>
+                                </div>
+                                <!-- Leggings Slot -->
+                                <div id="slotEqLegs" class="glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-center border text-center cursor-pointer min-h-[100px]">
+                                    <span class="text-2xl">👖</span>
+                                    <span class="text-[10px] text-gray-400 font-bold mt-1 uppercase">Leggings</span>
+                                    <span id="eqLegsName" class="text-xs font-bold text-gray-300 mt-0.5">None</span>
+                                </div>
+                                <!-- Boots Slot -->
+                                <div id="slotEqBoots" class="glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-center border text-center cursor-pointer min-h-[100px]">
+                                    <span class="text-2xl">👟</span>
+                                    <span class="text-[10px] text-gray-400 font-bold mt-1 uppercase">Boots</span>
+                                    <span id="eqBootsName" class="text-xs font-bold text-gray-300 mt-0.5">None</span>
+                                </div>
+                                <!-- Weapon Slot -->
+                                <div id="slotEqWeapon" class="glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-center border text-center cursor-pointer min-h-[100px]">
+                                    <span class="text-2xl">⚔️</span>
+                                    <span class="text-[10px] text-amber-400 font-bold mt-1 uppercase">Weapon</span>
+                                    <span id="eqWeaponName" class="text-xs font-bold text-amber-300 mt-0.5">Iron Sword</span>
+                                </div>
+                            </div>
+
+                            <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2 pt-2">Owned Inventory Items</h3>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="inventoryItemsGrid">
                                 <!-- Populated by JS -->
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <!-- HOW TO PLAY TAB -->
-                <div id="tabHowTo" class="tab-content hidden space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                <div id="tabHowTo" class="tab-content hidden space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div class="glass-panel p-4 rounded-2xl space-y-1.5">
                             <div class="font-bold text-amber-300 flex items-center gap-2"><span>🎯</span> Movement</div>
-                            <p class="text-xs text-gray-300 leading-relaxed"><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">W A S D</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Arrow Keys</kbd> to move your Emoji Champion.</p>
+                            <p class="text-xs text-gray-300 leading-relaxed"><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">WASD</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Arrow Keys</kbd> to move your Emoji Champion.</p>
                         </div>
-                        <div class="glass-panel p-4 rounded-2xl space-y-2">
+                        <div class="glass-panel p-4 rounded-2xl space-y-1.5">
                             <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚡</span> Dash / Sprint</div>
-                            <p class="text-xs text-gray-300 leading-relaxed">Hold <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SHIFT</kbd> to sprint fast! Watch out for Mana/Stamina drain.</p>
+                            <p class="text-xs text-gray-300 leading-relaxed">Hold <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SHIFT</kbd> to dash forward fast using Mana!</p>
                         </div>
-                        <div class="glass-panel p-4 rounded-2xl space-y-2">
-                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚔️</span> Attack & Cast</div>
-                            <p class="text-xs text-gray-300 leading-relaxed">Press <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Left Click</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">J</kbd> to attack with your equipped weapon or wand.</p>
+                        <div class="glass-panel p-4 rounded-2xl space-y-1.5">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚔️</span> Combat & Spells</div>
+                            <p class="text-xs text-gray-300 leading-relaxed"><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">Left Click</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">J</kbd> to trigger weapon attacks or shoot magic spells.</p>
                         </div>
-                        <div class="glass-panel p-4 rounded-2xl space-y-2">
-                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>💥</span> Special Elemental Nova</div>
-                            <p class="text-xs text-gray-300 leading-relaxed">Press <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SPACE</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">K</kbd> to unleash a powerful 360-degree magic spell explosion.</p>
+                        <div class="glass-panel p-4 rounded-2xl space-y-1.5">
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>💥</span> Elemental Nova</div>
+                            <p class="text-xs text-gray-300 leading-relaxed"><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">SPACE</kbd> or <kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white">K</kbd> to detonate a 360-degree magic ring blast.</p>
                         </div>
                     </div>
 
                     <div class="glass-panel p-4 rounded-2xl space-y-2 border border-amber-500/20">
-                        <h4 class="font-bold text-amber-300 text-sm">✨ Dynamic Character State Emojis:</h4>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-                            <div class="p-2 bg-black/30 rounded-xl">🙂 Normal State</div>
-                            <div class="p-2 bg-black/30 rounded-xl">⚡ Sprinting Fast</div>
-                            <div class="p-2 bg-black/30 rounded-xl">😵 Hit / Hurt</div>
-                            <div class="p-2 bg-black/30 rounded-xl">😤 Max Strength</div>
+                        <h4 class="font-bold text-amber-300 text-sm">🌟 Rarity Grades System:</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                            <div class="p-2 bg-black/40 rounded-xl border rarity-common">⚪ Common</div>
+                            <div class="p-2 bg-black/40 rounded-xl border rarity-uncommon">🟢 Uncommon</div>
+                            <div class="p-2 bg-black/40 rounded-xl border rarity-epic">🔵 Epic</div>
+                            <div class="p-2 bg-black/40 rounded-xl border rarity-legendary">🟣 Legendary</div>
+                            <div class="p-2 bg-black/40 rounded-xl border rarity-mythic">🟡 Mythic</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- SETTINGS TAB -->
-                <div id="tabSettings" class="tab-content hidden space-y-6">
+                <div id="tabSettings" class="tab-content hidden space-y-4">
                     <div class="glass-panel p-4 rounded-2xl space-y-4">
                         <div class="flex justify-between items-center">
                             <div>
-                                <div class="font-bold text-sm text-gray-200">Synthesized Sound Effects</div>
-                                <div class="text-xs text-gray-400">Audio synthesized live using Web Audio API</div>
+                                <div class="font-bold text-sm text-gray-200">Audio & Synthesized SFX</div>
+                                <div class="text-xs text-gray-400">Web Audio API synthesized sound effects</div>
                             </div>
                             <input type="checkbox" id="settingSfx" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
                         </div>
                         <div class="flex justify-between items-center border-t border-white/10 pt-4">
                             <div>
-                                <div class="font-bold text-sm text-gray-200">Particle Quality Effects</div>
-                                <div class="text-xs text-gray-400">Enable hit sparks, magic dust, and coin particles</div>
+                                <div class="font-bold text-sm text-gray-200">Particle Graphics & Sparks</div>
+                                <div class="text-xs text-gray-400">Enable hit effects, magic trails, and spell explosions</div>
                             </div>
                             <input type="checkbox" id="settingParticles" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
                         </div>
@@ -296,17 +427,20 @@
         <div class="text-center space-y-4 max-w-md">
             <span class="text-7xl animate-bounce inline-block">💀</span>
             <h2 class="font-cinzel text-4xl font-black text-red-500 tracking-wider">YOU DIED</h2>
-            <p class="text-gray-300 text-sm">The dark legion overran your stronghold in the realm!</p>
-            <div class="glass-panel p-4 rounded-2xl my-4 space-y-2 text-sm">
+            <p class="text-gray-300 text-sm">Your hero fell before the dark legions of the Mythic Realm!</p>
+            <div class="glass-panel p-4 rounded-2xl my-4 space-y-2 text-sm border-red-500/30">
                 <div class="flex justify-between text-gray-400"><span>Enemies Slain:</span> <span id="goSlain" class="text-amber-300 font-bold">0</span></div>
                 <div class="flex justify-between text-gray-400"><span>Coins Harvested:</span> <span id="goCoins" class="text-amber-300 font-bold">0</span></div>
+                <div class="flex justify-between text-gray-400"><span>Wave Reached:</span> <span id="goWave" class="text-red-400 font-bold">Wave 1</span></div>
             </div>
-            <button id="btnRestart" class="glass-btn px-8 py-3.5 rounded-2xl font-black text-amber-300 text-lg glow-gold w-full">RESPAWN HERO ⚔️</button>
+            <button id="btnRestart" class="glass-btn px-8 py-3.5 rounded-2xl font-black text-amber-300 text-lg glow-gold w-full">
+                RESPAWN HERO ⚔️
+            </button>
         </div>
     </div>
 
     <script>
-    // --- AUDIO SYNTHESIZER (Web Audio API) ---
+    // --- SYNTHESIZED AUDIO ENGINE (Web Audio API) ---
     class SoundFX {
         constructor() {
             this.ctx = null;
@@ -334,46 +468,46 @@
 
             if (type === 'hit') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(30, now + 0.15);
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
                 gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
                 osc.start(now);
-                osc.stop(now + 0.15);
+                osc.stop(now + 0.12);
             } else if (type === 'swing') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.1);
                 gain.gain.setValueAtTime(0.2, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now);
                 osc.stop(now + 0.1);
             } else if (type === 'magic') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.22);
                 gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
                 osc.start(now);
-                osc.stop(now + 0.25);
+                osc.stop(now + 0.22);
             } else if (type === 'coin') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(987.77, now); // B5
                 osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.setValueAtTime(0.25, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now);
                 osc.stop(now + 0.2);
             } else if (type === 'levelup') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(261.63, now); // C4
-                osc.frequency.setValueAtTime(329.63, now + 0.1); // E4
-                osc.frequency.setValueAtTime(392.00, now + 0.2); // G4
-                osc.frequency.setValueAtTime(523.25, now + 0.3); // C5
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.frequency.setValueAtTime(261.63, now);
+                osc.frequency.setValueAtTime(329.63, now + 0.1);
+                osc.frequency.setValueAtTime(392.00, now + 0.2);
+                osc.frequency.setValueAtTime(523.25, now + 0.3);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
                 osc.start(now);
-                osc.stop(now + 0.5);
+                osc.stop(now + 0.55);
             } else if (type === 'buy') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(523.25, now);
@@ -382,31 +516,66 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now);
                 osc.stop(now + 0.2);
+            } else if (type === 'boss') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
             }
         }
     }
 
     const sfx = new SoundFX();
-
-    // Cross-platform Emoji Font Stack Definition
     const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif';
 
-    // --- GAME DATA & CONFIGURATIONS ---
-    const WEAPONS = {
-        sword: { name: 'Iron Sword', type: 'melee', icon: '⚔️', dmg: 22, range: 75, cooldown: 0.3, cost: 0, desc: 'Reliable iron blade for close combat.' },
-        axe: { name: 'Battle Axe', type: 'melee', icon: '🪓', dmg: 40, range: 85, cooldown: 0.6, cost: 80, desc: 'Heavy greataxe that packs massive damage.' },
-        fireWand: { name: 'Fireball Wand', type: 'wand', icon: '🪄', spellIcon: '💥', dmg: 28, speed: 500, cooldown: 0.35, cost: 120, desc: 'Shoots explosive fiery magic projectiles.' },
-        iceWand: { name: 'Frost Staff', type: 'wand', icon: '❄️', spellIcon: '🧊', dmg: 20, speed: 450, cooldown: 0.25, cost: 180, desc: 'Fast icy projectiles that slow down foes.' },
-        thunderWand: { name: 'Storm Rod', type: 'wand', icon: '⚡', spellIcon: '⚡', dmg: 55, speed: 700, cooldown: 0.5, cost: 300, desc: 'High speed lightning magic bolts.' }
+    // --- RARITY DEFINITIONS ---
+    const RARITIES = {
+        common: { name: 'Common', class: 'rarity-common', color: '#9ca3af', mult: 1.0 },
+        uncommon: { name: 'Uncommon', class: 'rarity-uncommon', color: '#22c55e', mult: 1.25 },
+        epic: { name: 'Epic', class: 'rarity-epic', color: '#3b82f6', mult: 1.6 },
+        legendary: { name: 'Legendary', class: 'rarity-legendary', color: '#a855f7', mult: 2.1 },
+        mythic: { name: 'Mythic', class: 'rarity-mythic', color: '#eab308', mult: 3.0 }
     };
 
-    const SHOP_POTIONS = [
-        { id: 'healPotion', name: 'Health Elixir', icon: '🧪', cost: 25, desc: 'Restores 50 HP immediately.' },
-        { id: 'strTonic', name: 'Strength Tonic', icon: '💪', cost: 50, desc: 'Boosts attack power by +25% permanently.' },
-        { id: 'speedTonic', name: 'Swiftness Elixir', icon: '🏎️', cost: 40, desc: 'Increases movement speed by +15%.' }
-    ];
+    // --- ITEMS DATABASE (WEAPONS, ARMORS, ELIXIRS) ---
+    const ITEMS = {
+        // WEAPONS
+        sword: { id: 'sword', name: 'Iron Sword', type: 'weapon', slot: 'weapon', rarity: 'common', icon: '⚔️', dmg: 22, range: 75, cooldown: 0.3, cost: 0, desc: 'Reliable iron blade for standard melee strikes.' },
+        axe: { id: 'axe', name: 'Great Axe', type: 'weapon', slot: 'weapon', rarity: 'uncommon', icon: '🪓', dmg: 42, range: 85, cooldown: 0.55, cost: 80, desc: 'Heavy war axe that cleaves through enemy hordes.' },
+        fireWand: { id: 'fireWand', name: 'Pyromancer Wand', type: 'weapon', slot: 'weapon', rarity: 'epic', icon: '🪄', spellIcon: '🔥', dmg: 32, speed: 520, cooldown: 0.35, cost: 140, desc: 'Fires explosive long-range fiery magic embers.' },
+        iceWand: { id: 'iceWand', name: 'Frostbite Staff', type: 'weapon', slot: 'weapon', rarity: 'legendary', icon: '❄️', spellIcon: '🧊', dmg: 48, speed: 480, cooldown: 0.28, cost: 260, desc: 'Rapid icy projectiles that freeze and shatter foes.' },
+        mythicStar: { id: 'mythicStar', name: 'Star-Shatter Sceptre', type: 'weapon', slot: 'weapon', rarity: 'mythic', icon: '🌟', spellIcon: '✨', dmg: 95, speed: 750, cooldown: 0.2, cost: 600, desc: 'Mythic staff shooting cosmic star projectiles.' },
 
-    // --- GAME ENGINE STATE ---
+        // HEADWEAR
+        leatherCap: { id: 'leatherCap', name: 'Leather Cap', type: 'armor', slot: 'head', rarity: 'common', icon: '🧢', hp: 15, def: 2, cost: 40, desc: '+15 Max HP, +2% Defense' },
+        wizardHat: { id: 'wizardHat', name: 'Wizard Hat', type: 'armor', slot: 'head', rarity: 'uncommon', icon: '🧙‍♂️️', hp: 25, def: 4, mana: 15, cost: 90, desc: '+25 HP, +15 Mana, +4% Def' },
+        dragonCrown: { id: 'dragonCrown', name: 'Dragon Crown', type: 'armor', slot: 'head', rarity: 'legendary', icon: '👑', hp: 70, def: 10, mana: 30, cost: 320, desc: '+70 HP, +30 Mana, +10% Def' },
+        mythicHalo: { id: 'mythicHalo', name: 'Halo of the Gods', type: 'armor', slot: 'head', rarity: 'mythic', icon: '😇', hp: 140, def: 18, mana: 60, cost: 650, desc: 'Mythic halo grant +140 HP, +60 Mana, +18% Def' },
+
+        // CHESTPLATES
+        clothTunic: { id: 'clothTunic', name: 'Cloth Tunic', type: 'armor', slot: 'chest', rarity: 'common', icon: '👕', hp: 20, def: 3, cost: 50, desc: '+20 Max HP, +3% Defense' },
+        ironPlate: { id: 'ironPlate', name: 'Iron Cuirass', type: 'armor', slot: 'chest', rarity: 'epic', icon: '🛡️', hp: 80, def: 12, cost: 220, desc: '+80 Max HP, +12% Defense' },
+        mythicAegis: { id: 'mythicAegis', name: 'Mythic Aegis Robe', type: 'armor', slot: 'chest', rarity: 'mythic', icon: '🥋', hp: 180, def: 25, cost: 750, desc: 'Divine protection: +180 HP, +25% Defense' },
+
+        // LEGGINGS
+        leatherPants: { id: 'leatherPants', name: 'Leather Pants', type: 'armor', slot: 'legs', rarity: 'common', icon: '👖', hp: 15, spd: 15, cost: 45, desc: '+15 HP, +15 Speed' },
+        runicGreaves: { id: 'runicGreaves', name: 'Runic Greaves', type: 'armor', slot: 'legs', rarity: 'epic', icon: '🦵', hp: 60, spd: 35, cost: 200, desc: '+60 HP, +35 Speed, +8% Def' },
+        mythicGreaves: { id: 'mythicGreaves', name: 'Titan Greaves', type: 'armor', slot: 'legs', rarity: 'mythic', icon: '🦿', hp: 120, spd: 60, def: 15, cost: 600, desc: 'Mythic greaves: +120 HP, +60 Speed' },
+
+        // BOOTS
+        clothShoes: { id: 'clothShoes', name: 'Cloth Shoes', type: 'armor', slot: 'boots', rarity: 'common', icon: '👟', spd: 20, cost: 35, desc: '+20 Speed' },
+        flameStriders: { id: 'flameStriders', name: 'Flame Striders', type: 'armor', slot: 'boots', rarity: 'legendary', icon: '🥾', spd: 55, hp: 40, cost: 280, desc: '+55 Speed, +40 Max HP' },
+        hermesWings: { id: 'hermesWings', name: 'Hermes Winged Boots', type: 'armor', slot: 'boots', rarity: 'mythic', icon: '🩰', spd: 90, hp: 80, cost: 650, desc: 'Fly across fields: +90 Speed, +80 HP' },
+
+        // ELIXIRS
+        healPotion: { id: 'healPotion', name: 'Health Elixir', type: 'potion', icon: '🧪', cost: 25, desc: 'Restores 60 HP immediately.' },
+        strTonic: { id: 'strTonic', name: 'Strength Tonic', type: 'potion', icon: '💪', cost: 50, desc: 'Boosts attack power by +20% permanently.' }
+    };
+
+    // --- GAME ENGINE STATE & CANVAS ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -422,16 +591,17 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Key input listener
     const keys = {};
     let mousePos = { x: screenWidth / 2, y: screenHeight / 2 };
 
     window.addEventListener('keydown', e => {
-        keys[e.key.toLowerCase()] = true;
-        if (e.key === 'Escape' || e.key.toLowerCase() === 'm') toggleMenu();
-        if (e.key === ' ' || e.key.toLowerCase() === 'k') castNova();
-        if (e.key === '1') equipWeapon('sword');
-        if (e.key === '2') equipWeapon('fireWand');
+        const k = e.key.toLowerCase();
+        keys[k] = true;
+        if (k === 'p') togglePause();
+        if (k === 'escape' || k === 'm') toggleMenu();
+        if (k === ' ' || k === 'k') castNova();
+        if (k === '1') equipItem('sword');
+        if (k === '2') equipItem('fireWand');
     });
 
     window.addEventListener('keyup', e => {
@@ -444,13 +614,15 @@
     });
 
     window.addEventListener('mousedown', e => {
-        if (e.button === 0 && !isMenuOpen && !isGameOver) {
+        if (e.button === 0 && gameStarted && !isPaused && !isMenuOpen && !isGameOver) {
             sfx.init();
             playerAttack();
         }
     });
 
-    // Game Variables
+    // Main Engine Variables
+    let gameStarted = false;
+    let isPaused = false;
     let isMenuOpen = false;
     let isGameOver = false;
     let screenShake = 0;
@@ -458,141 +630,172 @@
     let enemiesKilled = 0;
     let waveNumber = 1;
 
-    // Camera Object
     const camera = { x: 0, y: 0 };
 
-    // Player Object
+    // Player Entity State
     const player = {
-        x: 0,
-        y: 0,
+        x: 0, y: 0,
         radius: 26,
-        hp: 100,
-        maxHp: 100,
-        mana: 50,
-        maxMana: 50,
-        coins: 0,
-        xp: 0,
-        maxXp: 100,
-        level: 1,
-        baseSpeed: 240,
-        speed: 240,
+        hp: 100, maxHp: 100,
+        mana: 50, maxMana: 50, baseManaCapacity: 50,
+        manaRegenRate: 8,
+        coins: 0, xp: 0, maxXp: 100, level: 1,
+        baseSpeed: 240, speed: 240,
         attackPowerMultiplier: 1.0,
-        defense: 0,
+        defensePercent: 0,
         
-        equippedWeaponKey: 'sword',
-        ownedWeapons: ['sword'],
-        
-        // Emojis based on state
-        state: 'normal',
+        // Equipment Slots
+        equipped: {
+            weapon: 'sword',
+            head: null,
+            chest: null,
+            legs: null,
+            boots: null
+        },
+        ownedItems: ['sword'],
+
         hitTimer: 0,
         attackCooldown: 0,
         novaCooldown: 0,
         facingAngle: 0,
 
         getEmoji() {
-            if (this.hitTimer > 0) return '😵';
+            if (this.hp < this.maxHp * 0.25) return '😱';
+            if (this.hitTimer > 0) return '🤕';
             if (keys['shift'] && (keys['w'] || keys['a'] || keys['s'] || keys['d'])) return '⚡';
-            if (this.attackPowerMultiplier > 1.2) return '😤';
-            if (this.equippedWeaponKey.includes('Wand') || this.equippedWeaponKey.includes('Staff') || this.equippedWeaponKey.includes('Rod')) return '🧙‍♂️';
+            if (this.attackPowerMultiplier > 1.3) return '🤬';
+            if (this.equipped.head === 'mythicHalo' || this.equipped.weapon === 'mythicStar') return '👑';
             return '🙂';
         }
     };
 
-    // Lists
     let enemies = [];
     let projectiles = [];
     let particles = [];
     let floatingTexts = [];
     let coinsList = [];
 
-    // --- GAME INITIALIZATION & RESET ---
+    // --- GAME INITIALIZATION & STATS RECALCULATION ---
+    function recalculateStats() {
+        let extraHp = 0;
+        let extraMana = 0;
+        let extraDef = 0;
+        let extraSpeed = 0;
+
+        ['head', 'chest', 'legs', 'boots'].forEach(slot => {
+            const itemId = player.equipped[slot];
+            if (itemId && ITEMS[itemId]) {
+                const item = ITEMS[itemId];
+                if (item.hp) extraHp += item.hp;
+                if (item.mana) extraMana += item.mana;
+                if (item.def) extraDef += item.def;
+                if (item.spd) extraSpeed += item.spd;
+            }
+        });
+
+        // Level 5 Mana Capacity Bonus Scaling (+25 MP per 5 levels)
+        const manaTierBonus = Math.floor(player.level / 5) * 25;
+        player.maxMana = player.baseManaCapacity + extraMana + manaTierBonus;
+        player.manaRegenRate = 8 + Math.floor(player.level / 5) * 4;
+
+        player.maxHp = 100 + (player.level - 1) * 20 + extraHp;
+        player.defensePercent = Math.min(65, extraDef);
+        player.speed = player.baseSpeed + extraSpeed;
+
+        updateUI();
+    }
+
     function initGame() {
-        player.x = 0;
-        player.y = 0;
-        player.hp = 100;
-        player.maxHp = 100;
-        player.mana = 50;
-        player.coins = 0;
-        player.xp = 0;
-        player.maxXp = 100;
+        player.x = 0; player.y = 0;
         player.level = 1;
+        player.xp = 0; player.maxXp = 100;
+        player.coins = 0;
         player.attackPowerMultiplier = 1.0;
-        player.equippedWeaponKey = 'sword';
-        player.ownedWeapons = ['sword'];
-        
-        enemies = [];
-        projectiles = [];
-        particles = [];
-        floatingTexts = [];
-        coinsList = [];
-        enemiesKilled = 0;
-        waveNumber = 1;
-        isGameOver = false;
+        player.baseManaCapacity = 50;
+
+        player.equipped = { weapon: 'sword', head: null, chest: null, legs: null, boots: null };
+        player.ownedItems = ['sword'];
+
+        recalculateStats();
+        player.hp = player.maxHp;
+        player.mana = player.maxMana;
+
+        enemies = []; projectiles = []; particles = []; floatingTexts = []; coinsList = [];
+        enemiesKilled = 0; waveNumber = 1;
+        isGameOver = false; isPaused = false;
 
         document.getElementById('gameOverModal').classList.add('hidden');
-        updateUI();
+        document.getElementById('pauseOverlay').classList.add('hidden');
         spawnWave();
     }
 
+    // --- WAVE SPAWNING & BIG BOSS ROSTER ---
     function spawnWave() {
+        const isBossWave = (waveNumber % 5 === 0);
         const enemyCount = 8 + waveNumber * 4;
-        const enemyTypes = [
-            { type: 'goblin', icon: '👹', color: '#16a34a', hp: 45, speed: 110, dmg: 8, coinVal: 5, size: 22 },
-            { type: 'skeleton', icon: '💀', color: '#94a3b8', hp: 70, speed: 90, dmg: 14, coinVal: 10, size: 24 },
-            { type: 'demon', icon: '👿', color: '#dc2626', hp: 120, speed: 130, dmg: 20, coinVal: 20, size: 28 }
+
+        // Regular Ranged & Melee Minions
+        const enemyTemplates = [
+            { type: 'goblin', icon: '👺', color: '#16a34a', hp: 45, speed: 110, dmg: 8, coinVal: 6, size: 22, ranged: false },
+            { type: 'skeleton', icon: '💀', color: '#94a3b8', hp: 70, speed: 85, dmg: 12, coinVal: 10, size: 24, ranged: true, spellIcon: '🏹', fireRate: 2.2 },
+            { type: 'wizard', icon: '🧙‍♂️', color: '#3b82f6', hp: 90, speed: 70, dmg: 18, coinVal: 16, size: 25, ranged: true, spellIcon: '⚡', fireRate: 1.8 },
+            { type: 'demon', icon: '👿', color: '#dc2626', hp: 130, speed: 125, dmg: 22, coinVal: 22, size: 28, ranged: true, spellIcon: '🔥', fireRate: 2.0 }
         ];
 
-        // Wave Boss every 3 waves
-        if (waveNumber % 3 === 0) {
+        // Boss Roster every 5 Waves
+        if (isBossWave) {
+            sfx.play('boss');
+            const bossRoster = [
+                { type: 'dragon', icon: '🐉', name: 'Imperial Dragon Boss', color: '#ea580c', hp: 700 + waveNumber * 150, speed: 65, dmg: 35, coinVal: 250, size: 55, spellIcon: '🔥' },
+                { type: 'demonBoss', icon: '👿', name: 'Overlord Demon Boss', color: '#991b1b', hp: 850 + waveNumber * 150, speed: 70, dmg: 40, coinVal: 300, size: 58, spellIcon: '⚡' },
+                { type: 'dino', icon: '🦖', name: 'Tyrant Rex Boss', color: '#15803d', hp: 950 + waveNumber * 150, speed: 80, dmg: 45, coinVal: 350, size: 60, spellIcon: '🪨' },
+                { type: 'snake', icon: '🐍', name: 'Leviathan Snake Boss', color: '#047857', hp: 750 + waveNumber * 150, speed: 95, dmg: 38, coinVal: 320, size: 52, spellIcon: '🧪' },
+                { type: 'ape', icon: '🦍', name: 'King Ape Titan Boss', color: '#374151', hp: 1100 + waveNumber * 150, speed: 60, dmg: 50, coinVal: 400, size: 62, spellIcon: '💥' }
+            ];
+
+            const bossIndex = (Math.floor(waveNumber / 5) - 1) % bossRoster.length;
+            const b = bossRoster[bossIndex];
             const angle = Math.random() * Math.PI * 2;
-            const dist = 600;
+            const dist = 650;
+
             enemies.push({
                 x: player.x + Math.cos(angle) * dist,
                 y: player.y + Math.sin(angle) * dist,
-                type: 'dragon',
-                icon: '🐲',
-                color: '#ea580c',
-                hp: 400 + waveNumber * 100,
-                maxHp: 400 + waveNumber * 100,
-                speed: 70,
-                dmg: 35,
-                coinVal: 150,
-                size: 48,
-                hitTimer: 0,
-                isBoss: true
+                type: b.type, name: b.name, icon: b.icon, color: b.color,
+                hp: b.hp, maxHp: b.hp, speed: b.speed, dmg: b.dmg, coinVal: b.coinVal, size: b.size,
+                isBoss: true, ranged: true, spellIcon: b.spellIcon, shootTimer: 1.5, hitTimer: 0
             });
+
+            document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: ${b.name}!`;
+            document.getElementById('hudWaveIcon').innerText = b.icon;
+        } else {
+            document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: Dark Legion Attack`;
+            document.getElementById('hudWaveIcon').innerText = '💀';
         }
 
         for (let i = 0; i < enemyCount; i++) {
-            const template = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            const tmpl = enemyTemplates[Math.floor(Math.random() * enemyTemplates.length)];
             const angle = Math.random() * Math.PI * 2;
-            const dist = 500 + Math.random() * 400;
+            const dist = 550 + Math.random() * 400;
 
             enemies.push({
                 x: player.x + Math.cos(angle) * dist,
                 y: player.y + Math.sin(angle) * dist,
-                type: template.type,
-                icon: template.icon,
-                color: template.color,
-                hp: template.hp + waveNumber * 10,
-                maxHp: template.hp + waveNumber * 10,
-                speed: template.speed,
-                dmg: template.dmg,
-                coinVal: template.coinVal,
-                size: template.size,
-                hitTimer: 0,
-                isBoss: false
+                type: tmpl.type, icon: tmpl.icon, color: tmpl.color,
+                hp: tmpl.hp + waveNumber * 12, maxHp: tmpl.hp + waveNumber * 12,
+                speed: tmpl.speed, dmg: tmpl.dmg, coinVal: tmpl.coinVal, size: tmpl.size,
+                isBoss: false, ranged: tmpl.ranged, spellIcon: tmpl.spellIcon || '⚡',
+                shootTimer: Math.random() * 2.0, hitTimer: 0
             });
         }
-
-        document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: ${waveNumber % 3 === 0 ? '🐲 Dragon Boss Attack!' : 'Dark Horde Spawning'}`;
     }
 
-    // --- COMBAT ACTIONS ---
+    // --- PLAYER COMBAT ACTIONS ---
     function playerAttack() {
         if (player.attackCooldown > 0) return;
 
-        const wep = WEAPONS[player.equippedWeaponKey];
+        const wepKey = player.equipped.weapon || 'sword';
+        const wep = ITEMS[wepKey];
         player.attackCooldown = wep.cooldown;
 
         const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
@@ -600,19 +803,16 @@
         const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
         player.facingAngle = angle;
 
-        if (wep.type === 'melee') {
+        if (wep.type === 'weapon' && wep.slot === 'weapon' && !wep.spellIcon) {
+            // Melee Slash
             sfx.play('swing');
-            for (let i = -0.5; i <= 0.5; i += 0.2) {
+            for (let i = -0.5; i <= 0.5; i += 0.25) {
                 const pAngle = angle + i;
                 particles.push({
                     x: player.x + Math.cos(pAngle) * 45,
                     y: player.y + Math.sin(pAngle) * 45,
-                    vx: Math.cos(pAngle) * 100,
-                    vy: Math.sin(pAngle) * 100,
-                    life: 0.2,
-                    maxLife: 0.2,
-                    color: '#f59e0b',
-                    size: 6
+                    vx: Math.cos(pAngle) * 120, vy: Math.sin(pAngle) * 120,
+                    life: 0.18, maxLife: 0.18, color: '#f59e0b', size: 6
                 });
             }
 
@@ -623,25 +823,22 @@
                     let diff = Math.abs(angle - enemyAngle);
                     if (diff > Math.PI) diff = Math.PI * 2 - diff;
 
-                    if (diff < 1.1) {
+                    if (diff < 1.2) {
                         const damage = Math.round(wep.dmg * player.attackPowerMultiplier);
                         damageEnemy(e, damage);
                     }
                 }
             });
-        } else if (wep.type === 'wand') {
+        } else {
+            // Wand Spell Projectile
             sfx.play('magic');
             projectiles.push({
-                x: player.x,
-                y: player.y,
+                x: player.x, y: player.y,
                 vx: Math.cos(angle) * wep.speed,
                 vy: Math.sin(angle) * wep.speed,
                 dmg: Math.round(wep.dmg * player.attackPowerMultiplier),
-                icon: wep.spellIcon,
-                color: '#38bdf8',
-                life: 1.8,
-                radius: 12,
-                isPlayer: true
+                icon: wep.spellIcon || '✨', color: '#38bdf8',
+                life: 1.8, radius: 14, isPlayer: true
             });
         }
     }
@@ -649,27 +846,22 @@
     function castNova() {
         if (player.novaCooldown > 0 || player.mana < 20) return;
         player.mana -= 20;
-        player.novaCooldown = 4.0;
+        player.novaCooldown = 3.5;
         sfx.play('magic');
-        screenShake = 12;
+        screenShake = 14;
 
-        const count = 16;
+        const count = 18;
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 / count) * i;
             projectiles.push({
-                x: player.x,
-                y: player.y,
-                vx: Math.cos(angle) * 400,
-                vy: Math.sin(angle) * 400,
-                dmg: Math.round(35 * player.attackPowerMultiplier),
-                icon: '💥',
-                color: '#06b6d4',
-                life: 1.2,
-                radius: 14,
-                isPlayer: true
+                x: player.x, y: player.y,
+                vx: Math.cos(angle) * 420, vy: Math.sin(angle) * 420,
+                dmg: Math.round(45 * player.attackPowerMultiplier),
+                icon: '💥', color: '#06b6d4',
+                life: 1.2, radius: 15, isPlayer: true
             });
         }
-        spawnFloatingText(player.x, player.y - 40, "ELEMENTAL NOVA!", "#06b6d4");
+        spawnFloatingText(player.x, player.y - 45, "ELEMENTAL NOVA!", "#06b6d4");
     }
 
     function damageEnemy(e, dmg) {
@@ -680,75 +872,69 @@
 
         for (let i = 0; i < 5; i++) {
             particles.push({
-                x: e.x,
-                y: e.y,
-                vx: (Math.random() - 0.5) * 200,
-                vy: (Math.random() - 0.5) * 200,
-                life: 0.3,
-                maxLife: 0.3,
-                color: '#f87171',
-                size: 4
+                x: e.x, y: e.y,
+                vx: (Math.random() - 0.5) * 220, vy: (Math.random() - 0.5) * 220,
+                life: 0.25, maxLife: 0.25, color: '#f87171', size: 4
             });
         }
 
         if (e.hp <= 0) {
             enemiesKilled++;
-            player.xp += e.isBoss ? 100 : 25;
-            
-            const coinAmount = Math.floor(e.coinVal * (0.8 + Math.random() * 0.4));
-            coinsList.push({
-                x: e.x,
-                y: e.y,
-                value: coinAmount,
-                life: 15
-            });
+            player.xp += e.isBoss ? 120 : 25;
+
+            const coinVal = Math.floor(e.coinVal * (0.85 + Math.random() * 0.3));
+            coinsList.push({ x: e.x, y: e.y, value: coinVal });
 
             if (player.xp >= player.maxXp) {
                 player.level++;
                 player.xp -= player.maxXp;
-                player.maxXp = Math.round(player.maxXp * 1.5);
-                player.maxHp += 20;
-                player.hp = player.maxHp;
+                player.maxXp = Math.round(player.maxXp * 1.45);
+
                 sfx.play('levelup');
-                spawnFloatingText(player.x, player.y - 60, "LEVEL UP! ⭐", "#eab308");
+                recalculateStats();
+                player.hp = player.maxHp;
+                player.mana = player.maxMana;
+
+                if (player.level % 5 === 0) {
+                    spawnFloatingText(player.x, player.y - 70, `LEVEL ${player.level}! +25 MANA BOOST! ⭐`, "#eab308");
+                } else {
+                    spawnFloatingText(player.x, player.y - 60, `LEVEL UP! (${player.level}) ⭐`, "#eab308");
+                }
             }
         }
     }
 
     function spawnFloatingText(x, y, text, color = '#ffffff') {
-        floatingTexts.push({
-            x, y, text, color, life: 1.0, maxLife: 1.0
-        });
+        floatingTexts.push({ x, y, text, color, life: 1.0, maxLife: 1.0 });
     }
 
+    // --- MAIN ENGINE UPDATE LOOP ---
     function update(dt) {
-        if (isGameOver || isMenuOpen) return;
+        if (!gameStarted || isPaused || isMenuOpen || isGameOver) return;
 
-        let moveX = 0;
-        let moveY = 0;
+        let moveX = 0; let moveY = 0;
         if (keys['w'] || keys['arrowup']) moveY -= 1;
         if (keys['s'] || keys['arrowdown']) moveY += 1;
         if (keys['a'] || keys['arrowleft']) moveX -= 1;
         if (keys['d'] || keys['arrowright']) moveX += 1;
 
         if (moveX !== 0 && moveY !== 0) {
-            moveX *= 0.7071;
-            moveY *= 0.7071;
+            moveX *= 0.7071; moveY *= 0.7071;
         }
 
         let currentSpeed = player.speed;
         if (keys['shift'] && player.mana > 2 && (moveX !== 0 || moveY !== 0)) {
             currentSpeed *= 1.6;
-            player.mana -= 12 * dt;
+            player.mana -= 14 * dt;
             if (particlesEnabled && Math.random() < 0.4) {
                 particles.push({
                     x: player.x, y: player.y,
-                    vx: -moveX * 50, vy: -moveY * 50,
-                    life: 0.25, maxLife: 0.25, color: '#38bdf8', size: 5
+                    vx: -moveX * 60, vy: -moveY * 60,
+                    life: 0.2, maxLife: 0.2, color: '#38bdf8', size: 5
                 });
             }
         } else {
-            player.mana = Math.min(player.maxMana, player.mana + 8 * dt);
+            player.mana = Math.min(player.maxMana, player.mana + player.manaRegenRate * dt);
         }
 
         player.x += moveX * currentSpeed * dt;
@@ -762,6 +948,7 @@
         camera.x += (player.x - camera.x) * 0.1;
         camera.y += (player.y - camera.y) * 0.1;
 
+        // Update Projectiles
         for (let i = projectiles.length - 1; i >= 0; i--) {
             const p = projectiles[i];
             p.x += p.vx * dt;
@@ -775,40 +962,82 @@
                         p.life = 0;
                     }
                 });
+            } else {
+                // Enemy Ranged Spell hitting player
+                if (Math.hypot(player.x - p.x, player.y - p.y) < player.radius + p.radius) {
+                    const actualDmg = p.dmg * (1 - player.defensePercent / 100);
+                    player.hp -= actualDmg;
+                    player.hitTimer = 0.2;
+                    screenShake = 8;
+                    sfx.play('hit');
+                    spawnFloatingText(player.x, player.y, `-${Math.round(actualDmg)}`, "#f87171");
+                    p.life = 0;
+
+                    if (player.hp <= 0) triggerGameOver();
+                }
             }
 
-            if (p.life <= 0) {
-                projectiles.splice(i, 1);
-            }
+            if (p.life <= 0) projectiles.splice(i, 1);
         }
 
+        // Update Enemies & Ranged Spells Logic
         for (let i = enemies.length - 1; i >= 0; i--) {
             const e = enemies[i];
             if (e.hitTimer > 0) e.hitTimer -= dt;
 
             const angle = Math.atan2(player.y - e.y, player.x - e.x);
-            e.x += Math.cos(angle) * e.speed * dt;
-            e.y += Math.sin(angle) * e.speed * dt;
+            const dist = Math.hypot(player.x - e.x, player.y - e.y);
 
-            const distToPlayer = Math.hypot(player.x - e.x, player.y - e.y);
-            if (distToPlayer < player.radius + e.size) {
-                player.hp -= e.dmg * dt;
-                player.hitTimer = 0.2;
-                screenShake = 6;
-                if (Math.random() < 0.1) sfx.play('hit');
+            // Movement logic
+            if (e.ranged && dist < 220) {
+                // Ranged enemies maintain distance
+                e.x -= Math.cos(angle) * e.speed * 0.5 * dt;
+                e.y -= Math.sin(angle) * e.speed * 0.5 * dt;
+            } else {
+                e.x += Math.cos(angle) * e.speed * dt;
+                e.y += Math.sin(angle) * e.speed * dt;
+            }
 
-                if (player.hp <= 0) {
-                    player.hp = 0;
-                    isGameOver = true;
-                    document.getElementById('goSlain').innerText = enemiesKilled;
-                    document.getElementById('goCoins').innerText = player.coins;
-                    document.getElementById('gameOverModal').classList.remove('hidden');
+            // Enemy Ranged Shoot Attack
+            if (e.ranged) {
+                e.shootTimer -= dt;
+                if (e.shootTimer <= 0 && dist < 500) {
+                    e.shootTimer = e.isBoss ? 1.4 : 2.5;
+                    
+                    if (e.isBoss) {
+                        // Bosses shoot multi-bullet spells
+                        for (let b = -0.3; b <= 0.3; b += 0.3) {
+                            projectiles.push({
+                                x: e.x, y: e.y,
+                                vx: Math.cos(angle + b) * 320,
+                                vy: Math.sin(angle + b) * 320,
+                                dmg: e.dmg, icon: e.spellIcon, color: '#ef4444',
+                                life: 2.2, radius: 15, isPlayer: false
+                            });
+                        }
+                    } else {
+                        projectiles.push({
+                            x: e.x, y: e.y,
+                            vx: Math.cos(angle) * 280,
+                            vy: Math.sin(angle) * 280,
+                            dmg: e.dmg, icon: e.spellIcon, color: '#f87171',
+                            life: 2.0, radius: 12, isPlayer: false
+                        });
+                    }
                 }
             }
 
-            if (e.hp <= 0) {
-                enemies.splice(i, 1);
+            // Melee contact collision
+            if (dist < player.radius + e.size) {
+                const actualDmg = (e.dmg * (1 - player.defensePercent / 100)) * dt;
+                player.hp -= actualDmg;
+                player.hitTimer = 0.15;
+                if (Math.random() < 0.1) sfx.play('hit');
+
+                if (player.hp <= 0) triggerGameOver();
             }
+
+            if (e.hp <= 0) enemies.splice(i, 1);
         }
 
         if (enemies.length === 0) {
@@ -816,34 +1045,35 @@
             spawnWave();
         }
 
+        // Coins Magnet & Magnet Collection
         for (let i = coinsList.length - 1; i >= 0; i--) {
             const coin = coinsList[i];
             const dist = Math.hypot(player.x - coin.x, player.y - coin.y);
-            if (dist < 150) {
+            if (dist < 160) {
                 const angle = Math.atan2(player.y - coin.y, player.x - coin.x);
-                coin.x += Math.cos(angle) * 320 * dt;
-                coin.y += Math.sin(angle) * 320 * dt;
+                coin.x += Math.cos(angle) * 350 * dt;
+                coin.y += Math.sin(angle) * 350 * dt;
 
-                if (dist < player.radius + 10) {
+                if (dist < player.radius + 12) {
                     player.coins += coin.value;
                     sfx.play('coin');
-                    spawnFloatingText(coin.x, coin.y, `+${coin.value}🪙`, "#f59e0b");
+                    spawnFloatingText(coin.x, coin.y, `+${coin.value}`, "#f59e0b");
                     coinsList.splice(i, 1);
                 }
             }
         }
 
+        // Update Particles & Floating Text
         for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
+            p.x += p.vx * dt; p.y += p.vy * dt;
             p.life -= dt;
             if (p.life <= 0) particles.splice(i, 1);
         }
 
         for (let i = floatingTexts.length - 1; i >= 0; i--) {
             const ft = floatingTexts[i];
-            ft.y -= 30 * dt;
+            ft.y -= 32 * dt;
             ft.life -= dt;
             if (ft.life <= 0) floatingTexts.splice(i, 1);
         }
@@ -851,9 +1081,19 @@
         updateUI();
     }
 
+    function triggerGameOver() {
+        player.hp = 0;
+        isGameOver = true;
+        document.getElementById('goSlain').innerText = enemiesKilled;
+        document.getElementById('goCoins').innerText = player.coins;
+        document.getElementById('goWave').innerText = `Wave ${waveNumber}`;
+        document.getElementById('gameOverModal').classList.remove('hidden');
+    }
+
+    // --- RENDER GAME WORLD ---
     function render() {
         ctx.save();
-        ctx.fillStyle = '#0a0914';
+        ctx.fillStyle = '#06050a';
         ctx.fillRect(0, 0, screenWidth, screenHeight);
 
         let shakeX = (Math.random() - 0.5) * screenShake;
@@ -861,7 +1101,7 @@
 
         ctx.translate(screenWidth / 2 - camera.x + shakeX, screenHeight / 2 - camera.y + shakeY);
 
-        // Render Fantasy Grid Arena Background
+        // Render Arena Grid Lines
         const tileSize = 64;
         const startX = Math.floor((camera.x - screenWidth) / tileSize) * tileSize;
         const endX = Math.ceil((camera.x + screenWidth) / tileSize) * tileSize;
@@ -871,23 +1111,14 @@
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
         ctx.lineWidth = 1;
         for (let x = startX; x <= endX; x += tileSize) {
-            ctx.beginPath();
-            ctx.moveTo(x, startY);
-            ctx.lineTo(x, endY);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, endY); ctx.stroke();
         }
         for (let y = startY; y <= endY; y += tileSize) {
-            ctx.beginPath();
-            ctx.moveTo(startX, y);
-            ctx.lineTo(endX, y);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(endX, y); ctx.stroke();
         }
 
-        // Render Dropped Coins (with Gold Circle Fallback)
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        // Render Canvas Shiny SVG/Vector Coins (No emoji box bugs!)
         coinsList.forEach(c => {
-            // Gold Circle Visual Fallback
             ctx.fillStyle = '#eab308';
             ctx.beginPath();
             ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
@@ -896,17 +1127,18 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Emoji Text Overlay
-            ctx.font = `16px ${EMOJI_FONT_STACK}`;
-            ctx.fillText('🪙', c.x, c.y);
+            ctx.fillStyle = '#ca8a04';
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
+            ctx.fill();
         });
 
-        // Render Enemies & Health Bars (with Visual Shape Fallbacks)
+        // Render Enemies & Bosses
         enemies.forEach(e => {
-            // Drop Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
             ctx.beginPath();
-            ctx.ellipse(e.x, e.y + e.size * 0.7, e.size * 0.8, e.size * 0.3, 0, 0, Math.PI * 2);
+            ctx.ellipse(e.x, e.y + e.size * 0.75, e.size * 0.85, e.size * 0.3, 0, 0, Math.PI * 2);
             ctx.fill();
 
             // Colored Body Circle Fallback
@@ -914,21 +1146,22 @@
             ctx.beginPath();
             ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = e.isBoss ? '#fde047' : 'rgba(255, 255, 255, 0.25)';
+            ctx.lineWidth = e.isBoss ? 3 : 1.5;
             ctx.stroke();
 
-            // Enemy Emoji Overlay
-            ctx.font = `${e.size * 1.4}px ${EMOJI_FONT_STACK}`;
+            // Enemy Emoji Stack
+            ctx.font = `${e.size * 1.35}px ${EMOJI_FONT_STACK}`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(e.icon, e.x, e.y);
 
             // Enemy Mini Health Bar
-            const barW = e.size * 1.5;
+            const barW = e.size * 1.6;
             const barH = 5;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-            ctx.fillRect(e.x - barW / 2, e.y - e.size - 8, barW, barH);
-            ctx.fillStyle = e.isBoss ? '#ef4444' : '#f87171';
-            ctx.fillRect(e.x - barW / 2, e.y - e.size - 8, barW * (e.hp / e.maxHp), barH);
+            ctx.fillRect(e.x - barW / 2, e.y - e.size - 10, barW, barH);
+            ctx.fillStyle = e.isBoss ? '#ea580c' : '#ef4444';
+            ctx.fillRect(e.x - barW / 2, e.y - e.size - 10, barW * (e.hp / e.maxHp), barH);
         });
 
         // Render Projectiles
@@ -938,18 +1171,18 @@
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.font = `${p.radius * 2}px ${EMOJI_FONT_STACK}`;
+            ctx.font = `${p.radius * 1.8}px ${EMOJI_FONT_STACK}`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(p.icon, p.x, p.y);
         });
 
         // Render Player
-        // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.4)';
         ctx.beginPath();
-        ctx.ellipse(player.x, player.y + 20, 22, 9, 0, 0, Math.PI * 2);
+        ctx.ellipse(player.x, player.y + 22, 24, 10, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Player Circle Base Fallback (Amber Glow/Hero Orb)
+        // Player Base Circle Glow
         ctx.fillStyle = player.hitTimer > 0 ? '#ef4444' : '#f59e0b';
         ctx.beginPath();
         ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
@@ -958,17 +1191,18 @@
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Aura effect if buffed
-        if (player.attackPowerMultiplier > 1.2) {
-            ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
+        // Mythic Armor Aura
+        if (player.equipped.head === 'mythicHalo' || player.equipped.weapon === 'mythicStar') {
+            ctx.strokeStyle = 'rgba(234, 179, 8, 0.7)';
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.arc(player.x, player.y, 34, 0, Math.PI * 2);
+            ctx.arc(player.x, player.y, 36, 0, Math.PI * 2);
             ctx.stroke();
         }
 
-        // Player Dynamic Emoji Overlay
+        // Hero Emoji
         ctx.font = `36px ${EMOJI_FONT_STACK}`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(player.getEmoji(), player.x, player.y);
 
         // Render Particles
@@ -981,10 +1215,11 @@
             ctx.globalAlpha = 1.0;
         });
 
-        // Render Floating Combat Text
+        // Floating Damage & Combat Text
         floatingTexts.forEach(ft => {
             ctx.fillStyle = ft.color;
-            ctx.font = `bold 16px Outfit, ${EMOJI_FONT_STACK}`;
+            ctx.font = `bold 15px Outfit, ${EMOJI_FONT_STACK}`;
+            ctx.textAlign = 'center';
             ctx.globalAlpha = ft.life / ft.maxLife;
             ctx.fillText(ft.text, ft.x, ft.y);
             ctx.globalAlpha = 1.0;
@@ -993,7 +1228,6 @@
         ctx.restore();
     }
 
-    // --- MAIN GAME LOOP ---
     let lastTime = performance.now();
     function gameLoop(now) {
         const dt = Math.min((now - lastTime) / 1000, 0.1);
@@ -1010,7 +1244,7 @@
         document.getElementById('hudCoins').innerText = player.coins;
         document.getElementById('hudHpText').innerText = `${Math.ceil(player.hp)} / ${player.maxHp}`;
         document.getElementById('hudHpBar').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
-        
+
         document.getElementById('hudManaText').innerText = `${Math.ceil(player.mana)} / ${player.maxMana}`;
         document.getElementById('hudManaBar').style.width = `${Math.max(0, (player.mana / player.maxMana) * 100)}%`;
 
@@ -1019,141 +1253,176 @@
 
         document.getElementById('hudLevelBadge').innerText = `Lvl ${player.level}`;
 
-        const activeWep = WEAPONS[player.equippedWeaponKey];
+        const activeWep = ITEMS[player.equipped.weapon || 'sword'];
         document.getElementById('hudSlotIcon').innerText = activeWep.icon;
         document.getElementById('hudSlotName').innerText = activeWep.name.split(' ')[0];
 
-        // Stats Panel
-        document.getElementById('statAtk').innerText = WEAPONS[player.equippedWeaponKey].dmg;
+        // Stats Summary
+        document.getElementById('statAtk').innerText = activeWep.dmg;
         document.getElementById('statMag').innerText = Math.round(10 * player.attackPowerMultiplier);
+        document.getElementById('statDef').innerText = `${player.defensePercent}%`;
         document.getElementById('statSpd').innerText = Math.round(player.speed);
-        document.getElementById('statStr').innerText = `${player.attackPowerMultiplier.toFixed(1)}x`;
+        document.getElementById('statManaCap').innerText = player.maxMana;
+        document.getElementById('statHpReg').innerText = `${player.manaRegenRate}/s`;
 
         document.getElementById('shopCoins').innerText = player.coins;
+
+        // Equipped Slot UI Labels
+        document.getElementById('eqHeadName').innerText = player.equipped.head ? ITEMS[player.equipped.head].name : 'None';
+        document.getElementById('eqChestName').innerText = player.equipped.chest ? ITEMS[player.equipped.chest].name : 'None';
+        document.getElementById('eqLegsName').innerText = player.equipped.legs ? ITEMS[player.equipped.legs].name : 'None';
+        document.getElementById('eqBootsName').innerText = player.equipped.boots ? ITEMS[player.equipped.boots].name : 'None';
+        document.getElementById('eqWeaponName').innerText = activeWep.name;
+    }
+
+    function togglePause() {
+        if (!gameStarted || isGameOver) return;
+        isPaused = !isPaused;
+        const overlay = document.getElementById('pauseOverlay');
+        const icon = document.getElementById('pauseIcon');
+        const txt = document.getElementById('pauseText');
+
+        if (isPaused) {
+            overlay.classList.remove('hidden');
+            icon.innerText = '▶️';
+            txt.innerText = 'RESUME';
+        } else {
+            overlay.classList.add('hidden');
+            icon.innerText = '⏸️';
+            txt.innerText = 'PAUSE';
+        }
     }
 
     function toggleMenu() {
+        if (!gameStarted) return;
         isMenuOpen = !isMenuOpen;
         const modal = document.getElementById('menuModal');
         if (isMenuOpen) {
             modal.classList.remove('hidden');
-            renderShopItems();
+            renderShopItems('all');
             renderInventoryItems();
         } else {
             modal.classList.add('hidden');
         }
     }
 
-    function equipWeapon(key) {
-        if (player.ownedWeapons.includes(key)) {
-            player.equippedWeaponKey = key;
-            updateUI();
-            if (isMenuOpen) renderInventoryItems();
+    function equipItem(id) {
+        if (!player.ownedItems.includes(id)) return;
+        const item = ITEMS[id];
+        if (!item) return;
+
+        if (item.type === 'weapon') {
+            player.equipped.weapon = id;
+        } else if (item.type === 'armor') {
+            player.equipped[item.slot] = id;
         }
+
+        recalculateStats();
+        sfx.play('buy');
+        if (isMenuOpen) renderInventoryItems();
     }
 
-    function renderShopItems() {
+    function renderShopItems(filter = 'all') {
         const grid = document.getElementById('shopItemsGrid');
         grid.innerHTML = '';
 
-        Object.keys(WEAPONS).forEach(key => {
-            const wep = WEAPONS[key];
-            const isOwned = player.ownedWeapons.includes(key);
+        Object.keys(ITEMS).forEach(key => {
+            const item = ITEMS[key];
+            if (filter !== 'all') {
+                if (filter === 'weapon' && item.type !== 'weapon') return;
+                if (filter === 'potion' && item.type !== 'potion') return;
+                if (item.type === 'armor' && item.slot !== filter) return;
+            }
+
+            const rarity = RARITIES[item.rarity || 'common'];
+            const isOwned = player.ownedItems.includes(key);
 
             const card = document.createElement('div');
-            card.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between border border-white/10';
+            card.className = `glass-panel p-3.5 rounded-2xl flex items-center justify-between border ${rarity.class}`;
             card.innerHTML = `
                 <div class="flex items-center gap-3">
-                    <span class="text-3xl bg-black/40 p-2.5 rounded-xl border border-white/10">${wep.icon}</span>
+                    <span class="text-3xl bg-black/50 p-2 rounded-xl border border-white/10">${item.icon}</span>
                     <div>
-                        <h4 class="font-bold text-amber-300 text-sm">${wep.name}</h4>
-                        <p class="text-xs text-gray-400 max-w-[180px]">${wep.desc}</p>
-                        <div class="text-xs text-cyan-400 font-semibold mt-1">Dmg: ${wep.dmg}</div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="font-bold text-sm" style="color: ${rarity.color}">${item.name}</h4>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase border" style="border-color:${rarity.color}">${rarity.name}</span>
+                        </div>
+                        <p class="text-[11px] text-gray-300 max-w-[190px] leading-tight mt-0.5">${item.desc}</p>
                     </div>
                 </div>
                 <div>
-                    ${isOwned 
+                    ${isOwned && item.type !== 'potion'
                         ? `<button class="px-3 py-1.5 rounded-xl bg-gray-800 text-gray-400 text-xs font-bold border border-white/5" disabled>Owned</button>`
-                        : `<button onclick="buyWeapon('${key}')" class="glass-btn px-4 py-2 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
-                             <span>🪙</span> ${wep.cost}
+                        : `<button onclick="buyItem('${key}')" class="glass-btn px-3.5 py-2 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
+                             <span class="coin-icon"></span> ${item.cost}
                            </button>`
                     }
                 </div>
             `;
             grid.appendChild(card);
         });
-
-        SHOP_POTIONS.forEach(pot => {
-            const card = document.createElement('div');
-            card.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between border border-white/10';
-            card.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-3xl bg-black/40 p-2.5 rounded-xl border border-white/10">${pot.icon}</span>
-                    <div>
-                        <h4 class="font-bold text-emerald-300 text-sm">${pot.name}</h4>
-                        <p class="text-xs text-gray-400 max-w-[180px]">${pot.desc}</p>
-                    </div>
-                </div>
-                <button onclick="buyPotion('${pot.id}')" class="glass-btn px-4 py-2 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
-                    <span>🪙</span> ${pot.cost}
-                </button>
-            `;
-            grid.appendChild(card);
-        });
     }
 
-    function buyWeapon(key) {
-        const wep = WEAPONS[key];
-        if (player.coins >= wep.cost && !player.ownedWeapons.includes(key)) {
-            player.coins -= wep.cost;
-            player.ownedWeapons.push(key);
-            player.equippedWeaponKey = key;
-            sfx.play('buy');
-            renderShopItems();
-            updateUI();
-        }
-    }
+    function buyItem(id) {
+        const item = ITEMS[id];
+        if (!item || player.coins < item.cost) return;
 
-    function buyPotion(id) {
-        const pot = SHOP_POTIONS.find(p => p.id === id);
-        if (pot && player.coins >= pot.cost) {
-            player.coins -= pot.cost;
-            sfx.play('buy');
-            if (id === 'healPotion') {
-                player.hp = Math.min(player.maxHp, player.hp + 50);
-            } else if (id === 'strTonic') {
-                player.attackPowerMultiplier += 0.25;
-            } else if (id === 'speedTonic') {
-                player.speed += 30;
+        player.coins -= item.cost;
+        sfx.play('buy');
+
+        if (item.type === 'potion') {
+            if (id === 'healPotion') player.hp = Math.min(player.maxHp, player.hp + 60);
+            if (id === 'strTonic') player.attackPowerMultiplier += 0.2;
+        } else {
+            if (!player.ownedItems.includes(id)) {
+                player.ownedItems.push(id);
+                equipItem(id);
             }
-            renderShopItems();
-            updateUI();
         }
+
+        recalculateStats();
+        renderShopItems();
     }
 
     function renderInventoryItems() {
         const grid = document.getElementById('inventoryItemsGrid');
         grid.innerHTML = '';
 
-        player.ownedWeapons.forEach(key => {
-            const wep = WEAPONS[key];
-            const isEquipped = player.equippedWeaponKey === key;
+        player.ownedItems.forEach(id => {
+            const item = ITEMS[id];
+            if (!item) return;
 
-            const item = document.createElement('div');
-            item.className = `glass-panel p-3 rounded-2xl flex flex-col items-center justify-between text-center border ${isEquipped ? 'border-amber-400 bg-amber-500/10' : 'border-white/10'}`;
-            item.innerHTML = `
-                <span class="text-3xl my-1">${wep.icon}</span>
-                <div class="text-xs font-bold text-amber-300">${wep.name}</div>
-                <div class="text-[10px] text-gray-400">Dmg: ${wep.dmg}</div>
-                <button onclick="equipWeapon('${key}')" class="mt-2 w-full py-1 rounded-xl text-xs font-bold ${isEquipped ? 'bg-amber-500 text-gray-950' : 'glass-btn text-gray-300'}">
+            const rarity = RARITIES[item.rarity || 'common'];
+            const isEquipped = (player.equipped.weapon === id || player.equipped[item.slot] === id);
+
+            const card = document.createElement('div');
+            card.className = `glass-panel p-3 rounded-2xl flex flex-col items-center justify-between text-center border ${isEquipped ? 'border-amber-400 bg-amber-500/10' : rarity.class}`;
+            card.innerHTML = `
+                <span class="text-3xl my-1">${item.icon}</span>
+                <div class="text-xs font-bold" style="color: ${rarity.color}">${item.name}</div>
+                <div class="text-[10px] text-gray-400 uppercase mt-0.5">${item.slot || item.type}</div>
+                <button onclick="equipItem('${id}')" class="mt-2 w-full py-1.5 rounded-xl text-xs font-bold ${isEquipped ? 'bg-amber-500 text-gray-950' : 'glass-btn text-gray-300'}">
                     ${isEquipped ? 'EQUIPPED' : 'EQUIP'}
                 </button>
             `;
-            grid.appendChild(item);
+            grid.appendChild(card);
         });
     }
 
-    // Modal Tabs Navigation
+    // Filter Buttons in Shop
+    document.querySelectorAll('.shop-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.shop-filter-btn').forEach(b => {
+                b.classList.remove('bg-amber-500', 'text-gray-950');
+                b.classList.add('glass-btn', 'text-gray-300');
+            });
+            btn.classList.add('bg-amber-500', 'text-gray-950');
+            btn.classList.remove('glass-btn', 'text-gray-300');
+            renderShopItems(btn.getAttribute('data-filter'));
+        });
+    });
+
+    // Menu Modal Tabs Navigation
     document.querySelectorAll('.menu-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
@@ -1168,21 +1437,23 @@
         });
     });
 
+    // Event Handlers
+    document.getElementById('btnPlayGame').addEventListener('click', () => {
+        gameStarted = true;
+        document.getElementById('startScreenModal').classList.add('hidden');
+        initGame();
+    });
+
+    document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
     document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
     document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
     document.getElementById('btnRestart').addEventListener('click', initGame);
 
-    document.getElementById('settingSfx').addEventListener('change', e => {
-        sfx.enabled = e.target.checked;
-    });
+    document.getElementById('settingSfx').addEventListener('change', e => { sfx.enabled = e.target.checked; });
+    document.getElementById('settingParticles').addEventListener('change', e => { particlesEnabled = e.target.checked; });
 
-    document.getElementById('settingParticles').addEventListener('change', e => {
-        particlesEnabled = e.target.checked;
-    });
-
-    // Start Game
+    // Start Main Loop
     window.onload = () => {
-        initGame();
         requestAnimationFrame(gameLoop);
     };
     </script>
