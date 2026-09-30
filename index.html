@@ -107,52 +107,38 @@
     <!-- GAME CANVAS -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- INTRO STORY & START OVERLAY MODAL -->
-    <div id="startScreenModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-2xl w-full text-center space-y-5 border border-amber-500/30 glow-gold max-h-[90vh] flex flex-col">
-            <div class="space-y-1">
-                <span class="text-5xl inline-block transform hover:scale-110 transition-transform">👑</span>
-                <h1 class="font-cinzel text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600">
-                    EMOJI LEGENDS: MYTHIC REALMS
+    <!-- START OVERLAY SCREEN -->
+    <div id="startScreenModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl max-w-lg w-full text-center space-y-6 border border-amber-500/30 glow-gold">
+            <div class="space-y-2">
+                <span class="text-6xl inline-block transform hover:scale-110 transition-transform">👑</span>
+                <h1 class="font-cinzel text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600">
+                    EMOJI LEGENDS
                 </h1>
-                <p class="text-xs uppercase tracking-widest text-amber-200/80 font-semibold">✨ A NEW LEGEND IS ABOUT TO BEGIN ✨</p>
+                <p class="text-xs uppercase tracking-widest text-amber-200/80 font-semibold">Mythic Realms ARPG</p>
             </div>
 
-            <!-- Scrollable Full Story Narrative -->
-            <div class="overflow-y-auto pr-2 text-left space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed bg-black/50 p-4 rounded-2xl border border-white/10 flex-1">
-                <p class="font-bold text-amber-300 text-center">🌟⚔️ WELCOME TO THE WORLD OF EMOJIS ⚔️🌟</p>
-                <p>Long ago, beyond the borders of the known world, there existed a realm where magic, mystery, and legendary warriors lived together in harmony.</p>
-                <p>A land filled with powerful creatures, ancient treasures, forgotten kingdoms, and endless possibilities... A world known as the <strong>Mythic Realms</strong>. 🌌</p>
-                <p class="text-amber-200">But peace never lasts forever.</p>
-                <p>From the shadows, powerful enemies have awakened. Dark forces are spreading across the lands, threatening to destroy everything that the heroes have protected for generations.</p>
-                <p>The kingdoms need a new warrior. Not a hero chosen by destiny. Not a warrior born with unlimited power. But someone with the courage to rise, learn, and fight. <strong>Someone like you. ⚔️</strong></p>
-                
-                <div class="border-t border-b border-white/10 py-2 space-y-1">
-                    <p class="font-bold text-amber-400">🌎 YOUR ADVENTURE BEGINS NOW 🌎</p>
-                    <p class="text-xs text-gray-400">Train your warrior • Discover powerful weapons • Unlock mysterious abilities • Collect legendary treasures • Face dangerous monsters • Challenge powerful bosses</p>
-                </div>
+            <p class="text-sm text-gray-300 leading-relaxed">
+                Unlock 8 skill slots, master elemental spells, equip 4 armor pieces, and conquer Wave 4400 against the 4 Apex Bosses!
+            </p>
 
-                <p>🔥 <em>Every battle makes you stronger.</em><br>
-                💎 <em>Every discovery brings you closer to greatness.</em><br>
-                ⚔️ <em>Every victory writes your story.</em></p>
-
-                <p class="text-red-400 font-semibold">But beware... The Mythic Realms are filled with enemies that will test your strength. Only the strongest will survive!</p>
-
-                <p class="text-center font-bold text-amber-300 pt-2">⭐ WELCOME, HERO. ⭐<br>Your adventure begins now. 🌟</p>
+            <div class="grid grid-cols-2 gap-2 text-left text-xs bg-black/40 p-4 rounded-2xl border border-white/10">
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">WASD / Arrows</span> <span>Move Hero</span></div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Left Click</span> <span>Basic Attack (0s CD)</span></div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Keys 1 to 8</span> <span>Trigger Skills 1-8</span></div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">SPACEBAR</span> <span>Ultimate Attack</span></div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">SHIFT</span> <span>Dash / Sprint</span></div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Key P</span> <span>Pause Game</span></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 text-left text-[11px] bg-black/40 p-3 rounded-xl border border-white/10">
-                <div><span class="text-amber-400 font-bold">WASD / Arrows:</span> Move Hero</div>
-                <div><span class="text-amber-400 font-bold">Left Click:</span> Basic Attack (0s CD)</div>
-                <div><span class="text-amber-400 font-bold">Keys 1 to 8:</span> Skill Slots 1-8</div>
-                <div><span class="text-amber-400 font-bold">SPACEBAR:</span> Ultimate Attack</div>
-                <div><span class="text-amber-400 font-bold">SHIFT:</span> Dash Sprint</div>
-                <div><span class="text-amber-400 font-bold">Key P:</span> Pause Game</div>
+            <div class="flex gap-2">
+                <button id="btnPlayGame" class="flex-1 glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
+                    ⚔️ ENTER REALM ⚔️
+                </button>
+                <button id="btnSkipToBoss" class="px-4 glass-btn py-4 rounded-2xl font-bold text-red-400 text-xs tracking-wider hover:text-red-200 border-red-500/40" title="Testing Shortcut: Jump straight to Wave 4400">
+                    🔥 WAVE 4400
+                </button>
             </div>
-
-            <button id="btnPlayGame" class="w-full glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
-                ⚔️ ENTER THE MYTHIC REALMS ⚔️
-            </button>
         </div>
     </div>
 
