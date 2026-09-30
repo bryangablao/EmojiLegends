@@ -342,7 +342,7 @@
             
             <div class="p-4 sm:p-5 bg-gray-900/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                    <span class="text-2xl sm:text-3xl">⚔️️</span>
+                    <span class="text-2xl sm:text-3xl">⚔</span>
                     <h2 class="font-cinzel text-lg sm:text-xl font-black text-amber-400">SANCTUARY MARKET & GEAR</h2>
                 </div>
                 
@@ -684,7 +684,7 @@ id:'skill_shadowblade',
 name:'Shadow Blade',
 type:'skill',
 rarity:'uncommon',
-icon:'🗡️',
+icon:'🗡️️',
 mana:13,
 dmg:42,
 cd:1.3,
@@ -741,7 +741,7 @@ id:'skill_venomblast',
 name:'Venom Burst',
 type:'skill',
 rarity:'rare',
-icon:'☣️',
+icon:'☣️️',
 mana:18,
 dmg:62,
 cd:1.9,
@@ -2392,63 +2392,62 @@ desc:'+300 HP, +30% Def, +150 Speed'
 
     document.querySelectorAll('.menu-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500/20', 'text-amber-300'));
+            btn.classList.add('active', 'bg-amber-500/20', 'text-amber-300');
 
-            btn.classList.add('active', 'bg-amber-500', 'text-gray-950');
-            const tabId = btn.getAttribute('data-tab');
-            document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.remove('hidden');
+            const tab = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
 
-            if (tabId === 'shop') renderShopItems();
-            if (tabId === 'inventory') renderInventoryItems();
+            if (tab === 'shop') {
+                document.getElementById('tabShop').classList.remove('hidden');
+                renderShopItems('all');
+            } else if (tab === 'inventory') {
+                document.getElementById('tabInventory').classList.remove('hidden');
+                renderInventoryItems();
+            } else if (tab === 'howTo') {
+                document.getElementById('tabHowTo').classList.remove('hidden');
+            }
         });
     });
 
-    // Event Wireup
+    // Event Listeners for UI Buttons
     document.getElementById('btnPlayGame').addEventListener('click', () => {
-        gameStarted = true;
         document.getElementById('startScreenModal').classList.add('hidden');
+        gameStarted = true;
         initGame();
     });
 
-const skipBossBtn = document.getElementById('btnSkipToBoss');
+    document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
+    document.getElementById('btnResumeGame').addEventListener('click', togglePause);
+    document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
+    document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
 
-if (skipBossBtn) {
-    skipBossBtn.addEventListener('click', () => {
-        gameStarted = true;
-        document.getElementById('startScreenModal').classList.add('hidden');
-        initGame();
-        waveNumber = 4400;
-        spawnWave();
+    document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
+        document.getElementById('intermissionModal').classList.add('hidden');
+        toggleMenu();
     });
-}
 
     document.getElementById('btnNextWave').addEventListener('click', () => {
         waveNumber++;
         spawnWave();
     });
 
-    document.getElementById('btnIntermissionMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
-    document.getElementById('btnResumeGame').addEventListener('click', togglePause);
-    document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnRestart').addEventListener('click', initGame);
+    document.getElementById('btnRestart').addEventListener('click', () => {
+        initGame();
+    });
 
-    // Victory Screen Buttons
     document.getElementById('btnSaveCertificate').addEventListener('click', () => {
-        const name = document.getElementById('heroNameInput').value || 'Mythic Champion';
+        const name = document.getElementById('heroNameInput').value.trim() || 'Mythic Champion';
         document.getElementById('certHeroName').innerText = name;
-        document.getElementById('hudName').innerText = name;
         document.getElementById('certificateContainer').classList.remove('hidden');
     });
 
-    document.getElementById('btnPlayAgain').addEventListener('click', initGame);
+    document.getElementById('btnPlayAgain').addEventListener('click', () => {
+        initGame();
+    });
 
-    // Start Engine
-    window.onload = () => {
-        requestAnimationFrame(gameLoop);
-    };
+    // Start Animation Loop
+    requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
