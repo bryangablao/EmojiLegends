@@ -100,6 +100,19 @@
             background-size: contain;
             background-repeat: no-repeat;
         }
+
+        /* Discrete Hidden Secret Sign */
+        .secret-trigger-sign {
+            opacity: 0.12;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .secret-trigger-sign:hover {
+            opacity: 0.9;
+            color: #ef4444;
+            text-shadow: 0 0 12px #ef4444;
+            transform: scale(1.3);
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-white select-none">
@@ -107,38 +120,52 @@
     <!-- GAME CANVAS -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- START OVERLAY SCREEN -->
-    <div id="startScreenModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="glass-panel p-8 rounded-3xl max-w-lg w-full text-center space-y-6 border border-amber-500/30 glow-gold">
-            <div class="space-y-2">
-                <span class="text-6xl inline-block transform hover:scale-110 transition-transform">👑</span>
-                <h1 class="font-cinzel text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600">
-                    EMOJI LEGENDS
+    <!-- INTRO STORY & START OVERLAY MODAL -->
+    <div id="startScreenModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-2xl w-full text-center space-y-5 border border-amber-500/30 glow-gold max-h-[90vh] flex flex-col">
+            <div class="space-y-1">
+                <span class="text-5xl inline-block transform hover:scale-110 transition-transform">👑</span>
+                <h1 class="font-cinzel text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600">
+                    EMOJI LEGENDS: MYTHIC REALMS
                 </h1>
-                <p class="text-xs uppercase tracking-widest text-amber-200/80 font-semibold">Mythic Realms ARPG</p>
+                <p class="text-xs uppercase tracking-widest text-amber-200/80 font-semibold">✨ A NEW LEGEND IS ABOUT TO BEGIN ✨</p>
             </div>
 
-            <p class="text-sm text-gray-300 leading-relaxed">
-                Unlock 8 skill slots, master elemental spells, equip 4 armor pieces, and conquer Wave 4400 against the 4 Apex Bosses!
-            </p>
+            <!-- Scrollable Full Story Narrative -->
+            <div class="overflow-y-auto pr-2 text-left space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed bg-black/50 p-4 rounded-2xl border border-white/10 flex-1">
+                <p class="font-bold text-amber-300 text-center">🌟⚔️ WELCOME TO THE WORLD OF EMOJIS ⚔️🌟</p>
+                <p>Long ago, beyond the borders of the known world, there existed a realm where magic, mystery, and legendary warriors lived together in harmony.</p>
+                <p>A land filled with powerful creatures, ancient treasures, forgotten kingdoms, and endless possibilities... A world known as the <strong>Mythic Realms</strong>. 🌌</p>
+                <p class="text-amber-200">But peace never lasts forever.</p>
+                <p>From the shadows, powerful enemies have awakened. Dark forces are spreading across the lands, threatening to destroy everything that the heroes have protected for generations.</p>
+                <p>The kingdoms need a new warrior. Not a hero chosen by destiny. Not a warrior born with unlimited power. But someone with the courage to rise, learn, and fight. <strong>Someone like you. ⚔️</strong></p>
+                
+                <div class="border-t border-b border-white/10 py-2 space-y-1">
+                    <p class="font-bold text-amber-400">🌎 YOUR ADVENTURE BEGINS NOW 🌎</p>
+                    <p class="text-xs text-gray-400">Train your warrior • Discover powerful weapons • Unlock mysterious abilities • Collect legendary treasures • Face dangerous monsters • Challenge powerful bosses</p>
+                </div>
 
-            <div class="grid grid-cols-2 gap-2 text-left text-xs bg-black/40 p-4 rounded-2xl border border-white/10">
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">WASD / Arrows</span> <span>Move Hero</span></div>
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Left Click</span> <span>Basic Attack (0s CD)</span></div>
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Keys 1 to 8</span> <span>Trigger Skills 1-8</span></div>
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">SPACEBAR</span> <span>Ultimate Attack</span></div>
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">SHIFT</span> <span>Dash / Sprint</span></div>
-                <div class="flex items-center gap-1.5"><span class="text-amber-400 font-bold">Key P</span> <span>Pause Game</span></div>
+                <p>🔥 <em>Every battle makes you stronger.</em><br>
+                💎 <em>Every discovery brings you closer to greatness.</em><br>
+                ⚔️ <em>Every victory writes your story.</em></p>
+
+                <p class="text-red-400 font-semibold">But beware... The Mythic Realms are filled with enemies that will test your strength. Only the strongest will survive!</p>
+
+                <p class="text-center font-bold text-amber-300 pt-2">⭐ WELCOME, HERO. ⭐<br>Your adventure begins now. 🌟</p>
             </div>
 
-            <div class="flex gap-2">
-                <button id="btnPlayGame" class="flex-1 glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
-                    ⚔️ ENTER REALM ⚔️
-                </button>
-                <button id="btnSkipToBoss" class="px-4 glass-btn py-4 rounded-2xl font-bold text-red-400 text-xs tracking-wider hover:text-red-200 border-red-500/40" title="Testing Shortcut: Jump straight to Wave 4400">
-                    🔥 WAVE 4400
-                </button>
+            <div class="grid grid-cols-2 gap-2 text-left text-[11px] bg-black/40 p-3 rounded-xl border border-white/10">
+                <div><span class="text-amber-400 font-bold">WASD / Arrows:</span> Move Hero</div>
+                <div><span class="text-amber-400 font-bold">Left Click:</span> Basic Attack (0s CD)</div>
+                <div><span class="text-amber-400 font-bold">Keys 1 to 8:</span> Skill Slots 1-8</div>
+                <div><span class="text-amber-400 font-bold">SPACEBAR:</span> Ultimate Attack</div>
+                <div><span class="text-amber-400 font-bold">SHIFT:</span> Dash Sprint</div>
+                <div><span class="text-amber-400 font-bold">Key P:</span> Pause Game</div>
             </div>
+
+            <button id="btnPlayGame" class="w-full glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
+                ⚔️ ENTER THE MYTHIC REALMS ⚔️
+            </button>
         </div>
     </div>
 
@@ -168,7 +195,7 @@
                 <!-- Health Bar -->
                 <div class="space-y-1">
                     <div class="flex justify-between text-[11px] font-semibold px-0.5">
-                        <span class="text-red-400 flex items-center gap-1">❤️ Health</span>
+                        <span class="text-red-400 flex items-center gap-1">❤️️ Health</span>
                         <span id="hudHpText" class="text-gray-300">100 / 100</span>
                     </div>
                     <div class="w-full h-3 bg-gray-900/80 rounded-full overflow-hidden border border-red-950/60 p-0.5">
@@ -320,13 +347,13 @@
         </div>
     </div>
 
-    <!-- SANCTUARY MENU MODAL (Shop, Inventory, Guide, Settings) -->
+    <!-- SANCTUARY MENU MODAL (Shop, Inventory, Guide) -->
     <div id="menuModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl flex flex-col overflow-hidden border border-white/20 shadow-2xl">
             
             <div class="p-4 sm:p-5 bg-gray-900/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                    <span class="text-2xl sm:text-3xl">⚔️️</span>
+                    <span class="text-2xl sm:text-3xl">⚔</span>
                     <h2 class="font-cinzel text-lg sm:text-xl font-black text-amber-400">SANCTUARY MARKET & GEAR</h2>
                 </div>
                 
@@ -408,7 +435,7 @@
                             <p class="text-xs text-gray-300">WASD or Arrow keys to move. Hold SHIFT to dash using Mana.</p>
                         </div>
                         <div class="glass-panel p-4 rounded-2xl space-y-1">
-                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚔️</span> Basic Attack</div>
+                            <div class="font-bold text-amber-300 flex items-center gap-2"><span>⚔️️</span> Basic Attack</div>
                             <p class="text-xs text-gray-300">Left Click fires standard weapon strikes with NO cooldown!</p>
                         </div>
                         <div class="glass-panel p-4 rounded-2xl space-y-1">
@@ -428,1248 +455,1269 @@
 
     <!-- EPIC VICTORY MODAL (WAVE 4400 CLEARED) -->
     <div id="victoryModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 hidden flex items-center justify-center p-4">
-        <div class="glass-panel p-6 sm:p-10 rounded-3xl max-w-xl w-full text-center space-y-6 border border-amber-400 glow-gold relative overflow-hidden">
+        <div class="glass-panel p-6 sm:p-10 rounded-3xl max-w-xl w-full text-center space-y-6 border border-amber-400 glow-gold relative overflow-hidden max-h-[90vh] flex flex-col">
+            
             <div class="space-y-2">
                 <span class="text-6xl inline-block animate-bounce">🏆</span>
                 <h1 class="font-cinzel text-xl sm:text-2xl font-black text-amber-300 leading-snug">
                     CONGRATULATIONS, LEGEND!
                 </h1>
                 <p class="text-xs sm:text-sm text-gray-200 font-semibold leading-relaxed">
-                    You Have Completed <span class="text-amber-400 font-bold">Emoji Legends: Mythic Realms</span>
+                    You Have Completed <span class="text-amber-400 font-bold">Emoji Legends: Mythic Realms</span> 🌌⚔️
                 </p>
-                <div class="inline-block bg-amber-500/20 text-amber-300 border border-amber-400/50 font-bold text-xs px-4 py-1.5 rounded-full mt-2">
-                    ⭐ TITLE UNLOCKED: LEGEND OF THE MYTHIC REALMS ⭐
+                <div class="inline-block bg-amber-500/20 text-amber-300 border border-amber-400/50 font-bold text-xs px-4 py-1 rounded-full">
+                    👑 TITLE UNLOCKED: ⭐ LEGEND OF THE MYTHIC REALMS ⭐
                 </div>
             </div>
 
-            <div class="bg-black/60 p-5 rounded-2xl border border-white/10 space-y-3">
+            <!-- Full Victory Narrative Scroll -->
+            <div class="overflow-y-auto pr-2 text-left space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed bg-black/60 p-4 rounded-2xl border border-white/10 flex-1">
+                <p>After countless battles, impossible challenges, legendary quests, and encounters with the strongest creatures across the Mythic Realms… you have finally reached the end of your journey.</p>
+                <p class="text-amber-300 font-bold">You were not just a player — you became a true legend. 🌟</p>
+                <p>From the very beginning, when you stepped into this mysterious world with nothing but courage and determination, you faced enemies that tested your strength, bosses that challenged your limits, and trials that pushed you beyond what you thought was possible.</p>
+                <p>Every victory, every upgrade, every weapon discovered, and every powerful ability unlocked brought you one step closer to this moment.</p>
+                <ul class="space-y-1 text-xs text-amber-200 font-semibold pl-2">
+                    <li>⚔️ You defeated mighty enemies.</li>
+                    <li>🔥 You mastered powerful abilities.</li>
+                    <li>💎 You collected rare treasures.</li>
+                    <li>🌠 You explored forgotten realms.</li>
+                    <li>👑 And now, you have earned your place among the greatest legends of all time.</li>
+                </ul>
+                <p>The Mythic Realms will forever remember your name. The kingdoms you saved are finally at peace because of your bravery.</p>
+                <p>🌟 <strong>Congratulations, Mythic Hero!</strong> 🌟<br>Thank you for playing Emoji Legends: Mythic Realms.</p>
+            </div>
+
+            <div class="bg-black/60 p-4 rounded-2xl border border-white/10 space-y-2">
                 <label for="heroNameInput" class="block text-xs font-bold text-amber-300 uppercase tracking-wider">
                     Please type your Hero Name:
                 </label>
-                <input type="text" id="heroNameInput" value="Mythic Champion" maxlength="24" class="w-full bg-gray-900 border border-amber-500/50 rounded-xl px-4 py-2.5 text-center text-amber-200 font-bold text-base focus:outline-none focus:border-amber-400">
+                <input type="text" id="heroNameInput" value="Mythic Champion" maxlength="24" class="w-full bg-gray-900 border border-amber-500/50 rounded-xl px-4 py-2 text-center text-amber-300 font-bold font-cinzel text-base focus:outline-none focus:border-amber-400">
             </div>
 
-            <!-- Victory Certificate Display -->
-            <div id="certificateContainer" class="hidden glass-panel p-4 rounded-2xl border border-amber-400/40 bg-amber-950/30 text-xs space-y-1">
-                <div class="font-cinzel text-amber-300 font-bold text-sm">✨ REALM VALOR CERTIFICATE ✨</div>
-                <div class="text-gray-300">Hero <span id="certHeroName" class="font-bold text-white"></span> vanquished the Wave 4400 Apex Bosses!</div>
-                <div class="text-[10px] text-amber-400/80 italic">Recorded into the Mythic Scrolls</div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button id="btnSaveCertificate" class="flex-1 glass-btn py-3.5 rounded-2xl font-black text-amber-300 text-sm uppercase border-amber-500/40">
-                    📜 SAVE HERO RECORD
+            <div class="flex items-center justify-between pt-1">
+                <button id="btnSaveHeroName" class="glass-btn px-6 py-3 rounded-2xl font-black text-amber-300 text-xs sm:text-sm tracking-wider uppercase border-amber-500/40">
+                    💾 REGISTER LEGACY
                 </button>
-                <button id="btnPlayAgain" class="flex-1 glass-btn py-3.5 rounded-2xl font-black text-emerald-300 text-sm uppercase border-emerald-500/40 bg-emerald-950/40 hover:bg-emerald-800/50">
-                    ⚔️ RESTART REALM
-                </button>
+                <!-- HIDDEN DISCRETE SECRET SIGN BUTTON 'Θ' -->
+                <span id="btnSecretUltraWave" class="secret-trigger-sign font-cinzel font-black text-xl px-3 py-1 select-none" title="An ancient symbol flickers...">Θ</span>
             </div>
         </div>
     </div>
 
-    <!-- GAME OVER OVERLAY -->
-    <div id="gameOverModal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden flex flex-col items-center justify-center p-4">
-        <div class="text-center space-y-4 max-w-md">
-            <span class="text-7xl animate-bounce inline-block">💀</span>
-            <h2 class="font-cinzel text-4xl font-black text-red-500 tracking-wider">YOU DIED</h2>
-            <p class="text-gray-300 text-sm">Your hero fell in combat!</p>
-            <div class="glass-panel p-4 rounded-2xl my-4 space-y-2 text-sm border-red-500/30">
-                <div class="flex justify-between text-gray-400"><span>Enemies Slain:</span> <span id="goSlain" class="text-amber-300 font-bold">0</span></div>
-                <div class="flex justify-between text-gray-400"><span>Coins Collected:</span> <span id="goCoins" class="text-amber-300 font-bold">0</span></div>
-                <div class="flex justify-between text-gray-400"><span>Wave Reached:</span> <span id="goWave" class="text-red-400 font-bold">Wave 1</span></div>
-            </div>
-            <button id="btnRestart" class="glass-btn px-8 py-3.5 rounded-2xl font-black text-amber-300 text-lg glow-gold w-full">
-                RESPAWN HERO ⚔️
-            </button>
-        </div>
-    </div>
-
+    <!-- AUDIO SYNTHESIZER & GAME SCRIPT -->
     <script>
-    // --- SYNTHESIZED AUDIO ENGINE ---
-    class SoundFX {
-        constructor() {
-            this.ctx = null;
-            this.enabled = true;
+        // --- SOUND SYNTHESIZER (WEB AUDIO API) ---
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        init() {
-            if (!this.ctx) {
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'coin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(987.77, now); // B5
+                    osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
+                    osc.start(now);
+                    osc.stop(now + 0.22);
+                } else if (type === 'spell') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.2);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'heal') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.linearRampToValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'freeze') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) {}
         }
 
-        play(type) {
-            if (!this.enabled) return;
-            this.init();
-            if (this.ctx.state === 'suspended') this.ctx.resume();
+        // --- GAME DATA DEFINITIONS ---
+        const RARITIES = {
+            COMMON: { name: 'Common', class: 'rarity-common', mult: 1.0, color: '#9ca3af' },
+            UNCOMMON: { name: 'Uncommon', class: 'rarity-uncommon', mult: 1.3, color: '#22c55e' },
+            EPIC: { name: 'Epic', class: 'rarity-epic', mult: 1.8, color: '#3b82f6' },
+            LEGENDARY: { name: 'Legendary', class: 'rarity-legendary', mult: 2.6, color: '#a855f7' },
+            MYTHIC: { name: 'Mythic', class: 'rarity-mythic', mult: 4.0, color: '#eab308' }
+        };
 
-            const now = this.ctx.currentTime;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
+        // Item Shop Catalog
+        const SHOP_ITEMS = [
+            // ARMORS: Head
+            { id: 'helm_iron', name: 'Iron Guard Helmet', type: 'armor', slot: 'head', rarity: 'COMMON', cost: 120, icon: '🪖', statText: '+30 Max HP, +5% Def', bonusHp: 30, bonusDef: 5, bonusSpeed: 0 },
+            { id: 'helm_gold', name: 'Golden Crown', type: 'armor', slot: 'head', rarity: 'EPIC', cost: 650, icon: '👑', statText: '+120 Max HP, +12% Def', bonusHp: 120, bonusDef: 12, bonusSpeed: 0 },
+            { id: 'helm_mythic', name: 'Celestial Crown', type: 'armor', slot: 'head', rarity: 'MYTHIC', cost: 4500, icon: '🎓', statText: '+500 Max HP, +25% Def', bonusHp: 500, bonusDef: 25, bonusSpeed: 0 },
 
-            if (type === 'hit') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(160, now);
-                osc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            } else if (type === 'swing') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(350, now);
-                osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                osc.start(now); osc.stop(now + 0.08);
-            } else if (type === 'fireball') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(150, now + 0.25);
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                osc.start(now); osc.stop(now + 0.25);
-            } else if (type === 'heal') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(600, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now); osc.stop(now + 0.3);
-            } else if (type === 'coin') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(987.77, now);
-                osc.frequency.setValueAtTime(1318.51, now + 0.08);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                osc.start(now); osc.stop(now + 0.2);
-            } else if (type === 'levelup') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(261.63, now);
-                osc.frequency.setValueAtTime(392.00, now + 0.12);
-                osc.frequency.setValueAtTime(523.25, now + 0.24);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-                osc.start(now); osc.stop(now + 0.45);
-            } else if (type === 'boss') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.exponentialRampToValueAtTime(40, now + 0.6);
-                gain.gain.setValueAtTime(0.4, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                osc.start(now); osc.stop(now + 0.6);
-            }
+            // ARMORS: Chestplate
+            { id: 'chest_leather', name: 'Leather Tunic', type: 'armor', slot: 'chest', rarity: 'COMMON', cost: 150, icon: '👕', statText: '+40 Max HP, +6% Def', bonusHp: 40, bonusDef: 6, bonusSpeed: 0 },
+            { id: 'chest_plate', name: 'Mythic Plate Armor', type: 'armor', slot: 'chest', rarity: 'LEGENDARY', cost: 1800, icon: '🥋', statText: '+300 Max HP, +20% Def', bonusHp: 300, bonusDef: 20, bonusSpeed: 0 },
+            { id: 'chest_god', name: 'Aegis Godplate', type: 'armor', slot: 'chest', rarity: 'MYTHIC', cost: 6000, icon: '🦺', statText: '+800 Max HP, +35% Def', bonusHp: 800, bonusDef: 35, bonusSpeed: 0 },
+
+            // ARMORS: Leggings
+            { id: 'legs_cloth', name: 'Traveler Pants', type: 'armor', slot: 'legs', rarity: 'COMMON', cost: 100, icon: '👖', statText: '+20 Max HP, +4% Def', bonusHp: 20, bonusDef: 4, bonusSpeed: 0 },
+            { id: 'legs_titan', name: 'Titan Greaves', type: 'armor', slot: 'legs', rarity: 'EPIC', cost: 900, icon: '🩳', statText: '+180 Max HP, +15% Def', bonusHp: 180, bonusDef: 15, bonusSpeed: 0 },
+
+            // ARMORS: Boots
+            { id: 'boots_speed', name: 'Swift Wind Boots', type: 'armor', slot: 'boots', rarity: 'UNCOMMON', cost: 250, icon: '🥾', statText: '+20 Speed, +20 HP', bonusHp: 20, bonusDef: 2, bonusSpeed: 30 },
+            { id: 'boots_hermes', name: 'Hermes Winged Boots', type: 'armor', slot: 'boots', rarity: 'MYTHIC', cost: 3500, icon: '👟', statText: '+75 Speed, +200 HP', bonusHp: 200, bonusDef: 10, bonusSpeed: 75 },
+
+            // WEAPONS
+            { id: 'wep_sword', name: 'Silver Broadsword', type: 'weapon', slot: 'weapon', rarity: 'COMMON', cost: 150, icon: '🗡️', damage: 35, statText: '35 Basic Damage' },
+            { id: 'wep_wand', name: 'Arcane Wand', type: 'weapon', slot: 'weapon', rarity: 'UNCOMMON', cost: 400, icon: '🪄', damage: 60, statText: '60 Basic Damage' },
+            { id: 'wep_axe', name: 'Battleaxe of Might', type: 'weapon', slot: 'weapon', rarity: 'EPIC', cost: 1200, icon: '🪓', damage: 120, statText: '120 Basic Damage' },
+            { id: 'wep_scythe', name: 'Grim Reaper Scythe', type: 'weapon', slot: 'weapon', rarity: 'LEGENDARY', cost: 3200, icon: '🧹', damage: 250, statText: '250 Basic Damage' },
+            { id: 'wep_godsword', name: 'Excalibur Mythic Blade', type: 'weapon', slot: 'weapon', rarity: 'MYTHIC', cost: 8000, icon: '⚔️', damage: 600, statText: '600 Basic Damage' },
+
+            // SKILL BOOKS
+            { id: 'sb_fireball', name: 'Book: Fireball Nova', type: 'skill', rarity: 'COMMON', cost: 200, icon: '📕', manaCost: 15, damage: 70, cd: 1.5, element: 'fire', statText: '70 Fire DMG | Cost: 15 MP' },
+            { id: 'sb_icebeam', name: 'Book: Frost Beam', type: 'skill', rarity: 'UNCOMMON', cost: 450, icon: '📘', manaCost: 20, damage: 110, cd: 2.0, element: 'ice', statText: '110 Ice DMG | Cost: 20 MP' },
+            { id: 'sb_lightning', name: 'Book: Thunder Strike', type: 'skill', rarity: 'EPIC', cost: 950, icon: '📙', manaCost: 30, damage: 220, cd: 2.5, element: 'lightning', statText: '220 Lightning DMG | Cost: 30 MP' },
+            { id: 'sb_heal', name: 'Book: Divine Holy Light', type: 'skill', rarity: 'EPIC', cost: 1100, icon: '📗', manaCost: 40, heal: 150, cd: 5.0, element: 'heal', statText: 'Heals +150 HP | Cost: 40 MP' },
+            { id: 'sb_meteor', name: 'Book: Armageddon Meteor', type: 'skill', rarity: 'MYTHIC', cost: 5000, icon: '📓', manaCost: 75, damage: 850, cd: 4.0, element: 'meteor', statText: '850 AoE DMG | Cost: 75 MP' },
+
+            // SKILL SLOTS
+            { id: 'slot_unlock', name: 'Permanently Unlock Skill Slot', type: 'slots', rarity: 'RARE', cost: 300, icon: '🔓', statText: 'Unlocks next 1-8 key slot' }
+        ];
+
+        // --- GAME STATE ENGINE ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-    }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-    const sfx = new SoundFX();
-    const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif';
+        const state = {
+            gameStarted: false,
+            paused: false,
+            intermission: false,
+            wave: 1,
+            isSecretWave: false,
+            coins: 0,
+            xp: 0,
+            level: 1,
+            xpToNextLevel: 100,
+            waveCoinsEarned: 0,
+            waveXpEarned: 0,
+            
+            // Skill Slots System
+            unlockedSlots: 0,
+            equippedSkills: Array(8).fill(null), // Slots 0 to 7
+            skillCooldowns: Array(8).fill(0),
+            ultCooldown: 0,
 
-    // --- RARITIES ---
-    const RARITIES = {
-        common: { name: 'Common', class: 'rarity-common', color: '#9ca3af' },
-        uncommon: { name: 'Uncommon', class: 'rarity-uncommon', color: '#22c55e' },
-        epic: { name: 'Epic', class: 'rarity-epic', color: '#3b82f6' },
-        legendary: { name: 'Legendary', class: 'rarity-legendary', color: '#a855f7' },
-        mythic: { name: 'Mythic', class: 'rarity-mythic', color: '#eab308' }
-    };
+            // Hero Equipment
+            equipped: {
+                head: null,
+                chest: null,
+                legs: null,
+                boots: null,
+                weapon: null
+            },
+            inventory: [],
 
-    // --- EXPANDED ITEMS DATABASE (ARMORS, WEAPONS, SKILL BOOKS, SLOTS) ---
-    const ITEMS = {
-        // SKILL SLOTS PURCHASES (1 TO 8)
-        slot_1: { id: 'slot_1', name: 'Skill Slot 1', type: 'slot', slotIndex: 0, cost: 50, icon: '1️⃣', desc: 'Unlocks Skill Slot #1.' },
-        slot_2: { id: 'slot_2', name: 'Skill Slot 2', type: 'slot', slotIndex: 1, cost: 100, icon: '2️⃣', desc: 'Unlocks Skill Slot #2.' },
-        slot_3: { id: 'slot_3', name: 'Skill Slot 3', type: 'slot', slotIndex: 2, cost: 180, icon: '3️⃣', desc: 'Unlocks Skill Slot #3.' },
-        slot_4: { id: 'slot_4', name: 'Skill Slot 4', type: 'slot', slotIndex: 3, cost: 280, icon: '4️⃣', desc: 'Unlocks Skill Slot #4.' },
-        slot_5: { id: 'slot_5', name: 'Skill Slot 5', type: 'slot', slotIndex: 4, cost: 400, icon: '5️⃣', desc: 'Unlocks Skill Slot #5.' },
-        slot_6: { id: 'slot_6', name: 'Skill Slot 6', type: 'slot', slotIndex: 5, cost: 550, icon: '6️⃣', desc: 'Unlocks Skill Slot #6.' },
-        slot_7: { id: 'slot_7', name: 'Skill Slot 7', type: 'slot', slotIndex: 6, cost: 750, icon: '7️⃣', desc: 'Unlocks Skill Slot #7.' },
-        slot_8: { id: 'slot_8', name: 'Skill Slot 8', type: 'slot', slotIndex: 7, cost: 1000, icon: '8️⃣', desc: 'Unlocks Skill Slot #8.' },
+            // Player Entity
+            player: {
+                x: 0,
+                y: 0,
+                baseHp: 100,
+                hp: 100,
+                maxHp: 100,
+                baseMana: 50,
+                mana: 50,
+                maxMana: 50,
+                manaRegen: 8, // Per sec
+                baseSpeed: 240,
+                speed: 240,
+                baseAtk: 22,
+                defPercent: 0,
+                isHit: false,
+                hitTimer: 0,
+                isSprinting: false,
+                isStunned: false,
+                stunTimer: 0,
+                emoji: '🙂'
+            },
 
-        // SKILL BOOKS
-        skill_fireball: { id: 'skill_fireball', name: 'Fireball Spell', type: 'skill', rarity: 'uncommon', icon: '🔥', mana: 12, dmg: 40, cd: 1.2, cost: 90, pColor: '#ef4444', desc: 'Launches a searing fire flame projectile.' },
-        skill_iceblast: { id: 'skill_iceblast', name: 'Ice Shard Spell', type: 'skill', rarity: 'epic', icon: '🧊', mana: 16, dmg: 55, cd: 1.8, cost: 160, pColor: '#38bdf8', desc: 'Fires sharp ice shards that damage foes.' },
-        skill_lightning: { id: 'skill_lightning', name: 'Lightning Bolt', type: 'skill', rarity: 'legendary', icon: '⚡', mana: 22, dmg: 85, cd: 2.2, cost: 280, pColor: '#facc15', desc: 'Shoots high-voltage electric energy.' },
-        skill_heal: { id: 'skill_heal', name: 'Healing Light', type: 'skill', rarity: 'epic', icon: '❇️', mana: 25, heal: 60, cd: 5.0, cost: 220, pColor: '#22c55e', desc: 'Swirls emerald light around hero (+60 HP).' },
-        skill_poison: { id: 'skill_poison', name: 'Poison Dart', type: 'skill', rarity: 'uncommon', icon: '🧪', mana: 10, dmg: 35, cd: 1.0, cost: 110, pColor: '#10b981', desc: 'Fires venomous cloud projectile.' },
+            // World Entities
+            camera: { x: 0, y: 0 },
+            keys: {},
+            mouse: { x: 0, y: 0, worldX: 0, worldY: 0 },
+            enemies: [],
+            projectiles: [],
+            particles: [],
+            floatingTexts: [],
+            coinsDrops: [],
 
-        // WEAPONS (NO COOLDOWN)
-        sword: { id: 'sword', name: 'Iron Sword', type: 'weapon', rarity: 'common', icon: '⚔️', dmg: 22, range: 80, cost: 0, desc: 'Basic blade strike. NO COOLDOWN!' },
-        axe: { id: 'axe', name: 'War Axe', type: 'weapon', rarity: 'uncommon', icon: '🪓', dmg: 38, range: 90, cost: 100, desc: 'Heavy war axe cleave. NO COOLDOWN!' },
-        fireStaff: { id: 'fireStaff', name: 'Ignis Staff', type: 'weapon', rarity: 'epic', icon: '🪄', dmg: 65, range: 105, cost: 240, desc: 'Magic staff weapon strike. NO COOLDOWN!' },
-        mythicSceptre: { id: 'mythicSceptre', name: 'Mythic Star Sceptre', type: 'weapon', rarity: 'mythic', icon: '🌟', dmg: 140, range: 125, cost: 800, desc: 'Divine mythic weapon. NO COOLDOWN!' },
+            // Timers & Spawners
+            secretSpawnerTimer: 0,
+            secretBossSkillTimer: 0
+        };
 
-        // ARMOR CATEGORY 1: HEAD (HELMETS)
-        helm_leather: { id: 'helm_leather', name: 'Leather Cap', type: 'armor', slot: 'head', rarity: 'common', icon: '🪖', hp: 25, def: 2, spd: 5, cost: 60, desc: '+25 HP, +2% Def, +5 Speed' },
-        helm_iron: { id: 'helm_iron', name: 'Iron Greathelm', type: 'armor', slot: 'head', rarity: 'epic', icon: '🪖', hp: 80, def: 8, spd: 0, cost: 220, desc: '+80 HP, +8% Def' },
-        helm_mythic: { id: 'helm_mythic', name: 'Mythic Crown', type: 'armor', slot: 'head', rarity: 'mythic', icon: '👑', hp: 200, def: 15, spd: 20, cost: 750, desc: '+200 HP, +15% Def, +20 Speed' },
+        // --- KEY INPUT LISTENERS ---
+        window.addEventListener('keydown', e => {
+            const k = e.key.toLowerCase();
+            state.keys[k] = true;
 
-        // ARMOR CATEGORY 2: CHEST (CHESTPLATES)
-        chest_cloth: { id: 'chest_cloth', name: 'Padded Tunic', type: 'armor', slot: 'chest', rarity: 'common', icon: '👕', hp: 35, def: 3, spd: 0, cost: 75, desc: '+35 HP, +3% Def' },
-        chest_iron: { id: 'chest_iron', name: 'Iron Cuirass', type: 'armor', slot: 'chest', rarity: 'epic', icon: '🛡️', hp: 120, def: 12, spd: 0, cost: 300, desc: '+120 HP, +12% Def' },
-        chest_mythic: { id: 'chest_mythic', name: 'Mythic Aegis', type: 'armor', slot: 'chest', rarity: 'mythic', icon: '🥋', hp: 300, def: 25, spd: 15, cost: 950, desc: '+300 HP, +25% Def, +15 Speed' },
+            if (k === 'p') togglePause();
+            if (k === ' ') triggerUltimate();
 
-        // ARMOR CATEGORY 3: LEGS (LEGGINGS)
-        legs_leather: { id: 'legs_leather', name: 'Leather Trousers', type: 'armor', slot: 'legs', rarity: 'common', icon: '👖', hp: 20, def: 2, spd: 10, cost: 60, desc: '+20 HP, +2% Def, +10 Speed' },
-        legs_iron: { id: 'legs_iron', name: 'Iron Greaves', type: 'armor', slot: 'legs', rarity: 'epic', icon: '👖', hp: 75, def: 7, spd: 10, cost: 210, desc: '+75 HP, +7% Def, +10 Speed' },
-        legs_mythic: { id: 'legs_mythic', name: 'Mythic Greaves', type: 'armor', slot: 'legs', rarity: 'mythic', icon: '👖', hp: 180, def: 14, spd: 30, cost: 700, desc: '+180 HP, +14% Def, +30 Speed' },
-
-        // ARMOR CATEGORY 4: BOOTS
-        boots_leather: { id: 'boots_leather', name: 'Light Boots', type: 'armor', slot: 'boots', rarity: 'common', icon: '🥾', hp: 15, def: 1, spd: 20, cost: 50, desc: '+15 HP, +1% Def, +20 Speed' },
-        boots_iron: { id: 'boots_iron', name: 'Iron Sabatons', type: 'armor', slot: 'boots', rarity: 'epic', icon: '🥾', hp: 50, def: 5, spd: 25, cost: 180, desc: '+50 HP, +5% Def, +25 Speed' },
-        boots_mythic: { id: 'boots_mythic', name: 'Hermes Wings', type: 'armor', slot: 'boots', rarity: 'mythic', icon: '👟', hp: 120, def: 10, spd: 55, cost: 650, desc: '+120 HP, +10% Def, +55 Speed' }
-    };
-
-    // --- GAME ENGINE STATE ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let screenWidth = innerWidth;
-    let screenHeight = innerHeight;
-
-    function resizeCanvas() {
-        canvas.width = innerWidth; canvas.height = innerHeight;
-        screenWidth = innerWidth; screenHeight = innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const keys = {};
-    let mousePos = { x: screenWidth / 2, y: screenHeight / 2 };
-
-    window.addEventListener('keydown', e => {
-        const k = e.key.toLowerCase();
-        keys[k] = true;
-        if (k === 'p') togglePause();
-        if (k === ' ') castUltimate();
-        if (k >= '1' && k <= '8') castSkill(parseInt(k) - 1);
-    });
-
-    window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
-    window.addEventListener('mousemove', e => { mousePos.x = e.clientX; mousePos.y = e.clientY; });
-
-    window.addEventListener('mousedown', e => {
-        if (e.button === 0 && gameStarted && !isPaused && !isMenuOpen && !isGameOver && !isIntermission) {
-            sfx.init();
-            basicAttack();
-        }
-    });
-
-    let gameStarted = false;
-    let isPaused = false;
-    let isMenuOpen = false;
-    let isIntermission = false;
-    let isGameOver = false;
-    let screenShake = 0;
-
-    let enemiesKilled = 0;
-    let waveNumber = 1;
-    let waveCoinsEarned = 0;
-    let waveXpEarned = 0;
-    let apexBossesDefeated = 0;
-
-    const camera = { x: 0, y: 0 };
-
-    const player = {
-        x: 0, y: 0,
-        radius: 26,
-        hp: 100, maxHp: 100,
-        mana: 50, maxMana: 50, baseManaCapacity: 50,
-        manaRegenRate: 8,
-        coins: 0, xp: 0, maxXp: 100, level: 1,
-        baseSpeed: 240, speed: 240,
-        defensePercent: 0,
-
-        unlockedSlots: [false, false, false, false, false, false, false, false],
-        equippedSkills: [null, null, null, null, null, null, null, null],
-        skillCooldowns: [0, 0, 0, 0, 0, 0, 0, 0],
-        ultCooldown: 0,
-
-        equipped: { weapon: 'sword', head: null, chest: null, legs: null, boots: null },
-        ownedItems: ['sword'],
-
-        hitTimer: 0,
-        getEmoji() {
-            if (this.hp < this.maxHp * 0.25) return '😱';
-            if (this.hitTimer > 0) return '🤕';
-            if (keys['shift'] && (keys['w'] || keys['a'] || keys['s'] || keys['d'])) return '⚡';
-            if (this.equipped.weapon === 'mythicSceptre') return '👑';
-            return '🙂';
-        }
-    };
-
-    let enemies = [];
-    let projectiles = [];
-    let particles = [];
-    let floatingTexts = [];
-    let coinsList = [];
-
-    // --- RECALCULATE STATS WITH ARMOR ---
-    function recalculateStats() {
-        let extraHp = 0; let extraDef = 0; let extraSpeed = 0;
-
-        ['head', 'chest', 'legs', 'boots'].forEach(slot => {
-            const itemId = player.equipped[slot];
-            if (itemId && ITEMS[itemId]) {
-                const item = ITEMS[itemId];
-                if (item.hp) extraHp += item.hp;
-                if (item.def) extraDef += item.def;
-                if (item.spd) extraSpeed += item.spd;
+            // 1-8 Keys
+            if (e.key >= '1' && e.key <= '8') {
+                const idx = parseInt(e.key) - 1;
+                useSkillSlot(idx);
             }
         });
 
-        const manaBonus = Math.floor(player.level / 5) * 25;
-        player.maxMana = player.baseManaCapacity + manaBonus;
-        player.manaRegenRate = 8 + Math.floor(player.level / 5) * 4;
+        window.addEventListener('keyup', e => {
+            state.keys[e.key.toLowerCase()] = false;
+        });
 
-        player.maxHp = 100 + (player.level - 1) * 20 + extraHp;
-        player.defensePercent = Math.min(75, extraDef);
-        player.speed = player.baseSpeed + extraSpeed;
+        window.addEventListener('mousemove', e => {
+            state.mouse.x = e.clientX;
+            state.mouse.y = e.clientY;
+        });
 
-        updateHUD();
-    }
+        canvas.addEventListener('mousedown', e => {
+            if (e.button === 0 && !state.paused && !state.intermission && state.gameStarted) {
+                fireBasicAttack();
+            }
+        });
 
-    function initGame() {
-        player.x = 0; player.y = 0;
-        player.level = 1; player.xp = 0; player.maxXp = 100;
-        player.coins = 0;
-        player.baseManaCapacity = 50;
+        // --- HERO STAT RECALCULATION ---
+        function recalculateStats() {
+            let addHp = 0, addDef = 0, addSpeed = 0, addAtk = 0;
 
-        player.unlockedSlots = [false, false, false, false, false, false, false, false];
-        player.equippedSkills = [null, null, null, null, null, null, null, null];
-        player.skillCooldowns = [0, 0, 0, 0, 0, 0, 0, 0];
-        player.ultCooldown = 0;
+            Object.values(state.equipped).forEach(item => {
+                if (!item) return;
+                if (item.bonusHp) addHp += item.bonusHp;
+                if (item.bonusDef) addDef += item.bonusDef;
+                if (item.bonusSpeed) addSpeed += item.bonusSpeed;
+                if (item.damage) addAtk += item.damage;
+            });
 
-        player.equipped = { weapon: 'sword', head: null, chest: null, legs: null, boots: null };
-        player.ownedItems = ['sword'];
+            // Leveling Bonus
+            const lvlBonusHp = (state.level - 1) * 20;
+            const lvlBonusMana = Math.floor(state.level / 5) * 25;
 
-        recalculateStats();
-        player.hp = player.maxHp; player.mana = player.maxMana;
+            state.player.maxHp = state.player.baseHp + addHp + lvlBonusHp;
+            state.player.hp = Math.min(state.player.hp, state.player.maxHp);
 
-        enemies = []; projectiles = []; particles = []; floatingTexts = []; coinsList = [];
-        enemiesKilled = 0; waveNumber = 1; waveCoinsEarned = 0; waveXpEarned = 0; apexBossesDefeated = 0;
+            state.player.maxMana = state.player.baseMana + lvlBonusMana;
+            state.player.mana = Math.min(state.player.mana, state.player.maxMana);
 
-        isGameOver = false; isPaused = false; isIntermission = false; isMenuOpen = false;
+            state.player.speed = state.player.baseSpeed + addSpeed;
+            state.player.defPercent = Math.min(addDef, 80); // Cap at 80%
 
-        document.getElementById('gameOverModal').classList.add('hidden');
-        document.getElementById('pauseOverlay').classList.add('hidden');
-        document.getElementById('intermissionModal').classList.add('hidden');
-        document.getElementById('menuModal').classList.add('hidden');
-        document.getElementById('victoryModal').classList.add('hidden');
+            const baseAtk = state.equipped.weapon ? state.equipped.weapon.damage : state.player.baseAtk;
+            state.player.calculatedAtk = Math.round(baseAtk * (1 + (state.level - 1) * 0.08));
 
-        spawnWave();
-    }
+            updateHUD();
+        }
 
-    // --- DYNAMIC WAVE SCALING & APEX BOSSES ---
-    function spawnWave() {
-        isIntermission = false;
-        waveCoinsEarned = 0; waveXpEarned = 0;
-        document.getElementById('btnOpenMenu').classList.add('hidden');
-        document.getElementById('intermissionModal').classList.add('hidden');
+        // --- COMBAT & SKILLS ---
+        function fireBasicAttack() {
+            initAudio();
+            const angle = Math.atan2(state.mouse.worldY - state.player.y, state.mouse.worldX - state.player.x);
+            
+            state.projectiles.push({
+                x: state.player.x,
+                y: state.player.y,
+                vx: Math.cos(angle) * 650,
+                vy: Math.sin(angle) * 650,
+                damage: state.player.calculatedAtk,
+                radius: 12,
+                color: '#f59e0b',
+                emoji: state.equipped.weapon ? state.equipped.weapon.icon : '⚔️',
+                isHero: true,
+                life: 1.5
+            });
 
-        enemies = [];
+            playSound('hit');
+        }
 
-        // WAVE 4400 APEX BOSS SHOWDOWN
-        if (waveNumber === 4400) {
-            sfx.play('boss');
-            document.getElementById('hudWaveText').innerText = `WAVE 4400: MYTHIC APEX BOSSES`;
-            document.getElementById('hudWaveIcon').innerText = '🌌';
+        function useSkillSlot(slotIdx) {
+            if (slotIdx >= state.unlockedSlots) return;
+            const skill = state.equippedSkills[slotIdx];
+            if (!skill) return;
+            if (state.skillCooldowns[slotIdx] > 0) return;
+            if (state.player.mana < skill.manaCost) return;
 
-            // Spawn 4 Apex Bosses
-            const apexRoster = [
-                { id: 'lumina', name: 'Lumina', icon: '🌟', color: '#fef08a', hp: 25000, speed: 110, dmg: 80, coinVal: 2000, size: 55, behavior: 'beam', cd: 4.0 },
-                { id: 'umbra', name: 'Umbra', icon: '🌑', color: '#a855f7', hp: 28000, speed: 100, dmg: 85, coinVal: 2000, size: 55, behavior: 'gatling', cd: 4.0 },
-                { id: 'terran_aqua', name: 'Terran & Aqua', icon: '🌊', color: '#0284c7', hp: 32000, speed: 90, dmg: 100, coinVal: 2500, size: 60, behavior: 'teleport', cd: 4.0 },
-                { id: 'ignis_aero', name: 'Ignis & Aero', icon: '🔥', color: '#ef4444', hp: 30000, speed: 180, dmg: 95, coinVal: 2500, size: 60, behavior: 'sprint', cd: 4.0 }
+            initAudio();
+            state.player.mana -= skill.manaCost;
+            state.skillCooldowns[slotIdx] = skill.cd;
+
+            const angle = Math.atan2(state.mouse.worldY - state.player.y, state.mouse.worldX - state.player.x);
+
+            if (skill.element === 'heal') {
+                state.player.hp = Math.min(state.player.maxHp, state.player.hp + skill.heal);
+                spawnParticles(state.player.x, state.player.y, '#10b981', 30, 'heal');
+                spawnFloatingText(state.player.x, state.player.y - 30, `+${skill.heal} HP`, '#10b981');
+                playSound('heal');
+            } else {
+                state.projectiles.push({
+                    x: state.player.x,
+                    y: state.player.y,
+                    vx: Math.cos(angle) * 750,
+                    vy: Math.sin(angle) * 750,
+                    damage: skill.damage * (1 + state.level * 0.05),
+                    radius: 20,
+                    color: skill.element === 'fire' ? '#ef4444' : skill.element === 'ice' ? '#38bdf8' : '#a855f7',
+                    emoji: skill.icon,
+                    isHero: true,
+                    element: skill.element,
+                    life: 2.0
+                });
+                playSound('spell');
+            }
+            updateHUD();
+        }
+
+        function triggerUltimate() {
+            if (state.ultCooldown > 0) return;
+            if (state.player.mana < 30) return;
+
+            initAudio();
+            state.player.mana -= 30;
+            state.ultCooldown = 12.0;
+
+            // Ultimate Radial Burst
+            for (let i = 0; i < 16; i++) {
+                const angle = (Math.PI * 2 / 16) * i;
+                state.projectiles.push({
+                    x: state.player.x,
+                    y: state.player.y,
+                    vx: Math.cos(angle) * 600,
+                    vy: Math.sin(angle) * 600,
+                    damage: 200 + state.level * 20,
+                    radius: 18,
+                    color: '#c084fc',
+                    emoji: '💥',
+                    isHero: true,
+                    life: 2.0
+                });
+            }
+            playSound('spell');
+            spawnParticles(state.player.x, state.player.y, '#a855f7', 50, 'burst');
+            updateHUD();
+        }
+
+        // --- WAVE SPAWNING ENGINE ---
+        function startWave(waveNum) {
+            state.wave = waveNum;
+            state.enemies = [];
+            state.projectiles = [];
+            state.coinsDrops = [];
+            state.intermission = false;
+
+            document.getElementById('intermissionModal').classList.add('hidden');
+            document.getElementById('btnOpenMenu').classList.add('hidden');
+
+            if (state.isSecretWave) {
+                setupSecretUltraWave();
+                return;
+            }
+
+            if (waveNum === 4400) {
+                setupWave4400Bosses();
+                return;
+            }
+
+            // Standard Wave Difficulty Scaling
+            const count = Math.min(12 + Math.floor(waveNum * 1.8), 80);
+            const baseHp = 40 + waveNum * 25;
+            const baseDmg = 8 + waveNum * 4;
+
+            const enemyTypes = [
+                { emoji: '👺', speed: 130, hpMult: 0.9, ranged: false },
+                { emoji: '💀', speed: 110, hpMult: 1.2, ranged: false },
+                { emoji: '👿', speed: 100, hpMult: 1.5, ranged: true, projEmoji: '🔥' },
+                { emoji: '🐍', speed: 160, hpMult: 0.8, ranged: true, projEmoji: '🧪' },
+                { emoji: '🕷️', speed: 180, hpMult: 0.7, ranged: false }
             ];
 
-            apexRoster.forEach((b, i) => {
-                const angle = (Math.PI * 2 / 4) * i;
-                enemies.push({
-                    x: player.x + Math.cos(angle) * 600, y: player.y + Math.sin(angle) * 600,
-                    type: 'apex', apexId: b.id, name: b.name, icon: b.icon, color: b.color,
-                    hp: b.hp, maxHp: b.hp, speed: b.speed, dmg: b.dmg, coinVal: b.coinVal, size: b.size,
-                    isBoss: true, behavior: b.behavior, timer: 1.0, hitTimer: 0
-                });
-            });
-            return;
-        }
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 600 + Math.random() * 800;
+                const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
 
-        // Standard Dynamic Wave Scaling
-        const isBossWave = (waveNumber % 5 === 0);
-        const count = 8 + Math.floor(waveNumber * 2.5);
-        const hpScale = 1 + waveNumber * 0.25;
-        const dmgScale = 1 + waveNumber * 0.15;
-        const speedScale = Math.min(220, 90 + waveNumber * 2);
-
-        document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: Dark Swarm`;
-        document.getElementById('hudWaveIcon').innerText = '💀';
-
-        for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 550 + Math.random() * 400;
-            const isRanged = Math.random() < 0.4;
-
-            enemies.push({
-                x: player.x + Math.cos(angle) * dist, y: player.y + Math.sin(angle) * dist,
-                type: isRanged ? 'skeleton' : 'goblin',
-                icon: isRanged ? '💀' : '👺',
-                color: isRanged ? '#94a3b8' : '#16a34a',
-                hp: Math.round(40 * hpScale), maxHp: Math.round(40 * hpScale),
-                speed: speedScale, dmg: Math.round(10 * dmgScale), coinVal: 10 + waveNumber,
-                size: 24, isBoss: false, ranged: isRanged, spellIcon: '🏹',
-                shootTimer: Math.random() * 2.0, hitTimer: 0
-            });
-        }
-    }
-
-    function triggerMegamorphFuse() {
-        sfx.play('boss');
-        screenShake = 30;
-
-        // Calculate total remaining HP
-        let totalHp = enemies.reduce((sum, e) => sum + e.hp, 0);
-
-        enemies = [{
-            x: player.x + 300, y: player.y,
-            type: 'megamorph', name: 'ENTIMA GOD', icon: '🌌', color: '#facc15',
-            hp: totalHp, maxHp: totalHp, speed: 120, dmg: 140, coinVal: 10000, size: 85,
-            isBoss: true, behavior: 'god', timer: 1.0, hitTimer: 0
-        }];
-
-        spawnFloatingText(player.x, player.y - 80, "MEGAMORPH FUSION! ENTIMA GOD RISES!", "#facc15");
-    }
-
-    function onWaveCompleted() {
-        if (waveNumber === 4400) {
-            triggerVictoryModal();
-            return;
-        }
-
-        isIntermission = true;
-        sfx.play('levelup');
-
-        document.getElementById('waveCoinsEarned').innerText = `+${waveCoinsEarned}`;
-        document.getElementById('waveXpGained').innerText = `+${waveXpEarned} XP`;
-        document.getElementById('waveHeroLevel').innerText = `Lvl ${player.level}`;
-        document.getElementById('intermissionTitle').innerText = `WAVE ${waveNumber} CLEARED!`;
-
-        document.getElementById('btnOpenMenu').classList.remove('hidden');
-        document.getElementById('intermissionModal').classList.remove('hidden');
-    }
-
-    function triggerVictoryModal() {
-        sfx.play('levelup');
-        document.getElementById('victoryModal').classList.remove('hidden');
-    }
-
-    // --- COMBAT & ATTACK LOGIC ---
-    function basicAttack() {
-        const wep = ITEMS[player.equipped.weapon || 'sword'];
-        sfx.play('swing');
-
-        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
-        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
-        const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
-
-        for (let i = -0.4; i <= 0.4; i += 0.2) {
-            const pAngle = angle + i;
-            particles.push({
-                x: player.x + Math.cos(pAngle) * 45, y: player.y + Math.sin(pAngle) * 45,
-                vx: Math.cos(pAngle) * 140, vy: Math.sin(pAngle) * 140,
-                life: 0.15, maxLife: 0.15, color: '#f59e0b', size: 5
-            });
-        }
-
-        enemies.forEach(e => {
-            const dist = Math.hypot(e.x - player.x, e.y - player.y);
-            if (dist <= wep.range + e.size) {
-                const enemyAngle = Math.atan2(e.y - player.y, e.x - player.x);
-                let diff = Math.abs(angle - enemyAngle);
-                if (diff > Math.PI) diff = Math.PI * 2 - diff;
-
-                if (diff < 1.2) damageEnemy(e, wep.dmg);
-            }
-        });
-    }
-
-    function castSkill(index) {
-        if (!player.unlockedSlots[index]) return;
-        const skillId = player.equippedSkills[index];
-        if (!skillId) return;
-        const skill = ITEMS[skillId];
-        if (!skill || player.skillCooldowns[index] > 0 || player.mana < skill.mana) return;
-
-        player.mana -= skill.mana;
-        player.skillCooldowns[index] = skill.cd;
-
-        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
-        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
-        const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
-
-        if (skill.heal) {
-            sfx.play('heal');
-            player.hp = Math.min(player.maxHp, player.hp + skill.heal);
-            spawnFloatingText(player.x, player.y - 40, `+${skill.heal} HP!`, "#22c55e");
-
-            for (let i = 0; i < 20; i++) {
-                const pAngle = (Math.PI * 2 / 20) * i;
-                particles.push({
-                    x: player.x + Math.cos(pAngle) * 35, y: player.y + Math.sin(pAngle) * 35,
-                    vx: Math.cos(pAngle) * 40, vy: Math.sin(pAngle) * 40,
-                    life: 0.8, maxLife: 0.8, color: '#22c55e', size: 6
+                state.enemies.push({
+                    x: state.player.x + Math.cos(angle) * dist,
+                    y: state.player.y + Math.sin(angle) * dist,
+                    hp: baseHp * type.hpMult,
+                    maxHp: baseHp * type.hpMult,
+                    damage: baseDmg,
+                    speed: type.speed,
+                    radius: 24,
+                    emoji: type.emoji,
+                    ranged: type.ranged,
+                    projEmoji: type.projEmoji || '⚡',
+                    shootCd: 2 + Math.random() * 2,
+                    isBoss: false
                 });
             }
-        } else {
-            sfx.play('fireball');
-            projectiles.push({
-                x: player.x, y: player.y,
-                vx: Math.cos(angle) * 600, vy: Math.sin(angle) * 600,
-                dmg: skill.dmg, icon: skill.icon, color: skill.pColor,
-                life: 1.8, radius: 15, isPlayer: true
-            });
-        }
-    }
 
-    function castUltimate() {
-        if (player.ultCooldown > 0 || player.mana < 30) return;
-        player.mana -= 30;
-        player.ultCooldown = 4.0;
-        sfx.play('fireball');
-        screenShake = 16;
-
-        const count = 20;
-        for (let i = 0; i < count; i++) {
-            const angle = (Math.PI * 2 / count) * i;
-            projectiles.push({
-                x: player.x, y: player.y,
-                vx: Math.cos(angle) * 450, vy: Math.sin(angle) * 450,
-                dmg: 85, icon: '💥', color: '#a855f7',
-                life: 1.2, radius: 16, isPlayer: true
-            });
-        }
-        spawnFloatingText(player.x, player.y - 50, "ELEMENTAL NOVA!", "#c084fc");
-    }
-
-    function damageEnemy(e, dmg) {
-        e.hp -= dmg;
-        e.hitTimer = 0.15;
-        sfx.play('hit');
-        spawnFloatingText(e.x, e.y, `-${dmg}`, "#ef4444");
-
-        if (e.hp <= 0) {
-            enemiesKilled++;
-            const xpGained = e.isBoss ? 200 : 30;
-            player.xp += xpGained; waveXpEarned += xpGained;
-
-            const coinVal = Math.floor(e.coinVal * (0.85 + Math.random() * 0.3));
-            coinsList.push({ x: e.x, y: e.y, value: coinVal });
-
-            if (player.xp >= player.maxXp) {
-                player.level++;
-                player.xp -= player.maxXp;
-                player.maxXp = Math.round(player.maxXp * 1.45);
-                sfx.play('levelup');
-                recalculateStats();
-                player.hp = player.maxHp; player.mana = player.maxMana;
-                spawnFloatingText(player.x, player.y - 65, `LEVEL UP! (${player.level}) ⭐`, "#eab308");
-            }
-        }
-    }
-
-    function spawnFloatingText(x, y, text, color = '#ffffff') {
-        floatingTexts.push({ x, y, text, color, life: 1.0, maxLife: 1.0 });
-    }
-
-    // --- MAIN ENGINE UPDATE LOOP ---
-    function update(dt) {
-        if (!gameStarted || isPaused || isMenuOpen || isIntermission || isGameOver) return;
-
-        // Player Movement
-        let moveX = 0; let moveY = 0;
-        if (keys['w'] || keys['arrowup']) moveY -= 1;
-        if (keys['s'] || keys['arrowdown']) moveY += 1;
-        if (keys['a'] || keys['arrowleft']) moveX -= 1;
-        if (keys['d'] || keys['arrowright']) moveX += 1;
-
-        if (moveX !== 0 && moveY !== 0) { moveX *= 0.7071; moveY *= 0.7071; }
-
-        let currentSpeed = player.speed;
-        if (keys['shift'] && player.mana > 2 && (moveX !== 0 || moveY !== 0)) {
-            currentSpeed *= 1.6;
-            player.mana -= 14 * dt;
-        } else {
-            player.mana = Math.min(player.maxMana, player.mana + player.manaRegenRate * dt);
+            updateHUD();
         }
 
-        player.x += moveX * currentSpeed * dt;
-        player.y += moveY * currentSpeed * dt;
+        // --- WAVE 4400 BOSS SHOWDOWN ---
+        function setupWave4400Bosses() {
+            const isMegamorph = Math.random() < 0.0314; // 3.14% chance
 
-        if (player.hitTimer > 0) player.hitTimer -= dt;
-        if (player.ultCooldown > 0) player.ultCooldown -= dt;
-        if (screenShake > 0) screenShake -= dt * 30;
-
-        for (let i = 0; i < 8; i++) {
-            if (player.skillCooldowns[i] > 0) player.skillCooldowns[i] -= dt;
-        }
-
-        camera.x += (player.x - camera.x) * 0.1;
-        camera.y += (player.y - camera.y) * 0.1;
-
-        // Wave 4400 3.14% Megamorph Fusion Check
-        if (waveNumber === 4400 && enemies.length === 4 && enemies[0].type === 'apex') {
-            if (Math.random() < 0.0314 * dt) triggerMegamorphFuse();
-        }
-
-        // Projectiles Loop
-        for (let i = projectiles.length - 1; i >= 0; i--) {
-            const p = projectiles[i];
-            p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
-
-            if (p.isPlayer) {
-                enemies.forEach(e => {
-                    if (Math.hypot(e.x - p.x, e.y - p.y) < e.size + p.radius) {
-                        damageEnemy(e, p.dmg);
-                        p.life = 0;
-                    }
+            if (isMegamorph) {
+                // 1 Combined Ultra Fusion Boss
+                state.enemies.push({
+                    x: state.player.x + 500,
+                    y: state.player.y,
+                    hp: 500000,
+                    maxHp: 500000,
+                    damage: 350,
+                    speed: 180,
+                    radius: 70,
+                    emoji: '🌌',
+                    name: 'MEGAMORPH OVERLORD',
+                    isBoss: true,
+                    bossType: 'megamorph',
+                    shootCd: 0.5,
+                    dashCd: 3.0
                 });
             } else {
-                if (Math.hypot(player.x - p.x, player.y - p.y) < player.radius + p.radius) {
-                    let actualDmg = p.isTrueDmg ? p.dmg : p.dmg * (1 - player.defensePercent / 100);
+                // 4 Distinct Apex Bosses
+                const bosses = [
+                    { name: 'Lumina Light God', emoji: '🐲', hp: 120000, dmg: 140, type: 'light', x: 400, y: -400 },
+                    { name: 'Umbra Dark Lord', emoji: '👿', hp: 120000, dmg: 150, type: 'dark', x: -400, y: 400 },
+                    { name: 'Terran & Aqua Serpent', emoji: '🐍', hp: 140000, dmg: 160, type: 'close_earth', x: 400, y: 400 },
+                    { name: 'Ignis & Aero Tyrant', emoji: '🦖', hp: 130000, dmg: 170, type: 'close_fire', x: -400, y: -400 }
+                ];
 
-                    // Megamorph 0.000001% Instant Death Chance
-                    if (p.isInstaDeathChance && Math.random() < 0.00000001) {
-                        actualDmg = player.hp + 9999;
-                        spawnFloatingText(player.x, player.y, "INSTANT DEATH!", "#dc2626");
-                    }
-
-                    player.hp -= actualDmg;
-                    player.hitTimer = 0.2; screenShake = 10;
-                    sfx.play('hit');
-                    spawnFloatingText(player.x, player.y, `-${Math.round(actualDmg)}`, "#f87171");
-                    p.life = 0;
-
-                    if (player.hp <= 0) triggerGameOver();
-                }
+                bosses.forEach(b => {
+                    state.enemies.push({
+                        x: state.player.x + b.x,
+                        y: state.player.y + b.y,
+                        hp: b.hp,
+                        maxHp: b.hp,
+                        damage: b.dmg,
+                        speed: 160,
+                        radius: 50,
+                        emoji: b.emoji,
+                        name: b.name,
+                        isBoss: true,
+                        bossType: b.type,
+                        shootCd: 1.5,
+                        dashCd: 4.0
+                    });
+                });
             }
-
-            if (p.life <= 0) projectiles.splice(i, 1);
+            updateHUD();
         }
 
-        // Enemies & Boss Behaviors
-        for (let i = enemies.length - 1; i >= 0; i--) {
-            const e = enemies[i];
-            if (e.hitTimer > 0) e.hitTimer -= dt;
+        // --- SECRET ULTRA NIGHTMARE WAVE ---
+        function setupSecretUltraWave() {
+            state.isSecretWave = true;
+            state.wave = 9999;
+            state.enemies = [];
 
-            const angle = Math.atan2(player.y - e.y, player.x - e.x);
-            const dist = Math.hypot(player.x - e.x, player.y - e.y);
+            // 1 Super Intelligent Apex Boss
+            state.enemies.push({
+                x: state.player.x + 600,
+                y: state.player.y,
+                hp: 2500000,
+                maxHp: 2500000,
+                damage: 450,
+                speed: 220,
+                radius: 80,
+                emoji: '👁️',
+                name: 'THE ANCIENT UNKNOWN',
+                isBoss: true,
+                bossType: 'secret_apex',
+                shootCd: 0.4,
+                dashCd: 3.0,
+                teleportCd: 4.0,
+                stunCd: 6.0
+            });
 
-            // APEX BOSS BEHAVIORS (WAVE 4400)
-            if (e.type === 'apex') {
-                e.timer -= dt;
+            // 13 Initial Clever Minions
+            const secretMinions = [
+                { emoji: '🗿', proj: '🪨', hp: 8000, dmg: 80 },
+                { emoji: '⚡', proj: '🌩️', hp: 6000, dmg: 90 },
+                { emoji: '🔥', proj: '☄️', hp: 7000, dmg: 100 },
+                { emoji: '🌊', proj: '💧', hp: 9000, dmg: 85 },
+                { emoji: '🌪️', proj: '💨', hp: 6500, dmg: 95 },
+                { emoji: '🩸', proj: '💉', hp: 10000, dmg: 110 },
+                { emoji: '👹', proj: null, hp: 15000, dmg: 160 }, // Heavy melee
+                { emoji: '👺', proj: null, hp: 12000, dmg: 140 },
+                { emoji: '🐺', proj: null, hp: 9000, dmg: 120 },
+                { emoji: '🦁', proj: null, hp: 11000, dmg: 130 },
+                { emoji: '🦇', proj: '🔮', hp: 7000, dmg: 90 },
+                { emoji: '🕷️', proj: '🕸️', hp: 8000, dmg: 100 },
+                { emoji: '🦂', proj: '🧪', hp: 8500, dmg: 105 }
+            ];
 
-                // 1. Lumina (Dragon Nova Beam)
-                if (e.behavior === 'beam') {
-                    e.x += Math.cos(angle + Math.PI / 2) * e.speed * dt;
-                    e.y += Math.sin(angle + Math.PI / 2) * e.speed * dt;
-                    if (e.timer <= 0) {
-                        e.timer = 4.0;
-                        for (let b = 0; b < 6; b++) {
-                            projectiles.push({
-                                x: e.x, y: e.y,
-                                vx: Math.cos(angle) * (300 + b * 40), vy: Math.sin(angle) * (300 + b * 40),
-                                dmg: e.dmg, icon: '🌟', color: '#fde047', life: 2.5, radius: 14, isPlayer: false
-                            });
-                        }
-                    }
-                }
-                // 2. Umbra (Spiral Gatling Gun)
-                else if (e.behavior === 'gatling') {
-                    e.x += Math.cos(angle) * e.speed * 0.4 * dt;
-                    e.y += Math.sin(angle) * e.speed * 0.4 * dt;
-                    if (e.timer <= 0) {
-                        e.timer = 4.0;
-                        for (let g = 0; g < 12; g++) {
-                            const gAngle = angle + (Math.PI / 6) * g;
-                            projectiles.push({
-                                x: e.x, y: e.y,
-                                vx: Math.cos(gAngle) * 320, vy: Math.sin(gAngle) * 320,
-                                dmg: e.dmg, icon: '🌑', color: '#c084fc', life: 2.5, radius: 12, isPlayer: false
-                            });
-                        }
-                    }
-                }
-                // 3. Terran & Aqua (Instant Teleport Slam)
-                else if (e.behavior === 'teleport') {
-                    if (e.timer <= 0) {
-                        e.timer = 4.0;
-                        e.x = player.x + (Math.random() - 0.5) * 60;
-                        e.y = player.y + (Math.random() - 0.5) * 60;
-                        spawnFloatingText(e.x, e.y, "TELEPORT SLAM!", "#38bdf8");
-                        sfx.play('hit');
-                    }
-                }
-                // 4. Ignis & Aero (Burst Speed Sprint)
-                else if (e.behavior === 'sprint') {
-                    const spd = (e.timer < 1.5) ? e.speed * 2.2 : e.speed * 0.5;
-                    e.x += Math.cos(angle) * spd * dt;
-                    e.y += Math.sin(angle) * spd * dt;
-                    if (e.timer <= 0) e.timer = 4.0;
-                }
-            } 
-            // MEGAMORPH GOD BOSS
-            else if (e.type === 'megamorph') {
-                e.x += Math.cos(angle) * e.speed * dt;
-                e.y += Math.sin(angle) * e.speed * dt;
-                e.timer -= dt;
+            secretMinions.forEach(m => {
+                const angle = Math.random() * Math.PI * 2;
+                state.enemies.push({
+                    x: state.player.x + Math.cos(angle) * 700,
+                    y: state.player.y + Math.sin(angle) * 700,
+                    hp: m.hp,
+                    maxHp: m.hp,
+                    damage: m.dmg,
+                    speed: 170,
+                    radius: 28,
+                    emoji: m.emoji,
+                    ranged: !!m.proj,
+                    projEmoji: m.proj || '💥',
+                    shootCd: 1.5,
+                    isBoss: false
+                });
+            });
 
-                if (e.timer <= 0) {
-                    e.timer = 1.8;
-                    projectiles.push({
-                        x: e.x, y: e.y,
-                        vx: Math.cos(angle) * 400, vy: Math.sin(angle) * 400,
-                        dmg: e.dmg, icon: '🌌', color: '#facc15', life: 3.0, radius: 20,
-                        isPlayer: false, isTrueDmg: true, isInstaDeathChance: true
-                    });
-                }
+            updateHUD();
+        }
+
+        // --- GAME LOOP & UPDATES ---
+        let lastTime = performance.now();
+
+        function gameLoop(now) {
+            requestAnimationFrame(gameLoop);
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+
+            if (!state.gameStarted || state.paused || state.intermission) return;
+
+            updatePlayer(dt);
+            updateEnemies(dt);
+            updateProjectiles(dt);
+            updateParticles(dt);
+            updateCoins(dt);
+            updateSecretSpawner(dt);
+
+            render();
+        }
+
+        function updatePlayer(dt) {
+            const p = state.player;
+
+            // Stun status check
+            if (p.isStunned) {
+                p.stunTimer -= dt;
+                if (p.stunTimer <= 0) p.isStunned = false;
             }
-            // Standard Minion AI
-            else {
-                if (e.ranged && dist < 220) {
-                    e.x -= Math.cos(angle) * e.speed * 0.5 * dt;
-                    e.y -= Math.sin(angle) * e.speed * 0.5 * dt;
-                } else {
-                    e.x += Math.cos(angle) * e.speed * dt;
-                    e.y += Math.sin(angle) * e.speed * dt;
+
+            // Movement logic
+            if (!p.isStunned) {
+                let dx = 0, dy = 0;
+                if (state.keys.w || state.keys.arrowup) dy -= 1;
+                if (state.keys.s || state.keys.arrowdown) dy += 1;
+                if (state.keys.a || state.keys.arrowleft) dx -= 1;
+                if (state.keys.d || state.keys.arrowright) dx += 1;
+
+                if (dx !== 0 && dy !== 0) {
+                    dx *= 0.7071;
+                    dy *= 0.7071;
                 }
 
-                if (e.ranged) {
-                    e.shootTimer -= dt;
-                    if (e.shootTimer <= 0 && dist < 500) {
-                        e.shootTimer = 2.5;
-                        projectiles.push({
-                            x: e.x, y: e.y,
-                            vx: Math.cos(angle) * 280, vy: Math.sin(angle) * 280,
-                            dmg: e.dmg, icon: e.spellIcon, color: '#f87171',
-                            life: 2.0, radius: 12, isPlayer: false
+                p.isSprinting = state.keys.shift && p.mana > 5;
+                let speedMult = p.isSprinting ? 1.6 : 1.0;
+                if (p.isSprinting) p.mana -= 12 * dt;
+
+                p.x += dx * p.speed * speedMult * dt;
+                p.y += dy * p.speed * speedMult * dt;
+            }
+
+            // Mana Regeneration
+            p.mana = Math.min(p.maxMana, p.mana + p.manaRegen * dt);
+
+            // Dynamic Hero Emoji States
+            if (p.isHit) {
+                p.hitTimer -= dt;
+                if (p.hitTimer <= 0) p.isHit = false;
+                p.emoji = '🤕';
+            } else if (p.hp / p.maxHp < 0.3) {
+                p.emoji = '😰';
+            } else if (p.isSprinting) {
+                p.emoji = '⚡';
+            } else if (state.level >= 20) {
+                p.emoji = '🗿';
+            } else {
+                p.emoji = '🙂';
+            }
+
+            // Camera Tracking
+            state.camera.x = p.x;
+            state.camera.y = p.y;
+
+            // Mouse World Mapping
+            state.mouse.worldX = state.mouse.x - canvas.width / 2 + state.camera.x;
+            state.mouse.worldY = state.mouse.y - canvas.height / 2 + state.camera.y;
+
+            // Cooldown ticks
+            for (let i = 0; i < 8; i++) {
+                if (state.skillCooldowns[i] > 0) state.skillCooldowns[i] = Math.max(0, state.skillCooldowns[i] - dt);
+            }
+            if (state.ultCooldown > 0) state.ultCooldown = Math.max(0, state.ultCooldown - dt);
+
+            updateHUD();
+        }
+
+        function updateEnemies(dt) {
+            const p = state.player;
+
+            for (let i = state.enemies.length - 1; i >= 0; i--) {
+                const e = state.enemies[i];
+                const dx = p.x - e.x;
+                const dy = p.y - e.y;
+                const dist = Math.hypot(dx, dy);
+
+                // AI Tactical Steering
+                if (dist > 10) {
+                    let moveX = dx / dist;
+                    let moveY = dy / dist;
+
+                    // Clever Circle-Flank Behavior for certain minions
+                    if (!e.isBoss && e.emoji === '🐺') {
+                        moveX = -dy / dist;
+                        moveY = dx / dist;
+                    }
+
+                    e.x += moveX * e.speed * dt;
+                    e.y += moveY * e.speed * dt;
+                }
+
+                // Melee Collision Attack
+                if (dist < e.radius + 20) {
+                    applyDamageToPlayer(e.damage * dt * 2);
+                }
+
+                // Boss AI Spells & Ranged Minions
+                if (e.ranged || e.isBoss) {
+                    e.shootCd -= dt;
+                    if (e.shootCd <= 0) {
+                        e.shootCd = e.isBoss ? 0.8 : 2.5;
+                        const angle = Math.atan2(dy, dx);
+
+                        state.projectiles.push({
+                            x: e.x,
+                            y: e.y,
+                            vx: Math.cos(angle) * 450,
+                            vy: Math.sin(angle) * 450,
+                            damage: e.damage,
+                            radius: 12,
+                            color: '#ef4444',
+                            emoji: e.projEmoji || '⚡',
+                            isHero: false,
+                            life: 3.0
                         });
                     }
                 }
+
+                // Secret Apex Boss Abilities (Stun, Teleport, Gatling)
+                if (e.bossType === 'secret_apex') {
+                    e.stunCd -= dt;
+                    if (e.stunCd <= 0) {
+                        e.stunCd = 6.0;
+                        p.isStunned = true;
+                        p.stunTimer = 0.8; // Freeze player for 0.8s
+                        playSound('freeze');
+                        spawnFloatingText(p.x, p.y - 40, '⚡ FROZEN / STUNNED! ⚡', '#ef4444');
+                    }
+
+                    e.teleportCd -= dt;
+                    if (e.teleportCd <= 0) {
+                        e.teleportCd = 4.0;
+                        e.x = p.x + (Math.random() - 0.5) * 200;
+                        e.y = p.y + (Math.random() - 0.5) * 200;
+                        spawnParticles(e.x, e.y, '#c084fc', 40, 'burst');
+                    }
+                }
             }
 
-            // Physical Melee Collision
-            if (dist < player.radius + e.size) {
-                const actualDmg = (e.dmg * (1 - player.defensePercent / 100)) * dt;
-                player.hp -= actualDmg; player.hitTimer = 0.15;
-                if (player.hp <= 0) triggerGameOver();
+            // Check Wave Clearing
+            if (state.enemies.length === 0 && state.gameStarted && !state.intermission) {
+                clearWaveVictory();
             }
-
-            if (e.hp <= 0) enemies.splice(i, 1);
         }
 
-        if (enemies.length === 0 && !isIntermission) onWaveCompleted();
+        function updateSecretSpawner(dt) {
+            if (!state.isSecretWave) return;
 
-        // Magnet Coins
-        for (let i = coinsList.length - 1; i >= 0; i--) {
-            const coin = coinsList[i];
-            const dist = Math.hypot(player.x - coin.x, player.y - coin.y);
-            if (dist < 160) {
-                const angle = Math.atan2(player.y - coin.y, player.x - coin.x);
-                coin.x += Math.cos(angle) * 380 * dt;
-                coin.y += Math.sin(angle) * 380 * dt;
+            state.secretSpawnerTimer += dt;
+            if (state.secretSpawnerTimer >= 6.0) {
+                state.secretSpawnerTimer = 0;
 
-                if (dist < player.radius + 12) {
-                    player.coins += coin.value; waveCoinsEarned += coin.value;
-                    sfx.play('coin');
-                    spawnFloatingText(coin.x, coin.y, `+${coin.value}`, "#f59e0b");
-                    coinsList.splice(i, 1);
+                // Spawn 10 Random Infinite Minions
+                const extraEmojis = ['🗿', '⚡', '🔥', '🌊', '🌪️', '🩸', '👹', '🐺', '🕷️', '🦂'];
+                for (let i = 0; i < 10; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const em = extraEmojis[Math.floor(Math.random() * extraEmojis.length)];
+
+                    state.enemies.push({
+                        x: state.player.x + Math.cos(angle) * 650,
+                        y: state.player.y + Math.sin(angle) * 650,
+                        hp: 10000,
+                        maxHp: 10000,
+                        damage: 120,
+                        speed: 175,
+                        radius: 26,
+                        emoji: em,
+                        ranged: true,
+                        projEmoji: '⚡',
+                        shootCd: 2.0,
+                        isBoss: false
+                    });
+                }
+                spawnFloatingText(state.player.x, state.player.y - 60, '⚠️ INFINITE REINFORCEMENTS ARRIVED! ⚠️', '#ef4444');
+            }
+        }
+
+        function applyDamageToPlayer(amount) {
+            const p = state.player;
+            const defMult = 1 - (p.defPercent / 100);
+            const actualDmg = Math.max(1, amount * defMult);
+
+            p.hp -= actualDmg;
+            p.isHit = true;
+            p.hitTimer = 0.25;
+
+            if (p.hp <= 0) {
+                p.hp = 0;
+                alert('💀 GAME OVER! You were defeated in the Mythic Realms.');
+                window.location.reload();
+            }
+        }
+
+        function updateProjectiles(dt) {
+            for (let i = state.projectiles.length - 1; i >= 0; i--) {
+                const proj = state.projectiles[i];
+                proj.x += proj.vx * dt;
+                proj.y += proj.vy * dt;
+                proj.life -= dt;
+
+                if (proj.life <= 0) {
+                    state.projectiles.splice(i, 1);
+                    continue;
+                }
+
+                // Hero Projectiles vs Enemies
+                if (proj.isHero) {
+                    for (let j = state.enemies.length - 1; j >= 0; j--) {
+                        const e = state.enemies[j];
+                        if (Math.hypot(proj.x - e.x, proj.y - e.y) < proj.radius + e.radius) {
+                            e.hp -= proj.damage;
+                            spawnFloatingText(e.x, e.y, Math.round(proj.damage), '#fde047');
+                            spawnParticles(e.x, e.y, proj.color, 10, 'hit');
+
+                            if (e.hp <= 0) {
+                                // Enemy Death Drops
+                                const coinsDrop = e.isBoss ? 250 : 15;
+                                const xpDrop = e.isBoss ? 500 : 35;
+
+                                state.coinsDrops.push({ x: e.x, y: e.y, value: coinsDrop });
+                                addXp(xpDrop);
+
+                                state.enemies.splice(j, 1);
+                            }
+
+                            state.projectiles.splice(i, 1);
+                            break;
+                        }
+                    }
+                } 
+                // Enemy Projectiles vs Hero
+                else {
+                    const p = state.player;
+                    if (Math.hypot(proj.x - p.x, proj.y - p.y) < proj.radius + 20) {
+                        applyDamageToPlayer(proj.damage);
+                        state.projectiles.splice(i, 1);
+                    }
                 }
             }
         }
 
-        // Particles & Floating Text
-        for (let i = particles.length - 1; i >= 0; i--) {
-            const p = particles[i];
-            p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
-            if (p.life <= 0) particles.splice(i, 1);
+        function updateCoins(dt) {
+            const p = state.player;
+            for (let i = state.coinsDrops.length - 1; i >= 0; i--) {
+                const c = state.coinsDrops[i];
+                const dist = Math.hypot(p.x - c.x, p.y - c.y);
+
+                // Magnet physics
+                if (dist < 180) {
+                    c.x += ((p.x - c.x) / dist) * 400 * dt;
+                    c.y += ((p.y - c.y) / dist) * 400 * dt;
+                }
+
+                if (dist < 25) {
+                    state.coins += c.value;
+                    state.waveCoinsEarned += c.value;
+                    playSound('coin');
+                    state.coinsDrops.splice(i, 1);
+                    updateHUD();
+                }
+            }
         }
 
-        for (let i = floatingTexts.length - 1; i >= 0; i--) {
-            const ft = floatingTexts[i];
-            ft.y -= 32 * dt; ft.life -= dt;
-            if (ft.life <= 0) floatingTexts.splice(i, 1);
+        function addXp(amount) {
+            state.xp += amount;
+            state.waveXpEarned += amount;
+
+            while (state.xp >= state.xpToNextLevel) {
+                state.xp -= state.xpToNextLevel;
+                state.level++;
+                state.xpToNextLevel = Math.round(state.xpToNextLevel * 1.3);
+                recalculateStats();
+                spawnFloatingText(state.player.x, state.player.y - 50, '⭐ LEVEL UP! ⭐', '#a855f7');
+            }
         }
 
-        updateHUD();
-    }
+        function clearWaveVictory() {
+            if (state.wave === 4400 && !state.isSecretWave) {
+                document.getElementById('victoryModal').classList.remove('hidden');
+                return;
+            }
 
-    function triggerGameOver() {
-        player.hp = 0; isGameOver = true;
-        document.getElementById('goSlain').innerText = enemiesKilled;
-        document.getElementById('goCoins').innerText = player.coins;
-        document.getElementById('goWave').innerText = `Wave ${waveNumber}`;
-        document.getElementById('gameOverModal').classList.remove('hidden');
-    }
+            state.intermission = true;
+            document.getElementById('intermissionModal').classList.remove('hidden');
+            document.getElementById('btnOpenMenu').classList.remove('hidden');
 
-    // --- CANVAS RENDER ENGINE ---
-    function render() {
-        ctx.save();
-        ctx.fillStyle = '#06050a';
-        ctx.fillRect(0, 0, screenWidth, screenHeight);
+            document.getElementById('waveCoinsEarned').innerText = `+${state.waveCoinsEarned}`;
+            document.getElementById('waveXpGained').innerText = `+${state.waveXpEarned} XP`;
+            document.getElementById('waveHeroLevel').innerText = `Lvl ${state.level}`;
 
-        let shakeX = (Math.random() - 0.5) * screenShake;
-        let shakeY = (Math.random() - 0.5) * screenShake;
-
-        ctx.translate(screenWidth / 2 - camera.x + shakeX, screenHeight / 2 - camera.y + shakeY);
-
-        // Grid Background
-        const tileSize = 64;
-        const startX = Math.floor((camera.x - screenWidth) / tileSize) * tileSize;
-        const endX = Math.ceil((camera.x + screenWidth) / tileSize) * tileSize;
-        const startY = Math.floor((camera.y - screenHeight) / tileSize) * tileSize;
-        const endY = Math.ceil((camera.y + screenHeight) / tileSize) * tileSize;
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-        ctx.lineWidth = 1;
-        for (let x = startX; x <= endX; x += tileSize) {
-            ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, endY); ctx.stroke();
-        }
-        for (let y = startY; y <= endY; y += tileSize) {
-            ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(endX, y); ctx.stroke();
+            state.waveCoinsEarned = 0;
+            state.waveXpEarned = 0;
         }
 
-        // Coins
-        coinsList.forEach(c => {
-            ctx.fillStyle = '#eab308';
-            ctx.beginPath(); ctx.arc(c.x, c.y, 8, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 2; ctx.stroke();
-        });
+        // --- PARTICLE & FLOATING TEXT ENGINE ---
+        function spawnParticles(x, y, color, count, type) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const spd = 50 + Math.random() * 200;
+                state.particles.push({
+                    x, y,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    color,
+                    life: 0.5 + Math.random() * 0.3,
+                    radius: 3 + Math.random() * 4
+                });
+            }
+        }
 
-        // Enemies & Bosses
-        enemies.forEach(e => {
-            ctx.fillStyle = e.hitTimer > 0 ? '#ffffff' : (e.color || '#ef4444');
-            ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = e.isBoss ? '#fde047' : 'rgba(255, 255, 255, 0.25)';
-            ctx.lineWidth = e.isBoss ? 4 : 1.5; ctx.stroke();
+        function updateParticles(dt) {
+            for (let i = state.particles.length - 1; i >= 0; i--) {
+                const pt = state.particles[i];
+                pt.x += pt.vx * dt;
+                pt.y += pt.vy * dt;
+                pt.life -= dt;
+                if (pt.life <= 0) state.particles.splice(i, 1);
+            }
 
-            ctx.font = `${e.size * 1.35}px ${EMOJI_FONT_STACK}`;
+            for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+                const ft = state.floatingTexts[i];
+                ft.y -= 30 * dt;
+                ft.life -= dt;
+                if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+            }
+        }
+
+        function spawnFloatingText(x, y, text, color) {
+            state.floatingTexts.push({ x, y, text, color, life: 1.0 });
+        }
+
+        // --- RENDER ENGINE ---
+        function render() {
+            ctx.fillStyle = '#06050a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(canvas.width / 2 - state.camera.x, canvas.height / 2 - state.camera.y);
+
+            // Draw Background World Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            const startX = Math.floor((state.camera.x - canvas.width) / 64) * 64;
+            const endX = Math.floor((state.camera.x + canvas.width) / 64) * 64;
+            const startY = Math.floor((state.camera.y - canvas.height) / 64) * 64;
+            const endY = Math.floor((state.camera.y + canvas.height) / 64) * 64;
+
+            for (let x = startX; x <= endX; x += 64) {
+                ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, endY); ctx.stroke();
+            }
+            for (let y = startY; y <= endY; y += 64) {
+                ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(endX, y); ctx.stroke();
+            }
+
+            // Draw Coins
+            state.coinsDrops.forEach(c => {
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath(); ctx.arc(c.x, c.y, 8, 0, Math.PI * 2); ctx.fill();
+            });
+
+            // Draw Particles
+            state.particles.forEach(pt => {
+                ctx.fillStyle = pt.color;
+                ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2); ctx.fill();
+            });
+
+            // Draw Enemies
+            state.enemies.forEach(e => {
+                ctx.fillStyle = e.isBoss ? 'rgba(239, 68, 68, 0.3)' : 'rgba(220, 38, 38, 0.2)';
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2); ctx.fill();
+
+                ctx.font = `${e.radius * 1.5}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(e.emoji, e.x, e.y);
+
+                // Enemy HP Bar
+                const barW = e.radius * 2;
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.fillRect(e.x - barW / 2, e.y - e.radius - 12, barW, 6);
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(e.x - barW / 2, e.y - e.radius - 12, barW * (e.hp / e.maxHp), 6);
+            });
+
+            // Draw Player Entity
+            const p = state.player;
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.25)';
+            ctx.beginPath(); ctx.arc(p.x, p.y, 25, 0, Math.PI * 2); ctx.fill();
+
+            ctx.font = '36px serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(e.icon, e.x, e.y);
+            ctx.fillText(p.emoji, p.x, p.y);
 
-            const barW = e.size * 1.6;
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-            ctx.fillRect(e.x - barW / 2, e.y - e.size - 12, barW, 6);
-            ctx.fillStyle = e.isBoss ? '#ea580c' : '#ef4444';
-            ctx.fillRect(e.x - barW / 2, e.y - e.size - 12, barW * (e.hp / e.maxHp), 6);
-        });
+            // Draw Projectiles
+            state.projectiles.forEach(proj => {
+                ctx.font = `${proj.radius * 1.8}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(proj.emoji, proj.x, proj.y);
+            });
 
-        // Projectiles
-        projectiles.forEach(p => {
-            ctx.fillStyle = p.color || '#06b6d4';
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+            // Draw Floating Damage Texts
+            state.floatingTexts.forEach(ft => {
+                ctx.font = 'bold 16px Outfit, sans-serif';
+                ctx.fillStyle = ft.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(ft.text, ft.x, ft.y);
+            });
 
-            ctx.font = `${p.radius * 1.8}px ${EMOJI_FONT_STACK}`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(p.icon, p.x, p.y);
-        });
+            ctx.restore();
+        }
 
-        // Hero Player
-        ctx.fillStyle = player.hitTimer > 0 ? '#ef4444' : '#f59e0b';
-        ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 3; ctx.stroke();
+        // --- UI & HUD RENDERERS ---
+        function updateHUD() {
+            const p = state.player;
+            document.getElementById('hudHpBar').style.width = `${Math.max(0, (p.hp / p.maxHp) * 100)}%`;
+            document.getElementById('hudHpText').innerText = `${Math.round(p.hp)} / ${p.maxHp}`;
 
-        ctx.font = `36px ${EMOJI_FONT_STACK}`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(player.getEmoji(), player.x, player.y);
+            document.getElementById('hudManaBar').style.width = `${Math.max(0, (p.mana / p.maxMana) * 100)}%`;
+            document.getElementById('hudManaText').innerText = `${Math.round(p.mana)} / ${p.maxMana}`;
 
-        // Particles
-        particles.forEach(p => {
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
-            ctx.globalAlpha = 1.0;
-        });
+            document.getElementById('hudXpBar').style.width = `${(state.xp / state.xpToNextLevel) * 100}%`;
+            document.getElementById('hudXpText').innerText = `${state.xp} / ${state.xpToNextLevel}`;
 
-        // Floating Text
-        floatingTexts.forEach(ft => {
-            ctx.fillStyle = ft.color;
-            ctx.font = `bold 15px Outfit, ${EMOJI_FONT_STACK}`;
-            ctx.textAlign = 'center';
-            ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
-            ctx.fillText(ft.text, ft.x, ft.y);
-            ctx.globalAlpha = 1.0;
-        });
+            document.getElementById('hudCoins').innerText = state.coins;
+            document.getElementById('hudLevelBadge').innerText = `Lvl ${state.level}`;
+            document.getElementById('playerAvatar').innerText = p.emoji;
 
-        ctx.restore();
-    }
+            document.getElementById('hudWaveText').innerText = state.isSecretWave ? 'SECRET: INFINITE NIGHTMARE' : `Wave ${state.wave}`;
 
-    let lastTime = performance.now();
-    function gameLoop(now) {
-        const dt = Math.min((now - lastTime) / 1000, 0.1);
-        lastTime = now;
-        update(dt);
-        render();
-        requestAnimationFrame(gameLoop);
-    }
+            // Skills Slot HUD Bar
+            const bar = document.getElementById('skillSlotsBar');
+            bar.innerHTML = '';
 
-    // --- HUD & SHOP / INVENTORY UI ---
-    function updateHUD() {
-        document.getElementById('playerAvatar').innerText = player.getEmoji();
-        document.getElementById('hudCoins').innerText = player.coins;
-        document.getElementById('hudHpText').innerText = `${Math.ceil(player.hp)} / ${player.maxHp}`;
-        document.getElementById('hudHpBar').style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
+            for (let i = 0; i < 8; i++) {
+                const unlocked = i < state.unlockedSlots;
+                const skill = state.equippedSkills[i];
+                const cd = state.skillCooldowns[i];
 
-        document.getElementById('hudManaText').innerText = `${Math.ceil(player.mana)} / ${player.maxMana}`;
-        document.getElementById('hudManaBar').style.width = `${Math.max(0, (player.mana / player.maxMana) * 100)}%`;
+                const slotEl = document.createElement('div');
+                slotEl.className = `w-11 h-11 sm:w-13 sm:h-13 rounded-2xl flex flex-col items-center justify-center relative shadow-lg ${unlocked ? 'bg-gray-900/80 border-2 border-white/20' : 'bg-black/80 border border-gray-800 opacity-50'}`;
 
-        document.getElementById('hudXpText').innerText = `${player.xp} / ${player.maxXp}`;
-        document.getElementById('hudXpBar').style.width = `${(player.xp / player.maxXp) * 100}%`;
-        document.getElementById('hudLevelBadge').innerText = `Lvl ${player.level}`;
-
-        const activeWep = ITEMS[player.equipped.weapon || 'sword'];
-        document.getElementById('hudBasicAttackIcon').innerText = activeWep.icon;
-        document.getElementById('hudBasicDmgText').innerText = `${activeWep.dmg} DMG`;
-
-        // Skill Slots HUD
-        const slotsBar = document.getElementById('skillSlotsBar');
-        slotsBar.innerHTML = '';
-
-        for (let i = 0; i < 8; i++) {
-            const isUnlocked = player.unlockedSlots[i];
-            const skillId = player.equippedSkills[i];
-            const skill = skillId ? ITEMS[skillId] : null;
-            const cd = player.skillCooldowns[i];
-
-            const slotEl = document.createElement('div');
-            slotEl.className = 'flex flex-col items-center';
-
-            if (!isUnlocked) {
                 slotEl.innerHTML = `
-                    <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gray-900/80 border border-white/10 flex items-center justify-center relative opacity-50">
-                        <span class="text-sm">🔒</span>
-                        <span class="absolute -top-2 -left-2 bg-gray-800 text-gray-300 font-bold text-[9px] px-1.5 py-0.5 rounded-full">${i + 1}</span>
-                    </div>
-                    <span class="text-[9px] font-bold text-gray-500 mt-1">Locked</span>
+                    <span class="absolute -top-2 -left-2 bg-amber-500 text-gray-950 font-black text-[9px] px-1.5 py-0.5 rounded-full shadow">${i + 1}</span>
+                    <span class="text-xl sm:text-2xl">${unlocked ? (skill ? skill.icon : '➕') : '🔒'}</span>
+                    ${cd > 0 ? `<div class="absolute inset-0 bg-black/80 rounded-2xl flex items-center justify-center text-xs font-bold text-amber-300">${cd.toFixed(1)}s</div>` : ''}
                 `;
-            } else if (!skill) {
-                slotEl.innerHTML = `
-                    <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-black/50 border border-amber-500/30 flex items-center justify-center relative cursor-pointer">
-                        <span class="text-xs text-amber-300 font-bold">Empty</span>
-                        <span class="absolute -top-2 -left-2 bg-amber-500 text-gray-950 font-black text-[9px] px-1.5 py-0.5 rounded-full">${i + 1}</span>
-                    </div>
-                    <span class="text-[9px] font-bold text-amber-200 mt-1">Slot ${i + 1}</span>
-                `;
-            } else {
-                slotEl.innerHTML = `
-                    <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gray-800/90 border-2 border-cyan-400 flex items-center justify-center relative cursor-pointer shadow-lg" onclick="castSkill(${i})">
-                        <span class="text-xl sm:text-2xl">${skill.icon}</span>
-                        <span class="absolute -top-2 -left-2 bg-cyan-400 text-gray-950 font-black text-[9px] px-1.5 py-0.5 rounded-full shadow">${i + 1}</span>
-                        ${cd > 0 ? `<div class="absolute inset-0 bg-black/75 rounded-2xl flex items-center justify-center text-xs font-bold text-cyan-300">${Math.ceil(cd)}s</div>` : ''}
-                    </div>
-                    <span class="text-[9px] font-bold text-cyan-300 mt-1">${skill.mana} MP</span>
-                `;
+                bar.appendChild(slotEl);
             }
-            slotsBar.appendChild(slotEl);
         }
 
-        // Stats summary
-        document.getElementById('statMaxHp').innerText = player.maxHp;
-        document.getElementById('statAtk').innerText = activeWep.dmg;
-        document.getElementById('statDef').innerText = `${player.defensePercent}%`;
-        document.getElementById('statSpd').innerText = Math.round(player.speed);
-        document.getElementById('statManaCap').innerText = player.maxMana;
-        document.getElementById('statUnlockedSlots').innerText = `${player.unlockedSlots.filter(Boolean).length} / 8`;
-        document.getElementById('shopCoins').innerText = player.coins;
-    }
+        // --- SANCTUARY SHOP & INVENTORY UI ---
+        function renderShopGrid(filter = 'all') {
+            const grid = document.getElementById('shopItemsGrid');
+            grid.innerHTML = '';
 
-    function togglePause() {
-        if (!gameStarted || isGameOver) return;
-        isPaused = !isPaused;
-        const overlay = document.getElementById('pauseOverlay');
+            const items = SHOP_ITEMS.filter(item => filter === 'all' || item.type === filter);
 
-        if (isPaused) {
-            document.getElementById('pauseHeroLevel').innerText = `Level ${player.level}`;
-            document.getElementById('pauseHeroXp').innerText = `${player.xp} / ${player.maxXp}`;
-            document.getElementById('pauseHeroCoins').innerText = player.coins;
-            document.getElementById('pauseWaveNum').innerText = `Wave ${waveNumber}`;
+            items.forEach(item => {
+                const rarity = RARITIES[item.rarity] || RARITIES.COMMON;
+                const card = document.createElement('div');
+                card.className = `glass-panel p-4 rounded-2xl border ${rarity.class} flex justify-between items-center gap-3`;
 
-            overlay.classList.remove('hidden');
-            document.getElementById('pauseIcon').innerText = '▶️';
-            document.getElementById('pauseText').innerText = 'RESUME';
-        } else {
-            overlay.classList.add('hidden');
-            document.getElementById('pauseIcon').innerText = '⏸️';
-            document.getElementById('pauseText').innerText = 'PAUSE';
-        }
-    }
-
-    function toggleMenu() {
-        if (!gameStarted) return;
-        isMenuOpen = !isMenuOpen;
-        const modal = document.getElementById('menuModal');
-        if (isMenuOpen) {
-            modal.classList.remove('hidden');
-            renderShopItems('all');
-            renderInventoryItems();
-        } else {
-            modal.classList.add('hidden');
-        }
-    }
-
-    function renderShopItems(filter = 'all') {
-        const grid = document.getElementById('shopItemsGrid');
-        grid.innerHTML = '';
-
-        Object.keys(ITEMS).forEach(key => {
-            const item = ITEMS[key];
-
-            if (filter !== 'all') {
-                if (filter === 'slots' && item.type !== 'slot') return;
-                if (filter === 'skill' && item.type !== 'skill') return;
-                if (filter === 'weapon' && item.type !== 'weapon') return;
-                if (filter === 'armor' && item.type !== 'armor') return;
-            }
-
-            const isSlot = item.type === 'slot';
-            const isUnlockedSlot = isSlot && player.unlockedSlots[item.slotIndex];
-            const isOwned = player.ownedItems.includes(key);
-            const rarity = RARITIES[item.rarity || 'common'];
-
-            const card = document.createElement('div');
-            card.className = `glass-panel p-3.5 rounded-2xl flex items-center justify-between border ${rarity ? rarity.class : 'border-white/10'}`;
-            card.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-3xl bg-black/50 p-2 rounded-xl border border-white/10">${item.icon}</span>
-                    <div>
-                        <h4 class="font-bold text-sm" style="color: ${rarity ? rarity.color : '#f59e0b'}">${item.name}</h4>
-                        <p class="text-[11px] text-gray-300 leading-tight mt-0.5">${item.desc}</p>
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">${item.icon}</span>
+                        <div>
+                            <h4 class="font-bold text-sm" style="color:${rarity.color}">${item.name}</h4>
+                            <p class="text-[11px] text-gray-300">${item.statText}</p>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    ${(isOwned || isUnlockedSlot)
-                        ? `<button class="px-3 py-1.5 rounded-xl bg-gray-800 text-gray-400 text-xs font-bold border border-white/5" disabled>Unlocked</button>`
-                        : `<button onclick="buyItem('${key}')" class="glass-btn px-3 py-1.5 rounded-xl text-amber-300 font-bold text-xs flex items-center gap-1">
-                             <span class="coin-icon"></span> ${item.cost}
-                           </button>`
-                    }
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    }
-
-    function buyItem(id) {
-        const item = ITEMS[id];
-        if (!item || player.coins < item.cost) return;
-
-        player.coins -= item.cost;
-        sfx.play('coin');
-
-        if (item.type === 'slot') {
-            player.unlockedSlots[item.slotIndex] = true;
-        } else {
-            if (!player.ownedItems.includes(id)) player.ownedItems.push(id);
-        }
-
-        recalculateStats();
-        renderShopItems();
-    }
-
-    // --- 4-SLOT ARMOR EQUIPMENT & INVENTORY MANAGEMENT ---
-    function renderInventoryItems() {
-        // Render 4-Slot Armor + Weapon Container
-        const eqContainer = document.getElementById('equippedSlotsContainer');
-        eqContainer.innerHTML = '';
-
-        const armorSlotsInfo = [
-            { key: 'head', label: 'Helmet', defaultIcon: '🪖' },
-            { key: 'chest', label: 'Chestplate', defaultIcon: '🛡️' },
-            { key: 'legs', label: 'Leggings', defaultIcon: '👖' },
-            { key: 'boots', label: 'Boots', defaultIcon: '🥾' },
-            { key: 'weapon', label: 'Weapon', defaultIcon: '⚔️' }
-        ];
-
-        armorSlotsInfo.forEach(s => {
-            const equippedId = player.equipped[s.key];
-            const item = equippedId ? ITEMS[equippedId] : null;
-
-            const slotCard = document.createElement('div');
-            slotCard.className = 'glass-panel p-2.5 rounded-2xl text-center flex flex-col items-center justify-between border border-amber-500/30';
-            slotCard.innerHTML = `
-                <span class="text-2xl">${item ? item.icon : s.defaultIcon}</span>
-                <div class="text-[10px] text-gray-400 uppercase font-bold mt-1">${s.label}</div>
-                <div class="text-xs font-bold text-amber-300">${item ? item.name : 'None'}</div>
-                ${(item && s.key !== 'weapon') ? `<button onclick="unequipArmor('${s.key}')" class="mt-1.5 w-full py-1 rounded bg-red-500/30 text-red-300 text-[10px] font-bold">Unequip</button>` : ''}
-            `;
-            eqContainer.appendChild(slotCard);
-        });
-
-        // Render 8 Skill Slots Configuration
-        const skillGrid = document.getElementById('inventorySkillsGrid');
-        skillGrid.innerHTML = '';
-
-        for (let i = 0; i < 8; i++) {
-            const isUnlocked = player.unlockedSlots[i];
-            const skillId = player.equippedSkills[i];
-            const skill = skillId ? ITEMS[skillId] : null;
-
-            const slotCard = document.createElement('div');
-            slotCard.className = `glass-panel p-2.5 rounded-2xl flex flex-col items-center justify-between text-center border ${isUnlocked ? 'border-cyan-500/30' : 'border-white/5 opacity-40'}`;
-            
-            if (!isUnlocked) {
-                slotCard.innerHTML = `<span class="text-xl">🔒</span><span class="text-[10px] text-gray-400">Slot ${i + 1} Locked</span>`;
-            } else {
-                slotCard.innerHTML = `
-                    <span class="text-2xl my-1">${skill ? skill.icon : '➕'}</span>
-                    <span class="text-xs font-bold text-cyan-300">Slot ${i + 1}</span>
-                    <span class="text-[10px] text-gray-300">${skill ? skill.name : 'Empty'}</span>
-                    ${skill ? `<button onclick="unequipSkill(${i})" class="mt-1 w-full py-1 rounded bg-red-500/30 text-red-300 text-[10px] font-bold">Unassign</button>` : ''}
+                    <button class="glass-btn px-4 py-2 rounded-xl font-bold text-xs text-amber-300 flex items-center gap-1 border-amber-500/40" onclick="buyShopItem('${item.id}')">
+                        <span class="coin-icon"></span> ${item.cost}
+                    </button>
                 `;
-            }
-            skillGrid.appendChild(slotCard);
+                grid.appendChild(card);
+            });
+
+            document.getElementById('shopCoins').innerText = state.coins;
         }
 
-        // Render Owned Items
-        const ownedGrid = document.getElementById('inventoryOwnedGrid');
-        ownedGrid.innerHTML = '';
-
-        player.ownedItems.forEach(id => {
-            const item = ITEMS[id];
+        window.buyShopItem = function(itemId) {
+            const item = SHOP_ITEMS.find(i => i.id === itemId);
             if (!item) return;
 
-            const rarity = RARITIES[item.rarity || 'common'];
-            const card = document.createElement('div');
-            card.className = `glass-panel p-3 rounded-2xl flex flex-col items-center text-center border ${rarity.class}`;
-
-            let equipBtnHTML = '';
-            if (item.type === 'armor') {
-                const isEq = player.equipped[item.slot] === id;
-                equipBtnHTML = `<button onclick="equipArmor('${id}')" class="mt-2 w-full py-1 rounded text-xs font-bold ${isEq ? 'bg-amber-500 text-gray-950' : 'glass-btn'}">${isEq ? 'Equipped' : 'Equip'}</button>`;
-            } else if (item.type === 'weapon') {
-                const isEq = player.equipped.weapon === id;
-                equipBtnHTML = `<button onclick="equipWeapon('${id}')" class="mt-2 w-full py-1 rounded text-xs font-bold ${isEq ? 'bg-amber-500 text-gray-950' : 'glass-btn'}">${isEq ? 'Equipped' : 'Equip'}</button>`;
-            } else if (item.type === 'skill') {
-                equipBtnHTML = `
-                    <select onchange="assignSkillToSlot('${id}', this.value)" class="mt-2 w-full bg-black/60 border border-cyan-500/40 text-cyan-300 text-xs rounded p-1">
-                        <option value="">Assign Slot...</option>
-                        ${player.unlockedSlots.map((unlocked, idx) => unlocked ? `<option value="${idx}">Slot ${idx + 1}</option>` : '').join('')}
-                    </select>
-                `;
+            if (state.coins < item.cost) {
+                alert('⚠️ Not enough Gold Coins!');
+                return;
             }
 
-            card.innerHTML = `
-                <span class="text-3xl my-1">${item.icon}</span>
-                <span class="text-xs font-bold" style="color:${rarity.color}">${item.name}</span>
-                ${equipBtnHTML}
-            `;
-            ownedGrid.appendChild(card);
-        });
-    }
+            if (item.type === 'slots') {
+                if (state.unlockedSlots >= 8) {
+                    alert('⚠️ All 8 Skill Slots are already unlocked!');
+                    return;
+                }
+                state.coins -= item.cost;
+                state.unlockedSlots++;
+                alert(`🎉 Unlocked Skill Slot ${state.unlockedSlots}!`);
+            } else {
+                state.coins -= item.cost;
+                state.inventory.push({ ...item, uid: Date.now() + Math.random() });
+                alert(`🎒 Acquired ${item.name}!`);
+            }
 
-    function equipArmor(id) {
-        const item = ITEMS[id];
-        if (item && item.type === 'armor') {
-            player.equipped[item.slot] = id;
             recalculateStats();
-            renderInventoryItems();
-        }
-    }
+            renderShopGrid();
+            renderInventoryUI();
+        };
 
-    function unequipArmor(slotKey) {
-        player.equipped[slotKey] = null;
-        recalculateStats();
-        renderInventoryItems();
-    }
+        function renderInventoryUI() {
+            // Render Stats
+            document.getElementById('statMaxHp').innerText = state.player.maxHp;
+            document.getElementById('statAtk').innerText = state.player.calculatedAtk;
+            document.getElementById('statDef').innerText = `${state.player.defPercent}%`;
+            document.getElementById('statSpd').innerText = state.player.speed;
+            document.getElementById('statManaCap').innerText = state.player.maxMana;
+            document.getElementById('statUnlockedSlots').innerText = `${state.unlockedSlots} / 8`;
 
-    function equipWeapon(id) {
-        player.equipped.weapon = id;
-        recalculateStats();
-        renderInventoryItems();
-    }
+            // Render Equipment Slots
+            const equipContainer = document.getElementById('equippedSlotsContainer');
+            equipContainer.innerHTML = '';
 
-    function assignSkillToSlot(skillId, slotIndexStr) {
-        if (slotIndexStr === '') return;
-        const index = parseInt(slotIndexStr);
-        player.equippedSkills[index] = skillId;
-        recalculateStats();
-        renderInventoryItems();
-    }
+            const slots = [
+                { key: 'head', title: 'Headwear', defaultIcon: '🪖' },
+                { key: 'chest', title: 'Chestplate', defaultIcon: '👕' },
+                { key: 'legs', title: 'Leggings', defaultIcon: '👖' },
+                { key: 'boots', title: 'Boots', defaultIcon: '🥾' },
+                { key: 'weapon', title: 'Weapon', defaultIcon: '⚔️' }
+            ];
 
-    function unequipSkill(index) {
-        player.equippedSkills[index] = null;
-        recalculateStats();
-        renderInventoryItems();
-    }
+            slots.forEach(s => {
+                const item = state.equipped[s.key];
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-3 rounded-2xl text-center border border-white/10 space-y-1';
 
-    // Modal Filters & Tabs Wire-up
-    document.querySelectorAll('.shop-filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.shop-filter-btn').forEach(b => {
-                b.classList.remove('bg-amber-500', 'text-gray-950');
-                b.classList.add('glass-btn', 'text-gray-300');
+                card.innerHTML = `
+                    <div class="text-[10px] text-gray-400 font-bold uppercase">${s.title}</div>
+                    <div class="text-3xl py-1">${item ? item.icon : s.defaultIcon}</div>
+                    <div class="text-[11px] font-bold ${item ? 'text-amber-300' : 'text-gray-500'}">${item ? item.name : 'Empty'}</div>
+                    ${item ? `<button class="text-[10px] text-red-400 underline font-semibold mt-1" onclick="unequipItem('${s.key}')">Unequip</button>` : ''}
+                `;
+                equipContainer.appendChild(card);
             });
-            btn.classList.add('bg-amber-500', 'text-gray-950');
-            btn.classList.remove('glass-btn', 'text-gray-300');
-            renderShopItems(btn.getAttribute('data-filter'));
+
+            // Render Owned Items Grid
+            const ownedGrid = document.getElementById('inventoryOwnedGrid');
+            ownedGrid.innerHTML = '';
+
+            state.inventory.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-3 rounded-2xl border border-white/10 flex flex-col justify-between text-center space-y-2';
+
+                card.innerHTML = `
+                    <div class="text-2xl">${item.icon}</div>
+                    <div class="text-xs font-bold text-amber-300">${item.name}</div>
+                    <button class="glass-btn py-1 px-2 rounded-xl text-[10px] font-bold text-emerald-300 border-emerald-500/30" onclick="equipItem('${item.uid}')">
+                        EQUIP
+                    </button>
+                `;
+                ownedGrid.appendChild(card);
+            });
+        }
+
+        window.equipItem = function(uid) {
+            const idx = state.inventory.findIndex(i => i.uid == uid);
+            if (idx === -1) return;
+            const item = state.inventory[idx];
+
+            if (item.type === 'armor' || item.type === 'weapon') {
+                const slotKey = item.slot;
+                if (state.equipped[slotKey]) {
+                    state.inventory.push(state.equipped[slotKey]);
+                }
+                state.equipped[slotKey] = item;
+                state.inventory.splice(idx, 1);
+            } else if (item.type === 'skill') {
+                if (state.unlockedSlots === 0) {
+                    alert('⚠️ Unlock a Skill Slot in the Shop first!');
+                    return;
+                }
+                // Equip into first empty slot
+                let placed = false;
+                for (let i = 0; i < state.unlockedSlots; i++) {
+                    if (!state.equippedSkills[i]) {
+                        state.equippedSkills[i] = item;
+                        placed = true;
+                        break;
+                    }
+                }
+                if (!placed) state.equippedSkills[0] = item; // Overwrite first
+            }
+
+            recalculateStats();
+            renderInventoryUI();
+        };
+
+        window.unequipItem = function(slotKey) {
+            if (state.equipped[slotKey]) {
+                state.inventory.push(state.equipped[slotKey]);
+                state.equipped[slotKey] = null;
+                recalculateStats();
+                renderInventoryUI();
+            }
+        };
+
+        // --- BUTTON BINDINGS & CONTROLS ---
+        function togglePause() {
+            state.paused = !state.paused;
+            const modal = document.getElementById('pauseOverlay');
+            if (state.paused) {
+                modal.classList.remove('hidden');
+                document.getElementById('pauseHeroLevel').innerText = `Level ${state.level}`;
+                document.getElementById('pauseHeroXp').innerText = `${state.xp} / ${state.xpToNextLevel}`;
+                document.getElementById('pauseHeroCoins').innerText = state.coins;
+                document.getElementById('pauseWaveNum').innerText = `Wave ${state.wave}`;
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('btnPlayGame').addEventListener('click', () => {
+            initAudio();
+            document.getElementById('startScreenModal').classList.add('hidden');
+            state.gameStarted = true;
+            recalculateStats();
+            startWave(1);
         });
-    });
 
-    document.querySelectorAll('.menu-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
+        document.getElementById('btnResumeGame').addEventListener('click', togglePause);
 
-            btn.classList.add('active', 'bg-amber-500', 'text-gray-950');
-            const tabId = btn.getAttribute('data-tab');
-            document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.remove('hidden');
-
-            if (tabId === 'shop') renderShopItems();
-            if (tabId === 'inventory') renderInventoryItems();
+        document.getElementById('btnNextWave').addEventListener('click', () => {
+            startWave(state.wave + 1);
         });
-    });
 
-    // Event Wireup
-    document.getElementById('btnPlayGame').addEventListener('click', () => {
-        gameStarted = true;
-        document.getElementById('startScreenModal').classList.add('hidden');
-        initGame();
-    });
+        document.getElementById('btnOpenMenu').addEventListener('click', () => {
+            document.getElementById('menuModal').classList.remove('hidden');
+            renderShopGrid();
+            renderInventoryUI();
+        });
 
-    document.getElementById('btnSkipToBoss').addEventListener('click', () => {
-        gameStarted = true;
-        document.getElementById('startScreenModal').classList.add('hidden');
-        initGame();
-        waveNumber = 4400;
-        spawnWave();
-    });
+        document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
+            document.getElementById('menuModal').classList.remove('hidden');
+            renderShopGrid();
+            renderInventoryUI();
+        });
 
-    document.getElementById('btnNextWave').addEventListener('click', () => {
-        waveNumber++;
-        spawnWave();
-    });
+        document.getElementById('btnCloseMenu').addEventListener('click', () => {
+            document.getElementById('menuModal').classList.add('hidden');
+        });
 
-    document.getElementById('btnIntermissionMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
-    document.getElementById('btnResumeGame').addEventListener('click', togglePause);
-    document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
-    document.getElementById('btnRestart').addEventListener('click', initGame);
+        // Tab Switches in Menu Modal
+        document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
+                e.target.classList.add('active', 'bg-amber-500', 'text-gray-950');
 
-    // Victory Screen Buttons
-    document.getElementById('btnSaveCertificate').addEventListener('click', () => {
-        const name = document.getElementById('heroNameInput').value || 'Mythic Champion';
-        document.getElementById('certHeroName').innerText = name;
-        document.getElementById('hudName').innerText = name;
-        document.getElementById('certificateContainer').classList.remove('hidden');
-    });
+                const tab = e.target.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
 
-    document.getElementById('btnPlayAgain').addEventListener('click', initGame);
+                if (tab === 'shop') {
+                    document.getElementById('tabShop').classList.remove('hidden');
+                    renderShopGrid();
+                } else if (tab === 'inventory') {
+                    document.getElementById('tabInventory').classList.remove('hidden');
+                    renderInventoryUI();
+                } else if (tab === 'howTo') {
+                    document.getElementById('tabHowTo').classList.remove('hidden');
+                }
+            });
+        });
 
-    // Start Engine
-    window.onload = () => {
+        // HIDDEN SECRET SIGN 'Θ' BUTTON TRIGGER
+        document.getElementById('btnSecretUltraWave').addEventListener('click', () => {
+            document.getElementById('victoryModal').classList.add('hidden');
+            alert('👁️ ANCIENT UNKNOWN AWAKENED! ENTERING ULTRA NIGHTMARE MODE...');
+            setupSecretUltraWave();
+        });
+
+        document.getElementById('btnSaveHeroName').addEventListener('click', () => {
+            const name = document.getElementById('heroNameInput').value.trim();
+            if (name) {
+                document.getElementById('hudName').innerText = name;
+                alert(`✨ Legacy Registered for Mythic Champion: ${name}!`);
+            }
+        });
+
+        // Start Loop
         requestAnimationFrame(gameLoop);
-    };
     </script>
 </body>
 </html>
