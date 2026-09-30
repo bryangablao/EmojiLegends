@@ -2390,35 +2390,37 @@ desc:'+300 HP, +30% Def, +150 Speed'
         });
     });
 
-    document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+document.querySelectorAll('.menu-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500/20', 'text-amber-300'));
-            btn.classList.add('active', 'bg-amber-500/20', 'text-amber-300');
+            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.remove('active', 'bg-amber-500', 'text-gray-950'));
+            btn.classList.add('active', 'bg-amber-500', 'text-gray-950');
 
-            const tab = btn.getAttribute('data-tab');
+            const tabName = btn.getAttribute('data-tab');
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
 
-            if (tab === 'shop') {
+            if (tabName === 'shop') {
                 document.getElementById('tabShop').classList.remove('hidden');
                 renderShopItems('all');
-            } else if (tab === 'inventory') {
+            } else if (tabName === 'inventory') {
                 document.getElementById('tabInventory').classList.remove('hidden');
                 renderInventoryItems();
-            } else if (tab === 'howTo') {
+            } else if (tabName === 'howTo') {
                 document.getElementById('tabHowTo').classList.remove('hidden');
             }
         });
     });
 
-    // Event Listeners for UI Buttons
+    // --- BUTTON EVENT LISTENERS ---
     document.getElementById('btnPlayGame').addEventListener('click', () => {
         document.getElementById('startScreenModal').classList.add('hidden');
         gameStarted = true;
         initGame();
+        requestAnimationFrame(gameLoop);
     });
 
     document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
     document.getElementById('btnResumeGame').addEventListener('click', togglePause);
+
     document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
     document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
 
@@ -2437,17 +2439,14 @@ desc:'+300 HP, +30% Def, +150 Speed'
     });
 
     document.getElementById('btnSaveCertificate').addEventListener('click', () => {
-        const name = document.getElementById('heroNameInput').value.trim() || 'Mythic Champion';
-        document.getElementById('certHeroName').innerText = name;
+        const inputName = document.getElementById('heroNameInput').value.trim() || 'Mythic Champion';
+        document.getElementById('certHeroName').innerText = inputName;
         document.getElementById('certificateContainer').classList.remove('hidden');
     });
 
     document.getElementById('btnPlayAgain').addEventListener('click', () => {
         initGame();
     });
-
-    // Start Animation Loop
-    requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
