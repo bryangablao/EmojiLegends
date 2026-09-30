@@ -2179,18 +2179,29 @@ desc:'+300 HP, +30% Def, +150 Speed'
         }
     }
 
-    function toggleMenu() {
-        if (!gameStarted) return;
-        isMenuOpen = !isMenuOpen;
-        const modal = document.getElementById('menuModal');
-        if (isMenuOpen) {
-            modal.classList.remove('hidden');
-            renderShopItems('all');
-            renderInventoryItems();
-        } else {
-            modal.classList.add('hidden');
+function toggleMenu() {
+    if (!gameStarted || isGameOver) return;
+
+    isMenuOpen = !isMenuOpen;
+
+    const modal = document.getElementById('menuModal');
+
+    if (isMenuOpen) {
+        modal.classList.remove('hidden');
+
+        renderShopItems('all');
+        renderInventoryItems();
+
+    } else {
+        modal.classList.add('hidden');
+
+        // Re-show the wave-clear message after closing the menu
+        // if the player is still between waves.
+        if (isIntermission) {
+            document.getElementById('intermissionModal').classList.remove('hidden');
         }
     }
+}
 
     function renderShopItems(filter = 'all') {
         const grid = document.getElementById('shopItemsGrid');
@@ -2422,10 +2433,10 @@ desc:'+300 HP, +30% Def, +150 Speed'
     document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
     document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
 
-    document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
-        document.getElementById('intermissionModal').classList.add('hidden');
-        toggleMenu();
-    });
+document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
+    document.getElementById('intermissionModal').classList.add('hidden');
+    toggleMenu();
+});
 
     document.getElementById('btnNextWave').addEventListener('click', () => {
         waveNumber++;
