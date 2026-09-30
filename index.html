@@ -1449,8 +1449,17 @@ desc:'+300 HP, +30% Def, +150 Speed'
     const player = {
         x: 0, y: 0,
         radius: 26,
-        hp: 100, maxHp: 100,
-        mana: 50, maxMana: 50, baseManaCapacity: 50,
+
+        hp: 100,
+        maxHp: 100,
+
+        stunTimer: 0,
+        poisonTimer: 0,
+        poisonDps: 0,
+        poisonTickTimer: 0,
+
+        mana: 50,
+        maxMana: 50, baseManaCapacity: 50,
         manaRegenRate: 8,
         coins: 0, xp: 0, maxXp: 100, level: 1,
         baseSpeed: 240, speed: 240,
@@ -1506,6 +1515,17 @@ desc:'+300 HP, +30% Def, +150 Speed'
     }
 
     function initGame() {
+
+        enemies = [];
+        projectiles = [];
+        particles = [];
+        floatingTexts = [];
+        coinsList = [];
+
+        player.stunTimer = 0;
+        player.poisonTimer = 0;
+        player.poisonDps = 0;
+        player.poisonTickTimer = 0;
         player.x = 0; player.y = 0;
         player.level = 1; player.xp = 0; player.maxXp = 100;
         player.coins = 0;
@@ -1536,6 +1556,193 @@ desc:'+300 HP, +30% Def, +150 Speed'
         spawnWave();
     }
 
+    // ============================================================
+// MYTHIC BOSS DATABASE
+// Every 10th wave gets ONE unique boss ability.
+// ============================================================
+
+const MYTHIC_BOSSES = [
+    {
+        name: 'Inferno Tyrant',
+        icon: '👹',
+        color: '#ef4444',
+        ability: 'fire',
+        abilityName: 'INFERNO BARRAGE',
+        warning: '🔥 INFERNO TYRANT AWAKENS! — SIMULTANEOUS FIRE!',
+        hpMult: 7.0,
+        speedMult: 1.0,
+        dmgMult: 2.2,
+        cooldown: 5.0
+    },
+
+    {
+        name: 'Void Reaper',
+        icon: '☠️',
+        color: '#a855f7',
+        ability: 'stun',
+        abilityName: 'VOID STUN',
+        warning: '☠️ VOID REAPER AWAKENS! — PREPARE FOR STUN!',
+        hpMult: 7.5,
+        speedMult: 1.0,
+        dmgMult: 2.4,
+        cooldown: 6.0
+    },
+
+    {
+        name: 'Chrono Beast',
+        icon: '🐲',
+        color: '#06b6d4',
+        ability: 'speed',
+        abilityName: 'CHRONO RUSH',
+        warning: '🐲 CHRONO BEAST AWAKENS! — IT IS MOVING TOO FAST!',
+        hpMult: 6.5,
+        speedMult: 1.0,
+        dmgMult: 2.0,
+        cooldown: 7.0
+    },
+
+    {
+        name: 'Plague Monarch',
+        icon: '🦠',
+        color: '#22c55e',
+        ability: 'summon',
+        abilityName: 'PLAGUE SUMMON',
+        warning: '🦠 PLAGUE MONARCH AWAKENS! — MINIONS ARE COMING!',
+        hpMult: 8.0,
+        speedMult: 0.9,
+        dmgMult: 2.3,
+        cooldown: 8.0
+    },
+
+    {
+        name: 'Solar Colossus',
+        icon: '😈',
+        color: '#facc15',
+        ability: 'superblast',
+        abilityName: 'SOLAR APOCALYPSE',
+        warning: '☀️ SOLAR COLOSSUS AWAKENS! — MASSIVE BLAST INCOMING!',
+        hpMult: 9.0,
+        speedMult: 0.8,
+        dmgMult: 3.0,
+        cooldown: 10.0
+    },
+
+    {
+        name: 'Rift Walker',
+        icon: '👾',
+        color: '#8b5cf6',
+        ability: 'teleport',
+        abilityName: 'RIFT TELEPORT',
+        warning: '🌀 RIFT WALKER AWAKENS! — IT CAN TELEPORT!',
+        hpMult: 7.5,
+        speedMult: 1.0,
+        dmgMult: 2.5,
+        cooldown: 6.0
+    },
+
+    {
+        name: 'Crimson Hydra',
+        icon: '🐉',
+        color: '#dc2626',
+        ability: 'firestorm',
+        abilityName: 'CRIMSON FIRESTORM',
+        warning: '🐉 CRIMSON HYDRA AWAKENS! — FIRE FROM EVERY DIRECTION!',
+        hpMult: 8.5,
+        speedMult: 0.9,
+        dmgMult: 2.7,
+        cooldown: 7.0
+    },
+
+    {
+        name: 'Eternal Warden',
+        icon: '🧿',
+        color: '#10b981',
+        ability: 'heal',
+        abilityName: 'ETERNAL REGENERATION',
+        warning: '🧿 ETERNAL WARDEN AWAKENS! — IT CAN HEAL!',
+        hpMult: 10.0,
+        speedMult: 0.75,
+        dmgMult: 2.2,
+        cooldown: 9.0
+    },
+
+    {
+        name: 'Abyss Emperor',
+        icon: '😡',
+        color: '#7c3aed',
+        ability: 'line',
+        abilityName: 'ABYSSAL LINE',
+        warning: '😡 ABYSS EMPEROR AWAKENS! — DEADLY LINE ATTACK!',
+        hpMult: 8.5,
+        speedMult: 1.0,
+        dmgMult: 2.8,
+        cooldown: 5.5
+    },
+
+    {
+        name: 'World Devourer',
+        icon: '🌋',
+        color: '#f97316',
+        ability: 'massive',
+        abilityName: 'WORLD DEVOURER',
+        warning: '🌋 WORLD DEVOURER AWAKENS! — RUN FROM THE APOCALYPSE!',
+        hpMult: 12.0,
+        speedMult: 0.7,
+        dmgMult: 3.5,
+        cooldown: 12.0
+    }
+];
+
+    // ============================================================
+// PARTICLE HELPERS
+// ============================================================
+
+function burstParticles(x, y, color, count = 20, force = 120, size = 5) {
+
+    for (let i = 0; i < count; i++) {
+
+        const angle = Math.random() * Math.PI * 2;
+        const speed = force * (0.35 + Math.random() * 0.65);
+
+        particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0.5 + Math.random() * 0.5,
+            maxLife: 1.0,
+            color,
+            size: size * (0.6 + Math.random() * 0.8)
+        });
+    }
+}
+
+
+function lineParticles(x1, y1, x2, y2, color, count = 18) {
+
+    for (let i = 0; i < count; i++) {
+
+        const t = Math.random();
+
+        const x = x1 + (x2 - x1) * t;
+        const y = y1 + (y2 - y1) * t;
+
+        const angle = Math.random() * Math.PI * 2;
+
+        particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * 40,
+            vy: Math.sin(angle) * 40,
+            life: 0.25 + Math.random() * 0.25,
+            maxLife: 0.5,
+            color,
+            size: 3 + Math.random() * 4
+        });
+    }
+}
+        
+        
     // --- DYNAMIC WAVE SCALING & APEX BOSSES ---
     function spawnWave() {
         isIntermission = false;
@@ -1571,34 +1778,725 @@ desc:'+300 HP, +30% Def, +150 Speed'
             return;
         }
 
-        // Standard Dynamic Wave Scaling
-        const isBossWave = (waveNumber % 5 === 0);
-        const count = 8 + Math.floor(waveNumber * 2.5);
-        const hpScale = 1 + waveNumber * 0.25;
-        const dmgScale = 1 + waveNumber * 0.15;
-        const speedScale = Math.min(220, 90 + waveNumber * 2);
+// ============================================================
+// STANDARD WAVES + EVERY 10TH WAVE MYTHIC BOSS
+// ============================================================
 
-        document.getElementById('hudWaveText').innerText = `Wave ${waveNumber}: Dark Swarm`;
-        document.getElementById('hudWaveIcon').innerText = '💀';
+const isBossWave = (waveNumber % 10 === 0);
 
-        for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 550 + Math.random() * 400;
-            const isRanged = Math.random() < 0.4;
+// ------------------------------------------------------------
+// MYTHIC BOSS WAVE
+// ------------------------------------------------------------
+
+if (isBossWave) {
+
+    const bossIndex =
+        (Math.floor(waveNumber / 10) - 1) % MYTHIC_BOSSES.length;
+
+    const bossData = MYTHIC_BOSSES[bossIndex];
+
+    const waveScale = 1 + waveNumber * 0.035;
+
+    const bossHp =
+        Math.round(1200 * bossData.hpMult * waveScale);
+
+    const bossDmg =
+        Math.round(25 * bossData.dmgMult * waveScale);
+
+    const bossSpeed =
+        75 * bossData.speedMult +
+        Math.min(80, waveNumber * 0.15);
+
+    const boss = {
+        x: player.x + 650,
+        y: player.y,
+
+        type: 'mythicBoss',
+
+        name: bossData.name,
+        icon: bossData.icon,
+        color: bossData.color,
+
+        hp: bossHp,
+        maxHp: bossHp,
+
+        speed: bossSpeed,
+        dmg: bossDmg,
+
+        coinVal: 150 + waveNumber * 5,
+
+        size: 65,
+
+        isBoss: true,
+
+        bossAbility: bossData.ability,
+        bossAbilityName: bossData.abilityName,
+
+        abilityCooldown: bossData.cooldown,
+        abilityTimer: 2.5,
+
+        hitTimer: 0,
+        speedBurstTimer: 0
+    };
+
+    enemies.push(boss);
+
+    sfx.play('boss');
+    screenShake = 18;
+
+    document.getElementById('hudWaveText').innerText =
+        `WAVE ${waveNumber}: ${bossData.name}`;
+
+    document.getElementById('hudWaveIcon').innerText =
+        bossData.icon;
+
+    // BIG WARNING
+bossWarning(
+    `⚠️ ${bossData.warning}`,
+    bossData.color
+);
+
+    // Boss entrance explosion
+    burstParticles(
+        boss.x,
+        boss.y,
+        bossData.color,
+        55,
+        260,
+        8
+    );
+
+    return;
+}
+
+
+// ------------------------------------------------------------
+// NORMAL WAVE
+// ------------------------------------------------------------
+
+const count = 8 + Math.floor(waveNumber * 2.5);
+
+const hpScale = 1 + waveNumber * 0.25;
+const dmgScale = 1 + waveNumber * 0.15;
+const speedScale = Math.min(220, 90 + waveNumber * 2);
+
+document.getElementById('hudWaveText').innerText =
+    `Wave ${waveNumber}: Dark Swarm`;
+
+document.getElementById('hudWaveIcon').innerText = '💀';
+
+
+for (let i = 0; i < count; i++) {
+
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 550 + Math.random() * 400;
+
+    // FOUR MINION TYPES
+    const minionRoll = Math.random();
+
+    let minion;
+
+
+    // --------------------------------------------------------
+    // 1. MELEE GOBLIN
+    // --------------------------------------------------------
+
+    if (minionRoll < 0.25) {
+
+        minion = {
+            type: 'goblin',
+            icon: '👺',
+            color: '#16a34a',
+
+            ranged: false,
+            minionType: 'melee',
+
+            hp: Math.round(40 * hpScale),
+            maxHp: Math.round(40 * hpScale),
+
+            speed: speedScale,
+            dmg: Math.round(10 * dmgScale),
+
+            coinVal: 10 + waveNumber,
+            size: 24,
+
+            isBoss: false,
+
+            hitTimer: 0
+        };
+
+    }
+
+
+    // --------------------------------------------------------
+    // 2. RANGED SKELETON
+    // --------------------------------------------------------
+
+    else if (minionRoll < 0.50) {
+
+        minion = {
+            type: 'skeleton',
+            icon: '💀',
+            color: '#94a3b8',
+
+            ranged: true,
+            minionType: 'ranged',
+
+            hp: Math.round(40 * hpScale),
+            maxHp: Math.round(40 * hpScale),
+
+            speed: speedScale * 0.85,
+            dmg: Math.round(10 * dmgScale),
+
+            coinVal: 12 + waveNumber,
+            size: 24,
+
+            isBoss: false,
+
+            spellIcon: '🏹',
+
+            shootTimer: Math.random() * 2,
+
+            hitTimer: 0
+        };
+
+    }
+
+
+    // --------------------------------------------------------
+    // 3. VENOM CRAWLER
+    // Straight projectile + poison damage
+    // --------------------------------------------------------
+
+    else if (minionRoll < 0.75) {
+
+        minion = {
+            type: 'venom',
+            icon: '🦂',
+            color: '#22c55e',
+
+            ranged: true,
+            minionType: 'poison',
+
+            hp: Math.round(45 * hpScale),
+            maxHp: Math.round(45 * hpScale),
+
+            speed: speedScale * 0.7,
+            dmg: Math.round(5 * dmgScale),
+
+            coinVal: 15 + waveNumber,
+            size: 25,
+
+            isBoss: false,
+
+            shootTimer: Math.random() * 2,
+
+            poisonDuration: 1.8,
+            poisonDps: Math.max(2, Math.round(5 * dmgScale)),
+
+            hitTimer: 0
+        };
+
+    }
+
+
+    // --------------------------------------------------------
+    // 4. BEAM WRAITH
+    // Straight continuous beam
+    // --------------------------------------------------------
+
+    else {
+
+        minion = {
+            type: 'beamWraith',
+            icon: '👁️',
+            color: '#06b6d4',
+
+            ranged: true,
+            minionType: 'beam',
+
+            hp: Math.round(50 * hpScale),
+            maxHp: Math.round(50 * hpScale),
+
+            speed: speedScale * 0.55,
+            dmg: Math.round(4 * dmgScale),
+
+            coinVal: 18 + waveNumber,
+            size: 26,
+
+            isBoss: false,
+
+            beamTimer: Math.random() * 2,
+            beamCooldown: 3.5,
+
+            hitTimer: 0
+        };
+    }
+
+
+    minion.x = player.x + Math.cos(angle) * dist;
+    minion.y = player.y + Math.sin(angle) * dist;
+
+    enemies.push(minion);
+}
+    }
+
+// ============================================================
+// MYTHIC BOSS SPECIAL ABILITIES
+// ============================================================
+
+function useMythicBossAbility(e) {
+
+    const angle =
+        Math.atan2(player.y - e.y, player.x - e.x);
+
+    e.abilityTimer = e.abilityCooldown;
+
+    // ========================================================
+    // 1. FAST MOVEMENT
+    // ========================================================
+
+    if (e.bossAbility === 'speed') {
+
+        e.speedBurstTimer = 2.5;
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '⚡ CHRONO RUSH!',
+            '#22d3ee'
+        );
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#22d3ee',
+            45,
+            300,
+            6
+        );
+
+        screenShake = 8;
+    }
+
+
+    // ========================================================
+    // 2. SUMMON MINIONS
+    // ========================================================
+
+    else if (e.bossAbility === 'summon') {
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '🦠 PLAGUE SUMMON!',
+            '#22c55e'
+        );
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#22c55e',
+            50,
+            220,
+            7
+        );
+
+        for (let i = 0; i < 4; i++) {
+
+            const a =
+                (Math.PI * 2 / 4) * i;
+
+            const x =
+                e.x + Math.cos(a) * 100;
+
+            const y =
+                e.y + Math.sin(a) * 100;
 
             enemies.push({
-                x: player.x + Math.cos(angle) * dist, y: player.y + Math.sin(angle) * dist,
-                type: isRanged ? 'skeleton' : 'goblin',
-                icon: isRanged ? '💀' : '👺',
-                color: isRanged ? '#94a3b8' : '#16a34a',
-                hp: Math.round(40 * hpScale), maxHp: Math.round(40 * hpScale),
-                speed: speedScale, dmg: Math.round(10 * dmgScale), coinVal: 10 + waveNumber,
-                size: 24, isBoss: false, ranged: isRanged, spellIcon: '🏹',
-                shootTimer: Math.random() * 2.0, hitTimer: 0
+                x,
+                y,
+
+                type: 'venom',
+                icon: '🦂',
+                color: '#22c55e',
+
+                hp: Math.round(e.maxHp * 0.035),
+                maxHp: Math.round(e.maxHp * 0.035),
+
+                speed: e.speed * 1.15,
+                dmg: Math.round(e.dmg * 0.35),
+
+                coinVal: 15,
+                size: 23,
+
+                isBoss: false,
+
+                ranged: true,
+                minionType: 'poison',
+
+                shootTimer: 0.5,
+
+                poisonDuration: 1.5,
+                poisonDps: Math.max(2, Math.round(e.dmg * 0.08)),
+
+                hitTimer: 0
             });
+
+            burstParticles(
+                x,
+                y,
+                '#84cc16',
+                18,
+                120,
+                4
+            );
         }
     }
 
+
+    // ========================================================
+    // 3. STRAIGHT LINE DAMAGE
+    // ========================================================
+
+    else if (e.bossAbility === 'line') {
+
+        const length = 850;
+
+        const endX =
+            e.x + Math.cos(angle) * length;
+
+        const endY =
+            e.y + Math.sin(angle) * length;
+
+        projectiles.push({
+            x: e.x,
+            y: e.y,
+
+            vx: 0,
+            vy: 0,
+
+            dmg: e.dmg * 1.8,
+
+            icon: '⚡',
+            color: '#a855f7',
+
+            life: 0.65,
+            radius: 18,
+
+            isPlayer: false,
+
+            kind: 'bossLine',
+
+            x2: endX,
+            y2: endY,
+
+            lineWidth: 34
+        });
+
+        lineParticles(
+            e.x,
+            e.y,
+            endX,
+            endY,
+            '#c084fc',
+            55
+        );
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '🟣 ABYSSAL LINE!',
+            '#c084fc'
+        );
+
+        screenShake = 12;
+    }
+
+
+    // ========================================================
+    // 4. STUN
+    // ========================================================
+
+    else if (e.bossAbility === 'stun') {
+
+        const stunRange = 550;
+
+        if (distBetween(e, player) <= stunRange) {
+
+            player.stunTimer = 2.2;
+
+            spawnFloatingText(
+                player.x,
+                player.y - 55,
+                '💫 STUNNED!',
+                '#c084fc'
+            );
+
+            burstParticles(
+                player.x,
+                player.y,
+                '#a855f7',
+                40,
+                160,
+                6
+            );
+
+            screenShake = 14;
+        }
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '☠️ VOID STUN!',
+            '#a855f7'
+        );
+    }
+
+
+    // ========================================================
+    // 5. MASSIVE EMOJI BLAST
+    // ========================================================
+
+    else if (e.bossAbility === 'superblast') {
+
+        const massiveDamage =
+            e.dmg * 8;
+
+        projectiles.push({
+            x: e.x,
+            y: e.y,
+
+            vx: 0,
+            vy: 0,
+
+            dmg: massiveDamage,
+
+            icon: '☀️',
+            color: '#facc15',
+
+            life: 1.0,
+            radius: 55,
+
+            isPlayer: false,
+
+            kind: 'massiveBlast',
+
+            explosionRadius: 260
+        });
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#facc15',
+            100,
+            420,
+            10
+        );
+
+        spawnFloatingText(
+            e.x,
+            e.y - 110,
+            '☀️ SOLAR APOCALYPSE!',
+            '#fde047'
+        );
+
+        screenShake = 30;
+    }
+
+
+    // ========================================================
+    // 6. TELEPORT CLOSE TO HERO
+    // ========================================================
+
+    else if (e.bossAbility === 'teleport') {
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#8b5cf6',
+            35,
+            180,
+            7
+        );
+
+        e.x =
+            player.x +
+            (Math.random() - 0.5) * 100;
+
+        e.y =
+            player.y +
+            (Math.random() - 0.5) * 100;
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#c084fc',
+            50,
+            240,
+            8
+        );
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '🌀 RIFT TELEPORT!',
+            '#c084fc'
+        );
+
+        screenShake = 15;
+    }
+
+
+    // ========================================================
+    // 7. FIRE SIMULTANEOUSLY
+    // ========================================================
+
+    else if (
+        e.bossAbility === 'fire' ||
+        e.bossAbility === 'firestorm'
+    ) {
+
+        const count =
+            e.bossAbility === 'fire' ? 12 : 20;
+
+        for (let i = 0; i < count; i++) {
+
+            const fireAngle =
+                (Math.PI * 2 / count) * i;
+
+            projectiles.push({
+                x: e.x,
+                y: e.y,
+
+                vx: Math.cos(fireAngle) * 380,
+                vy: Math.sin(fireAngle) * 380,
+
+                dmg: e.dmg * 1.2,
+
+                icon: '🔥',
+                color: '#ef4444',
+
+                life: 2.5,
+                radius: 16,
+
+                isPlayer: false,
+
+                kind: 'fire'
+            });
+        }
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#ef4444',
+            80,
+            320,
+            8
+        );
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            '🔥 CRIMSON FIRESTORM!',
+            '#ef4444'
+        );
+
+        screenShake = 20;
+    }
+
+
+    // ========================================================
+    // 8. HEAL
+    // ========================================================
+
+    else if (e.bossAbility === 'heal') {
+
+        const healAmount =
+            e.maxHp * 0.18;
+
+        e.hp =
+            Math.min(
+                e.maxHp,
+                e.hp + healAmount
+            );
+
+        spawnFloatingText(
+            e.x,
+            e.y - 90,
+            `💚 +${Math.round(healAmount)} HP`,
+            '#22c55e'
+        );
+
+        burstParticles(
+            e.x,
+            e.y,
+            '#22c55e',
+            70,
+            190,
+            8
+        );
+
+        sfx.play('heal');
+    }
+
+
+    // ========================================================
+    // 9. WORLD DEVOURER MASSIVE AREA
+    // ========================================================
+
+    else if (e.bossAbility === 'massive') {
+
+        projectiles.push({
+            x: player.x,
+            y: player.y,
+
+            vx: 0,
+            vy: 0,
+
+            dmg: e.dmg * 10,
+
+            icon: '🌋',
+            color: '#f97316',
+
+            life: 1.2,
+            radius: 80,
+
+            isPlayer: false,
+
+            kind: 'massiveBlast',
+
+            explosionRadius: 360
+        });
+
+        burstParticles(
+            player.x,
+            player.y,
+            '#f97316',
+            120,
+            500,
+            10
+        );
+
+        spawnFloatingText(
+            player.x,
+            player.y - 100,
+            '🌋 WORLD DEVOURER!',
+            '#fb923c'
+        );
+
+        screenShake = 35;
+    }
+}
+
+
+function distBetween(a, b) {
+    return Math.hypot(
+        a.x - b.x,
+        a.y - b.y
+    );
+}
+        
     function triggerMegamorphFuse() {
         sfx.play('boss');
         screenShake = 30;
@@ -1658,6 +2556,37 @@ desc:'+300 HP, +30% Def, +150 Speed'
         }
 
         enemies.forEach(e => {
+// Mythic Boss visual aura
+if (e.isBoss) {
+
+    ctx.save();
+
+    const pulse =
+        1 + Math.sin(performance.now() / 180) * 0.08;
+
+    ctx.globalAlpha = 0.25;
+
+    ctx.fillStyle =
+        e.color || '#facc15';
+
+    ctx.shadowBlur = 40;
+    ctx.shadowColor =
+        e.color || '#facc15';
+
+    ctx.beginPath();
+
+    ctx.arc(
+        e.x,
+        e.y,
+        e.size * 1.45 * pulse,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+}
             const dist = Math.hypot(e.x - player.x, e.y - player.y);
             if (dist <= wep.range + e.size) {
                 const enemyAngle = Math.atan2(e.y - player.y, e.x - player.x);
@@ -1753,6 +2682,23 @@ desc:'+300 HP, +30% Def, +150 Speed'
         }
     }
 
+function bossWarning(text, color) {
+
+    floatingTexts.push({
+        x: player.x,
+        y: player.y - 130,
+        text,
+        color,
+
+        life: 3.0,
+        maxLife: 3.0,
+
+        bossWarning: true
+    });
+
+    screenShake = 22;
+}
+
     function spawnFloatingText(x, y, text, color = '#ffffff') {
         floatingTexts.push({ x, y, text, color, life: 1.0, maxLife: 1.0 });
     }
@@ -1761,25 +2707,90 @@ desc:'+300 HP, +30% Def, +150 Speed'
     function update(dt) {
         if (!gameStarted || isPaused || isMenuOpen || isIntermission || isGameOver) return;
 
-        // Player Movement
-        let moveX = 0; let moveY = 0;
-        if (keys['w'] || keys['arrowup']) moveY -= 1;
-        if (keys['s'] || keys['arrowdown']) moveY += 1;
-        if (keys['a'] || keys['arrowleft']) moveX -= 1;
-        if (keys['d'] || keys['arrowright']) moveX += 1;
+// Player Movement
+let moveX = 0;
+let moveY = 0;
 
+// --------------------------------------------
+// STATUS EFFECTS
+// --------------------------------------------
+
+if (player.stunTimer > 0) {
+    player.stunTimer -= dt;
+}
+
+if (player.poisonTimer > 0) {
+
+    player.poisonTimer -= dt;
+    player.poisonTickTimer -= dt;
+
+    if (player.poisonTickTimer <= 0) {
+
+        player.poisonTickTimer = 0.25;
+
+        const poisonDamage =
+            player.poisonDps * 0.25;
+
+        player.hp -= poisonDamage;
+
+        spawnFloatingText(
+            player.x,
+            player.y,
+            `-${Math.round(poisonDamage)} ☣️`,
+            '#22c55e'
+        );
+
+        burstParticles(
+            player.x,
+            player.y,
+            '#22c55e',
+            4,
+            40,
+            3
+        );
+
+        if (player.hp <= 0) {
+            triggerGameOver();
+            return;
+        }
+    }
+
+} else {
+
+    player.poisonDps = 0;
+}
+
+
+// --------------------------------------------
+// MOVEMENT
+// --------------------------------------------
+
+if (player.stunTimer <= 0) {
+
+    if (keys['w'] || keys['arrowup']) moveY -= 1;
+    if (keys['s'] || keys['arrowdown']) moveY += 1;
+    if (keys['a'] || keys['arrowleft']) moveX -= 1;
+    if (keys['d'] || keys['arrowright']) moveX += 1;
+}
         if (moveX !== 0 && moveY !== 0) { moveX *= 0.7071; moveY *= 0.7071; }
 
         let currentSpeed = player.speed;
-        if (keys['shift'] && player.mana > 2 && (moveX !== 0 || moveY !== 0)) {
+        if (
+    player.stunTimer <= 0 &&
+    keys['shift'] &&
+    player.mana > 2 &&
+    (moveX !== 0 || moveY !== 0)
+) {
             currentSpeed *= 1.6;
             player.mana -= 14 * dt;
         } else {
             player.mana = Math.min(player.maxMana, player.mana + player.manaRegenRate * dt);
         }
 
-        player.x += moveX * currentSpeed * dt;
-        player.y += moveY * currentSpeed * dt;
+if (player.stunTimer <= 0) {
+    player.x += moveX * currentSpeed * dt;
+    player.y += moveY * currentSpeed * dt;
+}
 
         if (player.hitTimer > 0) player.hitTimer -= dt;
         if (player.ultCooldown > 0) player.ultCooldown -= dt;
@@ -1809,8 +2820,207 @@ desc:'+300 HP, +30% Def, +150 Speed'
                         p.life = 0;
                     }
                 });
-            } else {
-                if (Math.hypot(player.x - p.x, player.y - p.y) < player.radius + p.radius) {
+} else {
+
+    // ========================================================
+    // BOSS / MINION LINE ATTACKS
+    // ========================================================
+
+    if (
+        p.kind === 'bossLine' ||
+        p.kind === 'minionBeam'
+    ) {
+
+        const dx = p.x2 - p.x;
+        const dy = p.y2 - p.y;
+
+        const lenSq = dx * dx + dy * dy;
+
+        let t = 0;
+
+        if (lenSq > 0) {
+
+            t =
+                ((player.x - p.x) * dx +
+                 (player.y - p.y) * dy) /
+                lenSq;
+
+            t = Math.max(0, Math.min(1, t));
+        }
+
+        const closestX =
+            p.x + dx * t;
+
+        const closestY =
+            p.y + dy * t;
+
+        const lineDistance =
+            Math.hypot(
+                player.x - closestX,
+                player.y - closestY
+            );
+
+        if (
+            lineDistance <
+            player.radius + p.lineWidth / 2
+        ) {
+
+            const actualDmg =
+                p.dmg *
+                (1 - player.defensePercent / 100) *
+                dt *
+                4;
+
+            player.hp -= actualDmg;
+
+            player.hitTimer = 0.2;
+
+            spawnFloatingText(
+                player.x,
+                player.y,
+                `-${Math.round(actualDmg)}`,
+                '#f87171'
+            );
+
+            if (Math.random() < 0.3) {
+
+                burstParticles(
+                    player.x,
+                    player.y,
+                    p.color,
+                    5,
+                    60,
+                    3
+                );
+            }
+
+            if (player.hp <= 0) {
+                triggerGameOver();
+            }
+        }
+    }
+
+
+    // ========================================================
+    // MASSIVE BOSS BLAST
+    // ========================================================
+
+    else if (p.kind === 'massiveBlast') {
+
+        const blastDistance =
+            Math.hypot(
+                player.x - p.x,
+                player.y - p.y
+            );
+
+        if (
+            blastDistance <
+            p.explosionRadius
+        ) {
+
+            const actualDmg =
+                p.dmg *
+                (1 - player.defensePercent / 100);
+
+            player.hp -= actualDmg;
+
+            player.hitTimer = 0.3;
+
+            screenShake = 25;
+
+            spawnFloatingText(
+                player.x,
+                player.y,
+                `-${Math.round(actualDmg)} 💥`,
+                '#f97316'
+            );
+
+            if (player.hp <= 0) {
+                triggerGameOver();
+            }
+        }
+    }
+
+
+    // ========================================================
+    // NORMAL PROJECTILES
+    // ========================================================
+
+    else if (
+        Math.hypot(
+            player.x - p.x,
+            player.y - p.y
+        ) <
+        player.radius + p.radius
+    ) {
+
+        let actualDmg =
+            p.isTrueDmg
+                ? p.dmg
+                : p.dmg *
+                  (1 - player.defensePercent / 100);
+
+
+        // ----------------------------------------------------
+        // POISON PROJECTILE
+        // ----------------------------------------------------
+
+        if (p.kind === 'poison') {
+
+            player.poisonTimer =
+                Math.max(
+                    player.poisonTimer,
+                    p.poisonDuration
+                );
+
+            player.poisonDps =
+                Math.max(
+                    player.poisonDps,
+                    p.poisonDps
+                );
+
+            player.poisonTickTimer = 0;
+
+            spawnFloatingText(
+                player.x,
+                player.y - 30,
+                '☣️ POISONED!',
+                '#22c55e'
+            );
+
+            burstParticles(
+                player.x,
+                player.y,
+                '#22c55e',
+                18,
+                100,
+                4
+            );
+        }
+
+
+        player.hp -= actualDmg;
+
+        player.hitTimer = 0.2;
+
+        screenShake = 8;
+
+        sfx.play('hit');
+
+        spawnFloatingText(
+            player.x,
+            player.y,
+            `-${Math.round(actualDmg)}`,
+            '#f87171'
+        );
+
+        p.life = 0;
+
+        if (player.hp <= 0) {
+            triggerGameOver();
+        }
+    }
+}
                     let actualDmg = p.isTrueDmg ? p.dmg : p.dmg * (1 - player.defensePercent / 100);
 
                     // Megamorph 0.000001% Instant Death Chance
@@ -1829,7 +3039,7 @@ desc:'+300 HP, +30% Def, +150 Speed'
                 }
             }
 
-            if (p.life <= 0) projectiles.splice(i, 1);
+            if (p.life <= 0.65) projectiles.splice(i, 1);
         }
 
         // Enemies & Boss Behaviors
@@ -1893,6 +3103,75 @@ desc:'+300 HP, +30% Def, +150 Speed'
                     if (e.timer <= 0) e.timer = 4.0;
                 }
             } 
+
+// ============================================================
+// MYTHIC BOSS AI — EVERY 10TH WAVE
+// ============================================================
+
+else if (e.type === 'mythicBoss') {
+
+    // Boss ability cooldown
+    e.abilityTimer -= dt;
+
+    // Speed boss special
+    let bossSpeed = e.speed;
+
+    if (e.speedBurstTimer > 0) {
+
+        e.speedBurstTimer -= dt;
+
+        bossSpeed *= 2.8;
+
+        // Speed trail particles
+        if (Math.random() < 0.45) {
+
+            particles.push({
+                x: e.x + (Math.random() - 0.5) * 35,
+                y: e.y + (Math.random() - 0.5) * 35,
+
+                vx: 0,
+                vy: 0,
+
+                life: 0.3,
+                maxLife: 0.3,
+
+                color: e.color,
+                size: 7
+            });
+        }
+    }
+
+    // Boss follows hero
+    e.x += Math.cos(angle) * bossSpeed * dt;
+    e.y += Math.sin(angle) * bossSpeed * dt;
+
+
+    // Use special ability
+    if (e.abilityTimer <= 0) {
+
+        useMythicBossAbility(e);
+    }
+
+
+    // Boss aura particles
+    if (Math.random() < 0.12) {
+
+        particles.push({
+            x: e.x + (Math.random() - 0.5) * e.size * 1.5,
+            y: e.y + (Math.random() - 0.5) * e.size * 1.5,
+
+            vx: 0,
+            vy: -20,
+
+            life: 0.5,
+            maxLife: 0.5,
+
+            color: e.color,
+            size: 4 + Math.random() * 5
+        });
+    }
+}
+    
             // MEGAMORPH GOD BOSS
             else if (e.type === 'megamorph') {
                 e.x += Math.cos(angle) * e.speed * dt;
@@ -1909,29 +3188,212 @@ desc:'+300 HP, +30% Def, +150 Speed'
                     });
                 }
             }
-            // Standard Minion AI
-            else {
-                if (e.ranged && dist < 220) {
-                    e.x -= Math.cos(angle) * e.speed * 0.5 * dt;
-                    e.y -= Math.sin(angle) * e.speed * 0.5 * dt;
-                } else {
-                    e.x += Math.cos(angle) * e.speed * dt;
-                    e.y += Math.sin(angle) * e.speed * dt;
-                }
+// ============================================================
+// FOUR MINION TYPES
+// ============================================================
 
-                if (e.ranged) {
-                    e.shootTimer -= dt;
-                    if (e.shootTimer <= 0 && dist < 500) {
-                        e.shootTimer = 2.5;
-                        projectiles.push({
-                            x: e.x, y: e.y,
-                            vx: Math.cos(angle) * 280, vy: Math.sin(angle) * 280,
-                            dmg: e.dmg, icon: e.spellIcon, color: '#f87171',
-                            life: 2.0, radius: 12, isPlayer: false
-                        });
-                    }
-                }
-            }
+else {
+
+    // --------------------------------------------------------
+    // MELEE
+    // --------------------------------------------------------
+
+    if (e.minionType === 'melee') {
+
+        e.x += Math.cos(angle) * e.speed * dt;
+        e.y += Math.sin(angle) * e.speed * dt;
+    }
+
+
+    // --------------------------------------------------------
+    // NORMAL RANGED
+    // --------------------------------------------------------
+
+    else if (e.minionType === 'ranged') {
+
+        if (dist < 260) {
+
+            e.x -= Math.cos(angle) *
+                e.speed *
+                0.45 *
+                dt;
+
+            e.y -= Math.sin(angle) *
+                e.speed *
+                0.45 *
+                dt;
+
+        } else {
+
+            e.x += Math.cos(angle) *
+                e.speed *
+                0.45 *
+                dt;
+
+            e.y += Math.sin(angle) *
+                e.speed *
+                0.45 *
+                dt;
+        }
+
+        e.shootTimer -= dt;
+
+        if (
+            e.shootTimer <= 0 &&
+            dist < 600
+        ) {
+
+            e.shootTimer = 2.2;
+
+            projectiles.push({
+                x: e.x,
+                y: e.y,
+
+                vx: Math.cos(angle) * 300,
+                vy: Math.sin(angle) * 300,
+
+                dmg: e.dmg,
+
+                icon: '🏹',
+                color: '#f87171',
+
+                life: 2.0,
+                radius: 12,
+
+                isPlayer: false,
+
+                kind: 'normal'
+            });
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // VENOM
+    // Straight projectile
+    // --------------------------------------------------------
+
+    else if (e.minionType === 'poison') {
+
+        if (dist > 300) {
+
+            e.x += Math.cos(angle) *
+                e.speed *
+                0.35 *
+                dt;
+
+            e.y += Math.sin(angle) *
+                e.speed *
+                0.35 *
+                dt;
+        }
+
+        e.shootTimer -= dt;
+
+        if (
+            e.shootTimer <= 0 &&
+            dist < 650
+        ) {
+
+            e.shootTimer = 2.8;
+
+            projectiles.push({
+                x: e.x,
+                y: e.y,
+
+                vx: Math.cos(angle) * 360,
+                vy: Math.sin(angle) * 360,
+
+                dmg: e.dmg,
+
+                icon: '☣️',
+                color: '#22c55e',
+
+                life: 2.2,
+                radius: 13,
+
+                isPlayer: false,
+
+                kind: 'poison',
+                poisonDuration: e.poisonDuration,
+                poisonDps: e.poisonDps
+            });
+
+            lineParticles(
+                e.x,
+                e.y,
+                e.x + Math.cos(angle) * 100,
+                e.y + Math.sin(angle) * 100,
+                '#22c55e',
+                8
+            );
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // BEAM WRAITH
+    // Straight beam attack
+    // --------------------------------------------------------
+
+    else if (e.minionType === 'beam') {
+
+        if (dist > 400) {
+
+            e.x += Math.cos(angle) *
+                e.speed *
+                dt;
+
+            e.y += Math.sin(angle) *
+                e.speed *
+                dt;
+        }
+
+        e.beamTimer -= dt;
+
+        if (
+            e.beamTimer <= 0 &&
+            dist < 700
+        ) {
+
+            e.beamTimer = e.beamCooldown;
+
+            projectiles.push({
+                x: e.x,
+                y: e.y,
+
+                vx: 0,
+                vy: 0,
+
+                dmg: e.dmg,
+
+                icon: '⚡',
+                color: '#06b6d4',
+
+                life: 0.9,
+                radius: 10,
+
+                isPlayer: false,
+
+                kind: 'minionBeam',
+
+                x2: player.x,
+                y2: player.y,
+
+                lineWidth: 14
+            });
+
+            lineParticles(
+                e.x,
+                e.y,
+                player.x,
+                player.y,
+                '#22d3ee',
+                25
+            );
+        }
+    }
+}
 
             // Physical Melee Collision
             if (dist < player.radius + e.size) {
@@ -2023,31 +3485,186 @@ desc:'+300 HP, +30% Def, +150 Speed'
 
         // Enemies & Bosses
         enemies.forEach(e => {
+
+if (e.isBoss && e.name) {
+
+    ctx.save();
+
+    ctx.textAlign = 'center';
+
+    ctx.font =
+        `bold 16px Outfit, ${EMOJI_FONT_STACK}`;
+
+    ctx.fillStyle =
+        e.color || '#fde047';
+
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#000000';
+
+    ctx.fillText(
+        e.name,
+        e.x,
+        e.y - e.size - 38
+    );
+
+    ctx.restore();
+}
+            
             ctx.fillStyle = e.hitTimer > 0 ? '#ffffff' : (e.color || '#ef4444');
             ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill();
             ctx.strokeStyle = e.isBoss ? '#fde047' : 'rgba(255, 255, 255, 0.25)';
             ctx.lineWidth = e.isBoss ? 4 : 1.5; ctx.stroke();
 
-            ctx.font = `${e.size * 1.35}px ${EMOJI_FONT_STACK}`;
+            ctx.font = `${e.isBoss ? e.size * 2.4 : e.size * 1.8}px ${EMOJI_FONT_STACK}`;
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(e.icon, e.x, e.y);
 
-            const barW = e.size * 1.6;
+            const barW =
+                e.isBoss
+                    ? e.size * 3.5
+                    : e.size * 2;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(e.x - barW / 2, e.y - e.size - 12, barW, 6);
             ctx.fillStyle = e.isBoss ? '#ea580c' : '#ef4444';
-            ctx.fillRect(e.x - barW / 2, e.y - e.size - 12, barW * (e.hp / e.maxHp), 6);
+            ctx.fillRect(e.x - barW / 2, e.y - e.size - 12, barW * (e.hp / e.maxHp), e.isBoss ? 10 : 6);
+            
         });
 
-        // Projectiles
-        projectiles.forEach(p => {
-            ctx.fillStyle = p.color || '#06b6d4';
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+// ============================================================
+// PROJECTILES & SPECIAL ATTACKS
+// ============================================================
 
-            ctx.font = `${p.radius * 1.8}px ${EMOJI_FONT_STACK}`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(p.icon, p.x, p.y);
-        });
+projectiles.forEach(p => {
+
+    ctx.save();
+
+    // --------------------------------------------------------
+    // LINE / BEAM
+    // --------------------------------------------------------
+
+    if (
+        p.kind === 'bossLine' ||
+        p.kind === 'minionBeam'
+    ) {
+
+        ctx.globalAlpha =
+            Math.max(0, p.life / 0.9);
+
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = p.lineWidth || 12;
+
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = p.color;
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x2, p.y2);
+        ctx.stroke();
+
+        // Inner bright beam
+        ctx.globalAlpha = 0.8;
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth =
+            Math.max(2, (p.lineWidth || 12) * 0.22);
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x2, p.y2);
+        ctx.stroke();
+
+        ctx.restore();
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // MASSIVE BLAST
+    // --------------------------------------------------------
+
+    if (p.kind === 'massiveBlast') {
+
+        const alpha =
+            Math.max(0, p.life / 1.2);
+
+        ctx.globalAlpha = alpha;
+
+        ctx.fillStyle = p.color;
+
+        ctx.shadowBlur = 45;
+        ctx.shadowColor = p.color;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.explosionRadius *
+            (1 - alpha * 0.25),
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+
+        ctx.font =
+            `${p.radius * 1.8}px ${EMOJI_FONT_STACK}`;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.fillText(
+            p.icon,
+            p.x,
+            p.y
+        );
+
+        ctx.restore();
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // NORMAL PROJECTILE
+    // --------------------------------------------------------
+
+    ctx.fillStyle =
+        p.color || '#06b6d4';
+
+    ctx.shadowBlur = 12;
+    ctx.shadowColor =
+        p.color || '#06b6d4';
+
+    ctx.beginPath();
+
+    ctx.arc(
+        p.x,
+        p.y,
+        p.radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.font =
+        `${p.radius * 1.8}px ${EMOJI_FONT_STACK}`;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillText(
+        p.icon,
+        p.x,
+        p.y
+    );
+
+    ctx.restore();
+});
 
         // Hero Player
         ctx.fillStyle = player.hitTimer > 0 ? '#ef4444' : '#f59e0b';
@@ -2069,7 +3686,21 @@ desc:'+300 HP, +30% Def, +150 Speed'
         // Floating Text
         floatingTexts.forEach(ft => {
             ctx.fillStyle = ft.color;
-            ctx.font = `bold 15px Outfit, ${EMOJI_FONT_STACK}`;
+            ctx.font =
+                ft.bossWarning
+                    ? `900 28px Outfit, ${EMOJI_FONT_STACK}`
+                    : `bold 15px Outfit, ${EMOJI_FONT_STACK}`;
+
+            const drawX =
+                ft.bossWarning
+                    ? ft.x + (Math.random() - 0.5) * 4
+                    : ft.x;
+
+            ctx.fillText(
+                ft.text,
+                drawX,
+                ft.y
+            );
             ctx.textAlign = 'center';
             ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
             ctx.fillText(ft.text, ft.x, ft.y);
