@@ -1,25 +1,619 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Emoji Legends: Shadow Survival v0.1</title>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Emoji Legends: Shadow Survival</title>
+
 <style>
-body{margin:0;background:#0b0b12;color:#fff;font-family:Arial;overflow:hidden}
-#ui{position:fixed;top:10px;left:10px;background:#1118;padding:10px;border:1px solid #444}
-#game{display:block}
-</style></head><body>
-<canvas id="game"></canvas><div id="ui">❤️ <span id=h>100</span><br>🪙 <span id=c>0</span><br>Use WASD. Shift placeholder.</div>
-<script>
-const cv=document.getElementById('game'),ctx=cv.getContext('2d');
-function rs(){cv.width=innerWidth;cv.height=innerHeight}onresize=rs;rs();
-let p={x:0,y:0,s:220},k={};
-onkeydown=e=>k[e.key.toLowerCase()]=1;
-onkeyup=e=>k[e.key.toLowerCase()]=0;
-function loop(t){requestAnimationFrame(loop);
-let dt=1/60;
-if(k.w)p.y-=p.s*dt;if(k.s)p.y+=p.s*dt;if(k.a)p.x-=p.s*dt;if(k.d)p.x+=p.s*dt;
-ctx.fillStyle="#0b0b12";ctx.fillRect(0,0,cv.width,cv.height);
-ctx.strokeStyle="#222";
-for(let x=-2000;x<=2000;x+=64){ctx.beginPath();ctx.moveTo(cv.width/2+(x-p.x),0);ctx.lineTo(cv.width/2+(x-p.x),cv.height);ctx.stroke();}
-for(let y=-2000;y<=2000;y+=64){ctx.beginPath();ctx.moveTo(0,cv.height/2+(y-p.y));ctx.lineTo(cv.width,cv.height/2+(y-p.y));ctx.stroke();}
-ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";
-ctx.fillText("😀",cv.width/2,cv.height/2);
+
+body{
+margin:0;
+overflow:hidden;
+background:#090914;
+font-family:Arial;
+color:white;
 }
+
+canvas{
+display:block;
+}
+
+
+#hud{
+position:fixed;
+top:15px;
+left:15px;
+background:#111c;
+padding:15px;
+border-radius:15px;
+border:1px solid #555;
+font-size:18px;
+}
+
+
+#menuBtn{
+
+position:fixed;
+right:20px;
+top:20px;
+
+background:#4b7cff;
+padding:15px;
+border-radius:50%;
+font-size:30px;
+cursor:pointer;
+
+}
+
+
+
+#menu{
+
+position:fixed;
+right:20px;
+top:90px;
+
+background:#171722;
+padding:20px;
+border-radius:15px;
+
+display:none;
+
+}
+
+
+button{
+
+display:block;
+width:180px;
+margin:10px;
+padding:10px;
+
+background:#333;
+color:white;
+
+border:none;
+border-radius:10px;
+
+cursor:pointer;
+
+}
+
+
+
+#popup{
+
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+
+background:#151522;
+
+padding:30px;
+
+border-radius:20px;
+
+display:none;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<canvas id="game"></canvas>
+
+
+<div id="hud">
+
+❤️ <span id="hp">100</span><br>
+
+🪙 <span id="coins">0</span><br>
+
+⚔️ Damage:
+<span id="damage">10</span><br>
+
+⭐ Level:
+<span id="level">1</span>
+
+
+</div>
+
+
+
+<div id="menuBtn">
+☰
+</div>
+
+
+<div id="menu">
+
+<button onclick="openPanel('Shop')">
+🏪 Shop
+</button>
+
+<button onclick="openPanel('Inventory')">
+🎒 Inventory
+</button>
+
+
+<button onclick="openPanel('Magic')">
+🔮 Wands & Magic
+</button>
+
+
+<button onclick="openPanel('Settings')">
+⚙️ Settings
+</button>
+
+
+<button onclick="openPanel('How')">
+📜 How To Play
+</button>
+
+
+</div>
+
+
+
+<div id="popup">
+
+<h2 id="title"></h2>
+
+<p id="text"></p>
+
+<button onclick="closePanel()">
+Close
+</button>
+
+</div>
+
+
+
+<script>
+
+
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+
+
+function resize(){
+
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+}
+
+resize();
+onresize=resize;
+
+
+
+let keys={};
+
+
+onkeydown=e=>keys[e.key.toLowerCase()]=true;
+onkeyup=e=>keys[e.key.toLowerCase()]=false;
+
+
+
+let player={
+
+x:0,
+y:0,
+
+speed:250,
+
+hp:100,
+
+max:100,
+
+damage:10,
+
+coins:0,
+
+level:1,
+
+strength:0,
+
+emoji:"😀",
+
+attack:false,
+
+cool:0
+
+};
+
+
+
+let weapon={
+
+name:"Wood Wand",
+
+damage:10,
+
+magic:"🔥 Fire Bolt"
+
+};
+
+
+
+let enemies=[];
+
+
+function spawnEnemy(){
+
+enemies.push({
+
+x:Math.random()*1200-600,
+
+y:Math.random()*800-400,
+
+hp:40,
+
+speed:70
+
+});
+
+}
+
+
+setInterval(spawnEnemy,2000);
+
+
+
+function distance(a,b){
+
+return Math.hypot(
+a.x-b.x,
+a.y-b.y
+);
+
+}
+
+
+
+function update(){
+
+
+if(keys.w)player.y-=player.speed/60;
+if(keys.s)player.y+=player.speed/60;
+if(keys.a)player.x-=player.speed/60;
+if(keys.d)player.x+=player.speed/60;
+
+
+
+if(keys.shift){
+
+player.speed=400;
+
+}
+
+else{
+
+player.speed=250;
+
+}
+
+
+
+if(player.cool>0)
+player.cool--;
+
+
+
+// emoji evolution
+
+
+if(player.hp<25)
+player.emoji="😨";
+
+else if(player.hp<60)
+player.emoji="😟";
+
+else if(player.strength>=10)
+player.emoji="👑";
+
+else if(player.strength>=5)
+player.emoji="😈";
+
+else
+player.emoji="😀";
+
+
+
+
+// enemy logic
+
+
+enemies.forEach((e,i)=>{
+
+
+let dx=player.x-e.x;
+let dy=player.y-e.y;
+
+let d=Math.hypot(dx,dy);
+
+
+if(d>20){
+
+e.x+=dx/d*e.speed/60;
+e.y+=dy/d*e.speed/60;
+
+}
+
+
+// collision
+
+
+if(d<40){
+
+player.hp-=0.3;
+
+}
+
+
+
+});
+
+
+
+
+// attack
+
+
+if(keys.space && player.cool<=0){
+
+
+player.cool=30;
+
+
+enemies.forEach((e,i)=>{
+
+
+if(distance(player,e)<150){
+
+
+e.hp-=player.damage;
+
+
+}
+
+
+if(e.hp<=0){
+
+
+player.coins+=10;
+
+player.strength++;
+
+player.level=Math.floor(player.strength/5)+1;
+
+
+enemies.splice(i,1);
+
+
+}
+
+
+});
+
+
+}
+
+
+
+document.getElementById("hp").innerHTML=Math.floor(player.hp);
+
+document.getElementById("coins").innerHTML=player.coins;
+
+document.getElementById("damage").innerHTML=player.damage;
+
+document.getElementById("level").innerHTML=player.level;
+
+
+
+}
+
+
+
+
+
+function draw(){
+
+
+ctx.fillStyle="#090914";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+
+
+// grid
+
+ctx.strokeStyle="#202033";
+
+
+for(let x=0;x<canvas.width;x+=50){
+
+ctx.beginPath();
+ctx.moveTo(x,0);
+ctx.lineTo(x,canvas.height);
+ctx.stroke();
+
+}
+
+
+
+for(let y=0;y<canvas.height;y+=50){
+
+ctx.beginPath();
+ctx.moveTo(0,y);
+ctx.lineTo(canvas.width,y);
+ctx.stroke();
+
+}
+
+
+
+
+
+// enemies
+
+
+ctx.font="45px serif";
+ctx.textAlign="center";
+
+
+enemies.forEach(e=>{
+
+
+let sx=e.x-player.x+canvas.width/2;
+let sy=e.y-player.y+canvas.height/2;
+
+
+ctx.fillText("👹",sx,sy);
+
+
+ctx.fillStyle="red";
+
+ctx.fillRect(
+sx-20,
+sy-35,
+40*(e.hp/40),
+5
+);
+
+
+});
+
+
+
+
+
+// player
+
+
+ctx.fillStyle="white";
+
+
+ctx.fillText(
+
+player.emoji,
+
+canvas.width/2,
+
+canvas.height/2
+
+);
+
+
+
+
+
 requestAnimationFrame(loop);
-</script></body></html>
+
+}
+
+
+
+function loop(){
+
+update();
+draw();
+
+}
+
+
+
+loop();
+
+
+
+
+
+// MENU
+
+
+menuBtn.onclick=()=>{
+
+menu.style.display=
+menu.style.display=="block"
+?"none":"block";
+
+}
+
+
+
+
+
+function openPanel(type){
+
+
+popup.style.display="block";
+
+title.innerHTML=type;
+
+
+if(type=="Shop"){
+
+text.innerHTML=
+"🔥 Upgrade Damage<br><br>⚔️ Buy Legendary Weapons<br><br>🪙 Coins required";
+
+}
+
+
+if(type=="Inventory"){
+
+text.innerHTML=
+"Weapon: "+weapon.name+
+"<br>Magic: "+weapon.magic;
+
+}
+
+
+if(type=="Magic"){
+
+text.innerHTML=
+"🔥 Fire Bolt<br>❄ Ice Storm<br>⚡ Thunder Strike";
+
+}
+
+
+if(type=="How"){
+
+text.innerHTML=
+"WASD Move<br>SPACE Attack<br>SHIFT Speed Boost";
+
+}
+
+
+
+if(type=="Settings"){
+
+text.innerHTML=
+"Sound: ON<br>Difficulty: Normal";
+
+}
+
+
+}
+
+
+
+function closePanel(){
+
+popup.style.display="none";
+
+}
+
+
+
+</script>
+
+
+</body>
+</html>
