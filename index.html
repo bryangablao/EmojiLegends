@@ -602,38 +602,797 @@
         slot_7: { id: 'slot_7', name: 'Skill Slot 7', type: 'slot', slotIndex: 6, cost: 750, icon: '7️⃣', desc: 'Unlocks Skill Slot #7.' },
         slot_8: { id: 'slot_8', name: 'Skill Slot 8', type: 'slot', slotIndex: 7, cost: 1000, icon: '8️⃣', desc: 'Unlocks Skill Slot #8.' },
 
-        // SKILL BOOKS
-        skill_fireball: { id: 'skill_fireball', name: 'Fireball Spell', type: 'skill', rarity: 'uncommon', icon: '🔥', mana: 12, dmg: 40, cd: 1.2, cost: 90, pColor: '#ef4444', desc: 'Launches a searing fire flame projectile.' },
-        skill_iceblast: { id: 'skill_iceblast', name: 'Ice Shard Spell', type: 'skill', rarity: 'epic', icon: '🧊', mana: 16, dmg: 55, cd: 1.8, cost: 160, pColor: '#38bdf8', desc: 'Fires sharp ice shards that damage foes.' },
-        skill_lightning: { id: 'skill_lightning', name: 'Lightning Bolt', type: 'skill', rarity: 'legendary', icon: '⚡', mana: 22, dmg: 85, cd: 2.2, cost: 280, pColor: '#facc15', desc: 'Shoots high-voltage electric energy.' },
-        skill_heal: { id: 'skill_heal', name: 'Healing Light', type: 'skill', rarity: 'epic', icon: '❇️', mana: 25, heal: 60, cd: 5.0, cost: 220, pColor: '#22c55e', desc: 'Swirls emerald light around hero (+60 HP).' },
-        skill_poison: { id: 'skill_poison', name: 'Poison Dart', type: 'skill', rarity: 'uncommon', icon: '🧪', mana: 10, dmg: 35, cd: 1.0, cost: 110, pColor: '#10b981', desc: 'Fires venomous cloud projectile.' },
+// =========================
+// SKILL BOOKS
+// =========================
 
-        // WEAPONS (NO COOLDOWN)
-        sword: { id: 'sword', name: 'Iron Sword', type: 'weapon', rarity: 'common', icon: '⚔️', dmg: 22, range: 80, cost: 0, desc: 'Basic blade strike. NO COOLDOWN!' },
-        axe: { id: 'axe', name: 'War Axe', type: 'weapon', rarity: 'uncommon', icon: '🪓', dmg: 38, range: 90, cost: 100, desc: 'Heavy war axe cleave. NO COOLDOWN!' },
-        fireStaff: { id: 'fireStaff', name: 'Ignis Staff', type: 'weapon', rarity: 'epic', icon: '🪄', dmg: 65, range: 105, cost: 240, desc: 'Magic staff weapon strike. NO COOLDOWN!' },
-        mythicSceptre: { id: 'mythicSceptre', name: 'Mythic Star Sceptre', type: 'weapon', rarity: 'mythic', icon: '🌟', dmg: 140, range: 125, cost: 800, desc: 'Divine mythic weapon. NO COOLDOWN!' },
+// COMMON SKILLS
+skill_slash:{
+id:'skill_slash',
+name:'Wind Slash',
+type:'skill',
+rarity:'common',
+icon:'🌪',
+mana:8,
+dmg:25,
+cd:0.8,
+cost:50,
+pColor:'#cbd5e1',
+desc:'Fires a swift blade of compressed air.'
+},
+        
+skill_rockthrow:{
+id:'skill_rockthrow',
+name:'Rock Sling',
+type:'skill',
+rarity:'common',
+icon:'🌫',
+mana:6,
+dmg:20,
+cd:0.7,
+cost:40,
+pColor:'#78350f',
+desc:'Hurls a sharp piece of solid rock.'
+},
+        
+skill_spark:{
+id:'skill_spark',
+name:'Static Spark',
+type:'skill',
+rarity:'common',
+icon:'✨',
+mana:7,
+dmg:22,
+cd:0.6,
+cost:45,
+pColor:'#fde047',
+desc:'Emits a quick burst of electrical sparks.'
+},
 
-        // ARMOR CATEGORY 1: HEAD (HELMETS)
-        helm_leather: { id: 'helm_leather', name: 'Leather Cap', type: 'armor', slot: 'head', rarity: 'common', icon: '🪖', hp: 25, def: 2, spd: 5, cost: 60, desc: '+25 HP, +2% Def, +5 Speed' },
-        helm_iron: { id: 'helm_iron', name: 'Iron Greathelm', type: 'armor', slot: 'head', rarity: 'epic', icon: '🪖', hp: 80, def: 8, spd: 0, cost: 220, desc: '+80 HP, +8% Def' },
-        helm_mythic: { id: 'helm_mythic', name: 'Mythic Crown', type: 'armor', slot: 'head', rarity: 'mythic', icon: '👑', hp: 200, def: 15, spd: 20, cost: 750, desc: '+200 HP, +15% Def, +20 Speed' },
+// UNCOMMON SKILLS
+skill_waterjet:{
+id:'skill_waterjet',
+name:'Water Jet',
+type:'skill',
+rarity:'uncommon',
+icon:'💧',
+mana:11,
+dmg:38,
+cd:1.1,
+cost:95,
+pColor:'#60a5fa',
+desc:'Shoots a high-pressure stream of water.'
+},
+        
+skill_earthspike:{
+id:'skill_earthspike',
+name:'Earth Spike',
+type:'skill',
+rarity:'uncommon',
+icon:'⛰️',
+mana:14,
+dmg:45,
+cd:1.4,
+cost:120,
+pColor:'#b45309',
+desc:'Summons sharp stone spikes beneath enemies.'
+},
+        
+skill_shadowblade:{
+id:'skill_shadowblade',
+name:'Shadow Blade',
+type:'skill',
+rarity:'uncommon',
+icon:'🗡️',
+mana:13,
+dmg:42,
+cd:1.3,
+cost:115,
+pColor:'#4c1d95',
+desc:'Launches a swift knife made of darkness.'
+},
+        
+skill_bandages:{
+id:'skill_bandages',
+name:'Field Medic',
+type:'skill',
+rarity:'uncommon',
+icon:'🩹',
+mana:15,
+heal:35,
+cd:4,
+cost:100,
+pColor:'#86efac',
+desc:'Quickly patches wounds to restore health.'
+},
 
-        // ARMOR CATEGORY 2: CHEST (CHESTPLATES)
-        chest_cloth: { id: 'chest_cloth', name: 'Padded Tunic', type: 'armor', slot: 'chest', rarity: 'common', icon: '👕', hp: 35, def: 3, spd: 0, cost: 75, desc: '+35 HP, +3% Def' },
-        chest_iron: { id: 'chest_iron', name: 'Iron Cuirass', type: 'armor', slot: 'chest', rarity: 'epic', icon: '🛡️', hp: 120, def: 12, spd: 0, cost: 300, desc: '+120 HP, +12% Def' },
-        chest_mythic: { id: 'chest_mythic', name: 'Mythic Aegis', type: 'armor', slot: 'chest', rarity: 'mythic', icon: '🥋', hp: 300, def: 25, spd: 15, cost: 950, desc: '+300 HP, +25% Def, +15 Speed' },
+// RARE SKILLS
+skill_frostwave:{
+id:'skill_frostwave',
+name:'Frost Nova',
+type:'skill',
+rarity:'rare',
+icon:'❄️',
+mana:18,
+dmg:65,
+cd:2.0,
+cost:180,
+pColor:'#93c5fd',
+desc:'Unleashes an expanding ring of freezing frost.'
+},
+        
+skill_holybeam:{
+id:'skill_holybeam',
+name:'Holy Beam',
+type:'skill',
+rarity:'rare',
+icon:'☀️',
+mana:20,
+dmg:70,
+cd:2.2,
+cost:200,
+pColor:'#fef08a',
+desc:'Focuses sacred sunlight into a piercing beam.'
+},
+        
+skill_venomblast:{
+id:'skill_venomblast',
+name:'Venom Burst',
+type:'skill',
+rarity:'rare',
+icon:'☣️',
+mana:18,
+dmg:62,
+cd:1.9,
+cost:175,
+pColor:'#22c55e',
+desc:'Explodes a cloud of toxic venom particles.'
+},
+        
+skill_regeneration:{
+id:'skill_regeneration',
+name:'Nature Bloom',
+type:'skill',
+rarity:'rare',
+icon:'🌸',
+mana:30,
+heal:85,
+cd:6,
+cost:260,
+pColor:'#f472b6',
+desc:'Channels nature aura to heal deep wounds.'
+},
 
-        // ARMOR CATEGORY 3: LEGS (LEGGINGS)
-        legs_leather: { id: 'legs_leather', name: 'Leather Trousers', type: 'armor', slot: 'legs', rarity: 'common', icon: '👖', hp: 20, def: 2, spd: 10, cost: 60, desc: '+20 HP, +2% Def, +10 Speed' },
-        legs_iron: { id: 'legs_iron', name: 'Iron Greaves', type: 'armor', slot: 'legs', rarity: 'epic', icon: '👖', hp: 75, def: 7, spd: 10, cost: 210, desc: '+75 HP, +7% Def, +10 Speed' },
-        legs_mythic: { id: 'legs_mythic', name: 'Mythic Greaves', type: 'armor', slot: 'legs', rarity: 'mythic', icon: '👖', hp: 180, def: 14, spd: 30, cost: 700, desc: '+180 HP, +14% Def, +30 Speed' },
+// EPIC SKILLS
+skill_chainlightning:{
+id:'skill_chainlightning',
+name:'Chain Surge',
+type:'skill',
+rarity:'epic',
+icon:'🌩️',
+mana:26,
+dmg:105,
+cd:2.8,
+cost:350,
+pColor:'#eab308',
+desc:'Fires lightning that arcs across multiple foes.'
+},
+        
+skill_blooddrain:{
+id:'skill_blooddrain',
+name:'Vampiric Drain',
+type:'skill',
+rarity:'epic',
+icon:'🩸',
+mana:24,
+dmg:75,
+heal:40,
+cd:3.5,
+cost:380,
+pColor:'#9f1239',
+desc:'Siphons life essence from enemies to heal hero.'
+},
+        
+skill_flamethrower:{
+id:'skill_flamethrower',
+name:'Inferno Torrent',
+type:'skill',
+rarity:'epic',
+icon:'🔥',
+mana:28,
+dmg:115,
+cd:3.0,
+cost:400,
+pColor:'#dc2626',
+desc:'Streams a continuous torrent of molten fire.'
+},
+        
+skill_arcaneorbs:{
+id:'skill_arcaneorbs',
+name:'Arcane Barrage',
+type:'skill',
+rarity:'epic',
+icon:'🔮',
+mana:25,
+dmg:100,
+cd:2.5,
+cost:360,
+pColor:'#d8b4fe',
+desc:'Fires multiple homing magic projectiles.'
+},
 
-        // ARMOR CATEGORY 4: BOOTS
-        boots_leather: { id: 'boots_leather', name: 'Light Boots', type: 'armor', slot: 'boots', rarity: 'common', icon: '🥾', hp: 15, def: 1, spd: 20, cost: 50, desc: '+15 HP, +1% Def, +20 Speed' },
-        boots_iron: { id: 'boots_iron', name: 'Iron Sabatons', type: 'armor', slot: 'boots', rarity: 'epic', icon: '🥾', hp: 50, def: 5, spd: 25, cost: 180, desc: '+50 HP, +5% Def, +25 Speed' },
-        boots_mythic: { id: 'boots_mythic', name: 'Hermes Wings', type: 'armor', slot: 'boots', rarity: 'mythic', icon: '👟', hp: 120, def: 10, spd: 55, cost: 650, desc: '+120 HP, +10% Def, +55 Speed' }
+// LEGENDARY SKILLS
+skill_blizzard:{
+id:'skill_blizzard',
+name:'Glacial Blizzard',
+type:'skill',
+rarity:'legendary',
+icon:'🌧️',
+mana:45,
+dmg:210,
+cd:6.5,
+cost:850,
+pColor:'#0284c7',
+desc:'Summons a freezing ice storm over the area.'
+},
+        
+skill_solareclipse:{
+id:'skill_solareclipse',
+name:'Solar Flare',
+type:'skill',
+rarity:'legendary',
+icon:'💥',
+mana:50,
+dmg:240,
+cd:7.0,
+cost:950,
+pColor:'#fb923c',
+desc:'Triggers a blinding thermonuclear solar blast.'
+},
+        
+skill_sanctuary:{
+id:'skill_sanctuary',
+name:'Divine Sanctuary',
+type:'skill',
+rarity:'legendary',
+icon:'🛡️',
+mana:55,
+heal:220,
+cd:10.0,
+cost:900,
+pColor:'#fde047',
+desc:'Creates a holy realm that massively restores health.'
+},
+        
+skill_soulreaper:{
+id:'skill_soulreaper',
+name:'Soul Reaper',
+type:'skill',
+rarity:'legendary',
+icon:'💀',
+mana:48,
+dmg:225,
+cd:6.8,
+cost:880,
+pColor:'#312e81',
+desc:'Slashes with spectral energy, harvesting soul force.'
+},
+
+// MYTHIC SKILLS
+skill_supernova:{
+id:'skill_supernova',
+name:'Supernova',
+type:'skill',
+rarity:'mythic',
+icon:'🌀',
+mana:75,
+dmg:420,
+cd:10.0,
+cost:2200,
+pColor:'#e11d48',
+desc:'Triggers a cosmic stellar explosion of absolute force.'
+},
+        
+skill_timewarp:{
+id:'skill_timewarp',
+name:'Chronos Burst',
+type:'skill',
+rarity:'mythic',
+icon:'⏳',
+mana:65,
+dmg:350,
+cd:8.5,
+cost:1800,
+pColor:'#06b6d4',
+desc:'Rips through spacetime to shatter enemy defenses.'
+},
+        
+skill_abyssalclaws:{
+id:'skill_abyssalclaws',
+name:'Abyssal Rift',
+type:'skill',
+rarity:'mythic',
+icon:'👾',
+mana:70,
+dmg:390,
+cd:9.0,
+cost:2000,
+pColor:'#581c87',
+desc:'Tears open the void to crush nearby foes.'
+},
+        
+skill_phoenixrebirth:{
+id:'skill_phoenixrebirth',
+name:'Phoenix Grace',
+type:'skill',
+rarity:'mythic',
+icon:'🦅',
+mana:80,
+heal:450,
+cd:15.0,
+cost:2500,
+pColor:'#ff6b00',
+desc:'Empowers the hero with divine flame, fully mending health.'
+},
+
+// EXOTIC / SPECIAL SKILLS
+skill_singularity:{
+id:'skill_singularity',
+name:'Black Hole',
+type:'skill',
+rarity:'mythic',
+icon:'🕳️',
+mana:90,
+dmg:500,
+cd:12.0,
+cost:3000,
+pColor:'#09090b',
+desc:'Spawns a gravitational collapse that obliterates everything.'
+},
+        
+skill_prismbeam:{
+id:'skill_prismbeam',
+name:'Prismatic Ray',
+type:'skill',
+rarity:'epic',
+icon:'🌈',
+mana:32,
+dmg:130,
+cd:3.2,
+cost:450,
+pColor:'#ec4899',
+desc:'Fires a refracting rainbow beam of pure energy.'
+},
+
+// =========================
+// WEAPONS
+// =========================
+
+sword:{
+id:'KagemitsuG4',
+name:'KagemitsuG4',
+type:'weapon',
+rarity:'common',
+icon:'⚔️',
+dmg:22,
+range:80,
+cost:0,
+desc:'Basic beginner sword.'
+},
+
+steelSword:{
+id:'Sorrowfall',
+name:'Sorrowfall',
+type:'weapon',
+rarity:'uncommon',
+icon:'🗡️',
+dmg:40,
+range:90,
+cost:120,
+desc:'Stronger forged sword.'
+},
+
+crystalSword:{
+id:'Emberstrike',
+name:'Emberstrike',
+type:'weapon',
+rarity:'rare',
+icon:'💎',
+dmg:65,
+range:100,
+cost:250,
+desc:'Sword infused with crystal power.'
+},
+
+flameSword:{
+id:'DarkRepulser',
+name:'Dark Repulser',
+type:'weapon',
+rarity:'epic',
+icon:'🌑',
+dmg:95,
+range:110,
+cost:450,
+desc:'Burns enemies on impact.'
+},
+
+dragonSword:{
+id:'Elucidator',
+name:'Elucidator',
+type:'weapon',
+rarity:'legendary',
+icon:'🐉',
+dmg:150,
+range:120,
+cost:900,
+desc:'A blade forged to defeat dragons.'
+},
+
+mythicSceptre:{
+id:'Excalibur',
+name:'Excalibur',
+type:'weapon',
+rarity:'mythic',
+icon:'🌟',
+dmg:220,
+range:140,
+cost:1500,
+desc:'A divine weapon of legends.'
+},
+        
+// =========================
+// ARMOR CATEGORY 1: HEAD (HELMETS)
+// =========================
+
+helm_leather:{
+id:'helm_leather',
+name:'Leather Cap',
+type:'armor',
+slot:'head',
+rarity:'common',
+icon:'🧢',
+hp:25,
+def:2,
+spd:5,
+cost:60,
+desc:'+25 HP, +2% Def, +5 Speed'
+},
+
+helm_iron:{
+id:'helm_iron',
+name:'Iron Helmet',
+type:'armor',
+slot:'head',
+rarity:'uncommon',
+icon:'⛑️',
+hp:55,
+def:5,
+spd:8,
+cost:150,
+desc:'+55 HP, +5% Def, +8 Speed'
+},
+
+helm_knight:{
+id:'helm_knight',
+name:'Knight Helm',
+type:'armor',
+slot:'head',
+rarity:'rare',
+icon:'🛡️',
+hp:90,
+def:9,
+spd:10,
+cost:300,
+desc:'+90 HP, +9% Def'
+},
+
+helm_royal:{
+id:'helm_royal',
+name:'Royal Greathelm',
+type:'armor',
+slot:'head',
+rarity:'epic',
+icon:'👑',
+hp:140,
+def:13,
+spd:15,
+cost:500,
+desc:'+140 HP, +13% Def, +15 Speed'
+},
+
+helm_dragon:{
+id:'helm_dragon',
+name:'Dragon Crown',
+type:'armor',
+slot:'head',
+rarity:'legendary',
+icon:'🐉',
+hp:220,
+def:20,
+spd:20,
+cost:900,
+desc:'+220 HP, +20% Def'
+},
+
+helm_mythic:{
+id:'helm_mythic',
+name:'Mythic Crown',
+type:'armor',
+slot:'head',
+rarity:'mythic',
+icon:'🌟',
+hp:350,
+def:30,
+spd:30,
+cost:1600,
+desc:'+350 HP, +30% Def, +30 Speed'
+},
+
+
+// =========================
+// ARMOR CATEGORY 2: CHEST
+// =========================
+
+chest_cloth:{
+id:'chest_cloth',
+name:'Padded Tunic',
+type:'armor',
+slot:'chest',
+rarity:'common',
+icon:'🧥',
+hp:35,
+def:3,
+spd:0,
+cost:75,
+desc:'+35 HP, +3% Def'
+},
+
+chest_iron:{
+id:'chest_iron',
+name:'Iron Cuirass',
+type:'armor',
+slot:'chest',
+rarity:'uncommon',
+icon:'🧥',
+hp:80,
+def:8,
+spd:0,
+cost:180,
+desc:'+80 HP, +8% Def'
+},
+
+chest_knight:{
+id:'chest_knight',
+name:'Knight Armor',
+type:'armor',
+slot:'chest',
+rarity:'rare',
+icon:'🛡️',
+hp:130,
+def:12,
+spd:5,
+cost:350,
+desc:'+130 HP, +12% Def'
+},
+
+chest_royal:{
+id:'chest_royal',
+name:'Royal Plate Armor',
+type:'armor',
+slot:'chest',
+rarity:'epic',
+icon:'👑',
+hp:220,
+def:18,
+spd:10,
+cost:600,
+desc:'+220 HP, +18% Def'
+},
+
+chest_dragon:{
+id:'chest_dragon',
+name:'Dragon Scale Armor',
+type:'armor',
+slot:'chest',
+rarity:'legendary',
+icon:'🐉',
+hp:350,
+def:28,
+spd:15,
+cost:1100,
+desc:'+350 HP, +28% Def'
+},
+
+chest_mythic:{
+id:'chest_mythic',
+name:'Mythic Aegis',
+type:'armor',
+slot:'chest',
+rarity:'mythic',
+icon:'🌟',
+hp:500,
+def:40,
+spd:25,
+cost:2000,
+desc:'+500 HP, +40% Def, +25 Speed'
+},
+
+
+// =========================
+// ARMOR CATEGORY 3: LEGS
+// =========================
+
+legs_leather:{
+id:'legs_leather',
+name:'Leather Trousers',
+type:'armor',
+slot:'legs',
+rarity:'common',
+icon:'🩳',
+hp:20,
+def:2,
+spd:10,
+cost:60,
+desc:'+20 HP, +2% Def, +10 Speed'
+},
+
+legs_iron:{
+id:'legs_iron',
+name:'Iron Greaves',
+type:'armor',
+slot:'legs',
+rarity:'uncommon',
+icon:'👖',
+hp:60,
+def:6,
+spd:15,
+cost:160,
+desc:'+60 HP, +6% Def, +15 Speed'
+},
+
+legs_knight:{
+id:'legs_knight',
+name:'Knight Legguards',
+type:'armor',
+slot:'legs',
+rarity:'rare',
+icon:'🛡️',
+hp:100,
+def:10,
+spd:20,
+cost:320,
+desc:'+100 HP, +10% Def'
+},
+
+legs_royal:{
+id:'legs_royal',
+name:'Royal Greaves',
+type:'armor',
+slot:'legs',
+rarity:'epic',
+icon:'👑',
+hp:170,
+def:16,
+spd:25,
+cost:550,
+desc:'+170 HP, +16% Def'
+},
+
+legs_dragon:{
+id:'legs_dragon',
+name:'Dragon Greaves',
+type:'armor',
+slot:'legs',
+rarity:'legendary',
+icon:'🐉',
+hp:260,
+def:24,
+spd:35,
+cost:1000,
+desc:'+260 HP, +24% Def'
+},
+
+legs_mythic:{
+id:'legs_mythic',
+name:'Mythic Greaves',
+type:'armor',
+slot:'legs',
+rarity:'mythic',
+icon:'🌟',
+hp:400,
+def:35,
+spd:50,
+cost:1800,
+desc:'+400 HP, +35% Def, +50 Speed'
+},
+        
+// =========================
+// ARMOR CATEGORY 4: BOOTS
+// =========================
+
+boots_leather:{
+id:'boots_leather',
+name:'Light Boots',
+type:'armor',
+slot:'boots',
+rarity:'common',
+icon:'👞',
+hp:15,
+def:1,
+spd:20,
+cost:50,
+desc:'+15 HP, +1% Def, +20 Speed'
+},
+
+boots_iron:{
+id:'boots_iron',
+name:'Iron Sabatons',
+type:'armor',
+slot:'boots',
+rarity:'uncommon',
+icon:'🥾',
+hp:40,
+def:4,
+spd:30,
+cost:150,
+desc:'+40 HP, +4% Def, +30 Speed'
+},
+
+boots_shadow:{
+id:'boots_Knight',
+name:'Knight Boots',
+type:'armor',
+slot:'boots',
+rarity:'rare',
+icon:'🛡️',
+hp:70,
+def:7,
+spd:45,
+cost:300,
+desc:'+70 HP, +7% Def, +45 Speed'
+},
+
+boots_wind:{
+id:'boots_royal',
+name:'Royal Boots',
+type:'armor',
+slot:'boots',
+rarity:'epic',
+icon:'👑',
+hp:110,
+def:10,
+spd:70,
+cost:550,
+desc:'+110 HP, +10% Def, +70 Speed'
+},
+
+boots_dragon:{
+id:'boots_dragon',
+name:'Dragon Wing Boots',
+type:'armor',
+slot:'boots',
+rarity:'legendary',
+icon:'🐉',
+hp:180,
+def:18,
+spd:100,
+cost:1000,
+desc:'+180 HP, +18% Def, +100 Speed'
+},
+
+boots_mythic:{
+id:'boots_mythic',
+name:'Hermes Wings',
+type:'armor',
+slot:'boots',
+rarity:'mythic',
+icon:'🌟',
+hp:300,
+def:30,
+spd:150,
+cost:2000,
+desc:'+300 HP, +30% Def, +150 Speed'
+}
     };
 
     // --- GAME ENGINE STATE ---
@@ -1498,11 +2257,11 @@
         eqContainer.innerHTML = '';
 
         const armorSlotsInfo = [
-            { key: 'head', label: 'Helmet', defaultIcon: '🪖' },
+            { key: 'head', label: 'Helmet', defaultIcon: '⛑' },
             { key: 'chest', label: 'Chestplate', defaultIcon: '🛡️' },
             { key: 'legs', label: 'Leggings', defaultIcon: '👖' },
             { key: 'boots', label: 'Boots', defaultIcon: '🥾' },
-            { key: 'weapon', label: 'Weapon', defaultIcon: '⚔️' }
+            { key: 'weapon', label: 'Weapon', defaultIcon: '🔪' }
         ];
 
         armorSlotsInfo.forEach(s => {
