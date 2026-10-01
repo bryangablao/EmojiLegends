@@ -489,8 +489,8 @@
     </div>
 
     <!-- GAME OVER OVERLAY -->
-    <div id="gameOverModal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden flex flex-col items-center justify-center p-4">
-        <div class="text-center space-y-4 max-w-md">
+    <div id="gameOverModal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="text-center space-y-4 max-w-md w-full my-auto">
             <span class="text-7xl animate-bounce inline-block">💀</span>
             <h2 class="font-cinzel text-4xl font-black text-red-500 tracking-wider">YOU DIED</h2>
             <p class="text-gray-300 text-sm">Your hero fell in combat!</p>
@@ -499,11 +499,54 @@
                 <div class="flex justify-between text-gray-400"><span>Coins Collected:</span> <span id="goCoins" class="text-amber-300 font-bold">0</span></div>
                 <div class="flex justify-between text-gray-400"><span>Wave Reached:</span> <span id="goWave" class="text-red-400 font-bold">Wave 1</span></div>
             </div>
+
+            <!-- NEW HIGH SCORE NAME ENTRY -->
+            <div id="newHighScorePanel" class="hidden glass-panel p-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 space-y-3 text-left">
+                <div class="text-center">
+                    <div class="text-3xl mb-1">🏆</div>
+                    <h3 class="font-cinzel text-lg font-black text-amber-300">NEW HIGHEST WAVE RECORD!</h3>
+                    <p class="text-xs text-gray-200 mt-1">You surpassed the highest score of this game. Please enter your desired Hero Name:</p>
+                </div>
+                <input id="highScoreHeroName" type="text" maxlength="24" autocomplete="off" placeholder="Enter Hero Name" class="w-full bg-gray-950/80 border border-amber-500/50 rounded-xl px-4 py-3 text-center text-amber-200 font-bold focus:outline-none focus:border-amber-300">
+                <p id="highScoreNameError" class="hidden text-[11px] text-red-300 text-center">Please enter a Hero Name.</p>
+                <button id="btnSaveHighScore" class="w-full glass-btn py-3 rounded-xl font-black text-amber-300 border-amber-500/40">OK — SAVE RECORD</button>
+            </div>
+
+            <div id="savedHighScoreNotice" class="hidden text-sm font-bold text-emerald-300">✅ Hero record saved to the leaderboard!</div>
+
+            <button id="btnGameOverLeaderboard" class="glass-btn px-8 py-3 rounded-2xl font-black text-cyan-300 text-sm w-full border-cyan-500/30">
+                🏆 VIEW LEADERBOARD
+            </button>
             <button id="btnRestart" class="glass-btn px-8 py-3.5 rounded-2xl font-black text-amber-300 text-lg glow-gold w-full">
                 RESPAWN HERO ⚔️
             </button>
         </div>
     </div>
+
+    <!-- LEADERBOARD MODAL -->
+    <div id="leaderboardModal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-[60] hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl border border-amber-400/40 overflow-hidden shadow-2xl">
+            <div class="p-5 border-b border-white/10 flex items-center justify-between bg-amber-950/20">
+                <div>
+                    <h2 class="font-cinzel text-xl font-black text-amber-300">🏆 MYTHIC LEADERBOARD</h2>
+                    <p class="text-[11px] text-gray-400 mt-1">Top 10 heroes ranked by highest wave reached</p>
+                </div>
+                <button id="btnCloseLeaderboard" class="glass-btn w-9 h-9 rounded-full text-gray-200">✕</button>
+            </div>
+            <div class="p-4 sm:p-5">
+                <div class="grid grid-cols-[52px_1fr_95px] gap-2 text-[10px] uppercase tracking-wider text-gray-500 font-bold px-3 pb-2">
+                    <span>Rank</span><span>Hero</span><span class="text-right">Wave</span>
+                </div>
+                <div id="leaderboardRows" class="space-y-2 max-h-[55vh] overflow-y-auto"></div>
+                <div id="leaderboardEmpty" class="hidden text-center text-gray-400 py-8 text-sm">No hero records yet. Be the first legend!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALWAYS-AVAILABLE LEADERBOARD BUTTON -->
+    <button id="btnOpenLeaderboard" class="fixed left-4 bottom-4 z-30 glass-btn px-4 py-2.5 rounded-2xl text-xs font-black text-amber-300 border-amber-500/30">
+        🏆 LEADERBOARD
+    </button>
 
     <script>
     // --- SYNTHESIZED AUDIO ENGINE ---
@@ -1606,6 +1649,10 @@ desc:'+300 HP, +30% Def, +150 Speed'
     let waveCoinsEarned = 0;
     let waveXpEarned = 0;
     let apexBossesDefeated = 0;
+
+    // --- PERSISTENT HIGH SCORE / LEADERBOARD STATE ---
+    const LEADERBOARD_STORAGE_KEY = 'emojiLegendsMythicLeaderboardV1';
+    let pendingHighScoreWave = null;
 
     const camera = { x: 0, y: 0 };
 
@@ -3746,11 +3793,141 @@ else {
         updateHUD();
     }
 
+    // --- LEADERBOARD HELPERS ---
+    function getLeaderboard() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(LEADERBOARD_STORAGE_KEY) || '[]');
+            if (!Array.isArray(parsed)) return [];
+
+            // Normalize + remove duplicate hero names, keeping only their highest wave.
+            const bestByName = new Map();
+            parsed.forEach(entry => {
+                if (!entry || typeof entry.name !== 'string') return;
+                const cleanName = entry.name.trim().slice(0, 24);
+                const wave = Number(entry.wave);
+                if (!cleanName || !Number.isFinite(wave)) return;
+
+                const key = cleanName.toLocaleLowerCase();
+                const existing = bestByName.get(key);
+                if (!existing || wave > existing.wave) {
+                    bestByName.set(key, { name: cleanName, wave: Math.floor(wave) });
+                }
+            });
+
+            return [...bestByName.values()]
+                .sort((a, b) => b.wave - a.wave || a.name.localeCompare(b.name))
+                .slice(0, 10);
+        } catch (err) {
+            console.warn('Could not load leaderboard:', err);
+            return [];
+        }
+    }
+
+    function saveLeaderboard(entries) {
+        localStorage.setItem(LEADERBOARD_STORAGE_KEY, JSON.stringify(entries.slice(0, 10)));
+    }
+
+    function getHighestRecordedWave() {
+        const board = getLeaderboard();
+        return board.length ? board[0].wave : 0;
+    }
+
+    function addHighScoreRecord(name, wave) {
+        const cleanName = name.trim().slice(0, 24);
+        if (!cleanName) return false;
+
+        const entries = getLeaderboard();
+        const nameKey = cleanName.toLocaleLowerCase();
+        const previous = entries.find(e => e.name.toLocaleLowerCase() === nameKey);
+
+        // If the same hero already has an equal or better record, keep that record only.
+        if (previous && previous.wave >= wave) {
+            renderLeaderboard();
+            return true;
+        }
+
+        const withoutDuplicate = entries.filter(e => e.name.toLocaleLowerCase() !== nameKey);
+        withoutDuplicate.push({ name: cleanName, wave: Math.floor(wave) });
+        withoutDuplicate.sort((a, b) => b.wave - a.wave || a.name.localeCompare(b.name));
+        saveLeaderboard(withoutDuplicate.slice(0, 10));
+        renderLeaderboard();
+        return true;
+    }
+
+    function renderLeaderboard() {
+        const rows = document.getElementById('leaderboardRows');
+        const empty = document.getElementById('leaderboardEmpty');
+        if (!rows || !empty) return;
+
+        const board = getLeaderboard();
+        rows.innerHTML = '';
+
+        if (!board.length) {
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+
+        board.forEach((entry, index) => {
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-[52px_1fr_95px] gap-2 items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2.5';
+
+            const rank = document.createElement('span');
+            rank.className = `font-black ${index === 0 ? 'text-amber-300' : index === 1 ? 'text-gray-200' : index === 2 ? 'text-orange-300' : 'text-gray-400'}`;
+            rank.textContent = index === 0 ? '🥇 #1' : index === 1 ? '🥈 #2' : index === 2 ? '🥉 #3' : `#${index + 1}`;
+
+            const hero = document.createElement('span');
+            hero.className = 'font-bold text-gray-100 truncate';
+            hero.textContent = entry.name;
+
+            const wave = document.createElement('span');
+            wave.className = 'text-right font-black text-red-300';
+            wave.textContent = `Wave ${entry.wave}`;
+
+            row.append(rank, hero, wave);
+            rows.appendChild(row);
+        });
+    }
+
+    function openLeaderboard() {
+        renderLeaderboard();
+        document.getElementById('leaderboardModal').classList.remove('hidden');
+    }
+
+    function closeLeaderboard() {
+        document.getElementById('leaderboardModal').classList.add('hidden');
+    }
+
     function triggerGameOver() {
-        player.hp = 0; isGameOver = true;
+        // Prevent repeated game-over processing from overlapping damage sources.
+        if (isGameOver) return;
+
+        player.hp = 0;
+        isGameOver = true;
         document.getElementById('goSlain').innerText = enemiesKilled;
         document.getElementById('goCoins').innerText = player.coins;
         document.getElementById('goWave').innerText = `Wave ${waveNumber}`;
+
+        const previousHighestWave = getHighestRecordedWave();
+        const newRecordPanel = document.getElementById('newHighScorePanel');
+        const savedNotice = document.getElementById('savedHighScoreNotice');
+        const nameInput = document.getElementById('highScoreHeroName');
+        const nameError = document.getElementById('highScoreNameError');
+
+        pendingHighScoreWave = null;
+        newRecordPanel.classList.add('hidden');
+        savedNotice.classList.add('hidden');
+        nameError.classList.add('hidden');
+        nameInput.value = '';
+
+        // Ask for a name only when this run beats the all-time highest recorded wave.
+        if (waveNumber > previousHighestWave) {
+            pendingHighScoreWave = waveNumber;
+            newRecordPanel.classList.remove('hidden');
+            setTimeout(() => nameInput.focus(), 80);
+        }
+
+        renderLeaderboard();
         document.getElementById('gameOverModal').classList.remove('hidden');
     }
 
@@ -4416,6 +4593,41 @@ document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
     document.getElementById('btnRestart').addEventListener('click', () => {
         initGame();
     });
+
+    // Leaderboard controls
+    document.getElementById('btnOpenLeaderboard').addEventListener('click', openLeaderboard);
+    document.getElementById('btnGameOverLeaderboard').addEventListener('click', openLeaderboard);
+    document.getElementById('btnCloseLeaderboard').addEventListener('click', closeLeaderboard);
+    document.getElementById('leaderboardModal').addEventListener('click', e => {
+        if (e.target.id === 'leaderboardModal') closeLeaderboard();
+    });
+
+    document.getElementById('btnSaveHighScore').addEventListener('click', () => {
+        if (pendingHighScoreWave === null) return;
+
+        const input = document.getElementById('highScoreHeroName');
+        const error = document.getElementById('highScoreNameError');
+        const heroName = input.value.trim();
+
+        if (!heroName) {
+            error.classList.remove('hidden');
+            input.focus();
+            return;
+        }
+
+        error.classList.add('hidden');
+        addHighScoreRecord(heroName, pendingHighScoreWave);
+        pendingHighScoreWave = null;
+        document.getElementById('newHighScorePanel').classList.add('hidden');
+        document.getElementById('savedHighScoreNotice').classList.remove('hidden');
+        openLeaderboard();
+    });
+
+    document.getElementById('highScoreHeroName').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('btnSaveHighScore').click();
+    });
+
+    renderLeaderboard();
 
     document.getElementById('btnSaveCertificate').addEventListener('click', () => {
         const name = document.getElementById('heroNameInput').value.trim() || 'Mythic Champion';
