@@ -362,7 +362,7 @@
                     <div class="flex justify-between items-center bg-amber-950/30 p-4 rounded-2xl border border-amber-500/20">
                         <div>
                             <h3 class="font-cinzel font-bold text-amber-300 text-base">Merchant & Guild</h3>
-                            <p class="text-xs text-gray-300">Acquire Helmets, Chestplates, Leggings, Boots, Weapons, Skill Slots & Spells!</p>
+                            <p class="text-xs text-gray-300">Acquire Armor, Weapons, Skill Books, Skill Slots & 10 changeable SPACEBAR Ultimates!</p>
                         </div>
                         <div class="flex items-center gap-2 text-lg font-bold text-amber-300 bg-black/50 px-4 py-2 rounded-xl border border-amber-500/30">
                             <span class="coin-icon"></span>
@@ -375,6 +375,7 @@
                         <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="armor">Armor Pieces</button>
                         <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="weapon">Weapons</button>
                         <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="skill">Skill Books</button>
+                        <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-fuchsia-300" data-filter="ultimate">Ultimate Books</button>
                         <button class="shop-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold glass-btn text-gray-300" data-filter="slots">Skill Slots</button>
                     </div>
 
@@ -409,7 +410,7 @@
                             <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2 pt-2">Skill Slot Configurations (Keys 1-8)</h3>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="inventorySkillsGrid"></div>
 
-                            <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2 pt-2">Owned Armors, Weapons & Books</h3>
+                            <h3 class="font-cinzel font-bold text-amber-400 text-sm border-b border-white/10 pb-2 pt-2">Owned Armors, Weapons, Skill Books & Ultimate Books</h3>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="inventoryOwnedGrid"></div>
                         </div>
 
@@ -430,6 +431,10 @@
                         <div class="glass-panel p-4 rounded-2xl space-y-1">
                             <div class="font-bold text-amber-300 flex items-center gap-2"><span>🛡️</span> Armor Mechanics</div>
                             <p class="text-xs text-gray-300">Equip Head, Chest, Legs, and Boots to gain massive HP, Defense, and Speed.</p>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl space-y-1">
+                            <div class="font-bold text-fuchsia-300 flex items-center gap-2"><span>🌌</span> Changeable Ultimate</div>
+                            <p class="text-xs text-gray-300">Buy Ultimate Books, equip one in Inventory, then press SPACE or click the purple ultimate slot to cast it.</p>
                         </div>
                         <div class="glass-panel p-4 rounded-2xl space-y-1">
                             <div class="font-bold text-amber-300 flex items-center gap-2"><span>💥</span> Wave 4400 Final Showdown</div>
@@ -586,6 +591,7 @@
     const RARITIES = {
         common: { name: 'Common', class: 'rarity-common', color: '#9ca3af' },
         uncommon: { name: 'Uncommon', class: 'rarity-uncommon', color: '#22c55e' },
+        rare: { name: 'Rare', class: 'rarity-epic', color: '#38bdf8' },
         epic: { name: 'Epic', class: 'rarity-epic', color: '#3b82f6' },
         legendary: { name: 'Legendary', class: 'rarity-legendary', color: '#a855f7' },
         mythic: { name: 'Mythic', class: 'rarity-mythic', color: '#eab308' }
@@ -963,6 +969,162 @@ cd:3.2,
 cost:450,
 pColor:'#ec4899',
 desc:'Fires a refracting rainbow beam of pure energy.'
+},
+
+// =========================
+// ULTIMATE SKILL BOOKS (SPACEBAR)
+// Buy these in the shop and equip one from Inventory.
+// =========================
+
+ult_elemental_nova:{
+id:'ult_elemental_nova',
+name:'Elemental Nova',
+type:'ultimate',
+rarity:'epic',
+icon:'💥',
+mana:30,
+dmg:95,
+cd:4.0,
+cost:0,
+pColor:'#a855f7',
+style:'nova',
+desc:'Starter ultimate. Fires a 24-shot elemental nova in every direction.'
+},
+
+ult_dragonstorm:{
+id:'ult_dragonstorm',
+name:'Dragonstorm Cataclysm',
+type:'ultimate',
+rarity:'legendary',
+icon:'🐉',
+mana:70,
+dmg:260,
+cd:8.0,
+cost:2800,
+pColor:'#ef4444',
+style:'dragonstorm',
+desc:'Unleashes three rotating rings of dragon-fire projectiles.'
+},
+
+ult_void_singularity:{
+id:'ult_void_singularity',
+name:'Void Singularity',
+type:'ultimate',
+rarity:'mythic',
+icon:'🕳️',
+mana:85,
+dmg:520,
+cd:11.0,
+cost:4200,
+pColor:'#7c3aed',
+style:'singularity',
+desc:'Collapses space at your cursor, pulling nearby enemies inward before detonating.'
+},
+
+ult_thunder_emperor:{
+id:'ult_thunder_emperor',
+name:'Thunder Emperor',
+type:'ultimate',
+rarity:'mythic',
+icon:'⚡',
+mana:75,
+dmg:430,
+cd:9.0,
+cost:3800,
+pColor:'#fde047',
+style:'thunder',
+desc:'Chains imperial lightning through up to 10 nearby enemies.'
+},
+
+ult_phoenix_rebirth:{
+id:'ult_phoenix_rebirth',
+name:'Phoenix Rebirth',
+type:'ultimate',
+rarity:'mythic',
+icon:'🔥',
+mana:90,
+dmg:390,
+heal:320,
+cd:13.0,
+cost:4600,
+pColor:'#fb923c',
+style:'phoenix',
+desc:'Restores health and erupts into a massive phoenix-flame ring.'
+},
+
+ult_chrono_rupture:{
+id:'ult_chrono_rupture',
+name:'Chrono Rupture',
+type:'ultimate',
+rarity:'mythic',
+icon:'⏳',
+mana:95,
+dmg:560,
+cd:12.0,
+cost:5000,
+pColor:'#22d3ee',
+style:'chrono',
+desc:'Fractures time and damages every enemy inside a huge temporal field.'
+},
+
+ult_abyss_vortex:{
+id:'ult_abyss_vortex',
+name:'Abyss Vortex',
+type:'ultimate',
+rarity:'mythic',
+icon:'🌌',
+mana:100,
+dmg:610,
+cd:13.0,
+cost:5400,
+pColor:'#4c1d95',
+style:'abyss',
+desc:'Drags enemies toward you with void force and crushes them in an abyssal burst.'
+},
+
+ult_prism_apocalypse:{
+id:'ult_prism_apocalypse',
+name:'Prism Apocalypse',
+type:'ultimate',
+rarity:'mythic',
+icon:'🌈',
+mana:105,
+dmg:330,
+cd:10.0,
+cost:5700,
+pColor:'#ec4899',
+style:'prism',
+desc:'Fires three multicolor projectile rings with different speeds and rotations.'
+},
+
+ult_meteor_dominion:{
+id:'ult_meteor_dominion',
+name:'Meteor Dominion',
+type:'ultimate',
+rarity:'mythic',
+icon:'☄️',
+mana:115,
+dmg:720,
+cd:15.0,
+cost:6500,
+pColor:'#f97316',
+style:'meteor',
+desc:'Calls a meteor convergence around the cursor, striking inward from every side.'
+},
+
+ult_worldbreaker:{
+id:'ult_worldbreaker',
+name:'Worldbreaker',
+type:'ultimate',
+rarity:'mythic',
+icon:'🌋',
+mana:130,
+dmg:950,
+cd:18.0,
+cost:8000,
+pColor:'#dc2626',
+style:'worldbreaker',
+desc:'The ultimate ground rupture: a gigantic point-blank shockwave with extreme damage.'
 },
 
 // =========================
@@ -1415,6 +1577,7 @@ desc:'+300 HP, +30% Def, +150 Speed'
 
     window.addEventListener('keydown', e => {
         const k = e.key.toLowerCase();
+        if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k) && gameStarted) e.preventDefault();
         keys[k] = true;
         if (k === 'p') togglePause();
         if (k === ' ') castUltimate();
@@ -1469,9 +1632,10 @@ desc:'+300 HP, +30% Def, +150 Speed'
         equippedSkills: [null, null, null, null, null, null, null, null],
         skillCooldowns: [0, 0, 0, 0, 0, 0, 0, 0],
         ultCooldown: 0,
+        equippedUltimate: 'ult_elemental_nova',
 
         equipped: { weapon: 'sword', head: null, chest: null, legs: null, boots: null },
-        ownedItems: ['sword'],
+        ownedItems: ['sword', 'ult_elemental_nova'],
 
         hitTimer: 0,
         getEmoji() {
@@ -1535,9 +1699,10 @@ desc:'+300 HP, +30% Def, +150 Speed'
         player.equippedSkills = [null, null, null, null, null, null, null, null];
         player.skillCooldowns = [0, 0, 0, 0, 0, 0, 0, 0];
         player.ultCooldown = 0;
+        player.equippedUltimate = 'ult_elemental_nova';
 
         player.equipped = { weapon: 'sword', head: null, chest: null, legs: null, boots: null };
-        player.ownedItems = ['sword'];
+        player.ownedItems = ['sword', 'ult_elemental_nova'];
 
         recalculateStats();
         player.hp = player.maxHp; player.mana = player.maxMana;
@@ -2637,32 +2802,190 @@ if (e.isBoss) {
     }
 
     function castUltimate() {
-        if (player.ultCooldown > 0 || player.mana < 30) return;
-        player.mana -= 30;
-        player.ultCooldown = 4.0;
-        sfx.play('fireball');
-        screenShake = 16;
+        if (!gameStarted || isPaused || isMenuOpen || isIntermission || isGameOver) return;
 
-        const count = 20;
-        for (let i = 0; i < count; i++) {
-            const angle = (Math.PI * 2 / count) * i;
-            projectiles.push({
-                x: player.x, y: player.y,
-                vx: Math.cos(angle) * 450, vy: Math.sin(angle) * 450,
-                dmg: 85, icon: '💥', color: '#a855f7',
-                life: 1.2, radius: 16, isPlayer: true
-            });
+        const ult = ITEMS[player.equippedUltimate || 'ult_elemental_nova'];
+        if (!ult || ult.type !== 'ultimate') return;
+        if (player.ultCooldown > 0 || player.mana < ult.mana) return;
+
+        player.mana -= ult.mana;
+        player.ultCooldown = ult.cd;
+        sfx.play('fireball');
+        screenShake = 18;
+
+        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
+        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
+        const aimAngle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
+
+        const radialProjectiles = (count, speed, dmg, icon, color, angleOffset = 0, radius = 17, life = 2.0) => {
+            for (let i = 0; i < count; i++) {
+                const a = angleOffset + (Math.PI * 2 / count) * i;
+                projectiles.push({
+                    x: player.x, y: player.y,
+                    vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+                    dmg, icon, color, life, radius, isPlayer: true
+                });
+            }
+        };
+
+        switch (ult.style) {
+            case 'nova':
+                radialProjectiles(24, 480, ult.dmg, '💥', '#a855f7', performance.now() / 900);
+                burstParticles(player.x, player.y, '#c084fc', 80, 330, 7);
+                spawnFloatingText(player.x, player.y - 55, '💥 ELEMENTAL NOVA!', '#c084fc');
+                break;
+
+            case 'dragonstorm':
+                radialProjectiles(18, 380, ult.dmg, '🔥', '#ef4444', 0, 18, 2.5);
+                radialProjectiles(18, 500, ult.dmg * 0.85, '🐉', '#fb923c', Math.PI / 18, 16, 2.2);
+                radialProjectiles(18, 620, ult.dmg * 0.7, '🔥', '#facc15', Math.PI / 9, 14, 1.9);
+                burstParticles(player.x, player.y, '#ef4444', 110, 440, 9);
+                spawnFloatingText(player.x, player.y - 60, '🐉 DRAGONSTORM CATACLYSM!', '#fb923c');
+                screenShake = 28;
+                break;
+
+            case 'singularity': { // Cursor-centered pull + detonation
+                const center = { x: worldMouseX, y: worldMouseY };
+                enemies.slice().forEach(e => {
+                    if (e.dead) return;
+                    const d = Math.hypot(e.x - center.x, e.y - center.y);
+                    if (d < 520) {
+                        e.x += (center.x - e.x) * 0.45;
+                        e.y += (center.y - e.y) * 0.45;
+                        damageEnemy(e, Math.round(ult.dmg * (1 - d / 900)));
+                    }
+                });
+                for (let r = 0; r < 5; r++) burstParticles(center.x, center.y, r % 2 ? '#7c3aed' : '#111827', 30, 100 + r * 70, 5 + r);
+                spawnFloatingText(center.x, center.y - 65, '🕳️ VOID SINGULARITY!', '#c084fc');
+                screenShake = 34;
+                break;
+            }
+
+            case 'thunder': { // Chain lightning through nearest enemies
+                const targets = enemies.filter(e => !e.dead)
+                    .sort((a,b) => Math.hypot(a.x-worldMouseX,a.y-worldMouseY) - Math.hypot(b.x-worldMouseX,b.y-worldMouseY))
+                    .slice(0, 10);
+                let from = { x: player.x, y: player.y };
+                targets.forEach((e, idx) => {
+                    lineParticles(from.x, from.y, e.x, e.y, idx % 2 ? '#fef08a' : '#22d3ee', 26);
+                    damageEnemy(e, Math.round(ult.dmg * Math.max(0.45, 1 - idx * 0.055)));
+                    burstParticles(e.x, e.y, '#fde047', 24, 190, 5);
+                    from = e;
+                });
+                spawnFloatingText(player.x, player.y - 60, '⚡ THUNDER EMPEROR!', '#fde047');
+                screenShake = 24;
+                break;
+            }
+
+            case 'phoenix':
+                player.hp = Math.min(player.maxHp, player.hp + ult.heal);
+                radialProjectiles(30, 520, ult.dmg, '🔥', '#fb923c', aimAngle, 18, 2.2);
+                burstParticles(player.x, player.y, '#f97316', 140, 460, 9);
+                burstParticles(player.x, player.y, '#fde047', 70, 250, 6);
+                spawnFloatingText(player.x, player.y - 60, `🔥 PHOENIX REBIRTH! +${ult.heal} HP`, '#fb923c');
+                screenShake = 25;
+                break;
+
+            case 'chrono':
+                enemies.slice().forEach(e => {
+                    if (!e.dead && Math.hypot(e.x-player.x, e.y-player.y) < 760) damageEnemy(e, ult.dmg);
+                });
+                for (let i=0;i<8;i++) {
+                    const a = (Math.PI*2/8)*i;
+                    lineParticles(player.x, player.y, player.x+Math.cos(a)*700, player.y+Math.sin(a)*700, i%2 ? '#22d3ee' : '#a5f3fc', 30);
+                }
+                burstParticles(player.x, player.y, '#06b6d4', 130, 360, 7);
+                spawnFloatingText(player.x, player.y - 60, '⏳ CHRONO RUPTURE!', '#67e8f9');
+                screenShake = 26;
+                break;
+
+            case 'abyss':
+                enemies.slice().forEach(e => {
+                    if (e.dead) return;
+                    const d = Math.hypot(e.x-player.x, e.y-player.y);
+                    if (d < 680) {
+                        const a = Math.atan2(player.y-e.y, player.x-e.x);
+                        e.x += Math.cos(a) * Math.min(210, d * 0.5);
+                        e.y += Math.sin(a) * Math.min(210, d * 0.5);
+                        damageEnemy(e, Math.round(ult.dmg * (1 - d / 1200)));
+                    }
+                });
+                for (let i=0;i<5;i++) radialProjectiles(10, 180+i*55, ult.dmg*0.25, '🌌', i%2?'#4c1d95':'#a855f7', i*0.22, 12+i, 2.7);
+                burstParticles(player.x, player.y, '#581c87', 160, 420, 8);
+                spawnFloatingText(player.x, player.y - 60, '🌌 ABYSS VORTEX!', '#a855f7');
+                screenShake = 31;
+                break;
+
+            case 'prism': {
+                const colors = ['#ef4444','#f97316','#fde047','#22c55e','#22d3ee','#3b82f6','#a855f7','#ec4899'];
+                for (let ring=0; ring<3; ring++) {
+                    const count = 24;
+                    for (let i=0; i<count; i++) {
+                        const a = aimAngle + ring*0.17 + (Math.PI*2/count)*i;
+                        projectiles.push({
+                            x:player.x,y:player.y,
+                            vx:Math.cos(a)*(360+ring*150),vy:Math.sin(a)*(360+ring*150),
+                            dmg:ult.dmg*(1-ring*0.12), icon:'◆', color:colors[i%colors.length],
+                            life:2.4, radius:12+ring*2, isPlayer:true
+                        });
+                    }
+                }
+                colors.forEach((c,i)=>burstParticles(player.x,player.y,c,18,220+i*25,5));
+                spawnFloatingText(player.x, player.y - 60, '🌈 PRISM APOCALYPSE!', '#f0abfc');
+                screenShake = 29;
+                break;
+            }
+
+            case 'meteor': {
+                const cx = worldMouseX, cy = worldMouseY;
+                const count = 18;
+                for (let i=0;i<count;i++) {
+                    const a = (Math.PI*2/count)*i + Math.random()*0.12;
+                    const dist = 520 + Math.random()*180;
+                    const sx = cx + Math.cos(a)*dist;
+                    const sy = cy + Math.sin(a)*dist;
+                    const ta = Math.atan2(cy-sy,cx-sx);
+                    projectiles.push({x:sx,y:sy,vx:Math.cos(ta)*700,vy:Math.sin(ta)*700,dmg:ult.dmg,icon:'☄️',color:'#f97316',life:1.8,radius:22,isPlayer:true});
+                    burstParticles(sx,sy,'#fb923c',10,100,4);
+                }
+                burstParticles(cx,cy,'#facc15',90,310,8);
+                spawnFloatingText(cx, cy - 70, '☄️ METEOR DOMINION!', '#fb923c');
+                screenShake = 36;
+                break;
+            }
+
+            case 'worldbreaker':
+                enemies.slice().forEach(e => {
+                    if (!e.dead) {
+                        const d = Math.hypot(e.x-player.x,e.y-player.y);
+                        if (d < 520) damageEnemy(e, Math.round(ult.dmg * Math.max(0.55, 1-d/1100)));
+                    }
+                });
+                for (let ring=1; ring<=6; ring++) {
+                    const count = 18 + ring*4;
+                    for (let i=0;i<count;i++) {
+                        const a=(Math.PI*2/count)*i;
+                        particles.push({x:player.x+Math.cos(a)*ring*55,y:player.y+Math.sin(a)*ring*55,vx:Math.cos(a)*(80+ring*35),vy:Math.sin(a)*(80+ring*35),life:0.6+ring*0.08,maxLife:1.1,color:ring%2?'#dc2626':'#f97316',size:5+ring});
+                    }
+                }
+                spawnFloatingText(player.x, player.y - 75, '🌋 WORLDBREAKER!', '#f97316');
+                screenShake = 48;
+                break;
         }
-        spawnFloatingText(player.x, player.y - 50, "ELEMENTAL NOVA!", "#c084fc");
+
+        updateHUD();
     }
 
     function damageEnemy(e, dmg) {
+        if (!e || e.dead) return;
         e.hp -= dmg;
         e.hitTimer = 0.15;
         sfx.play('hit');
-        spawnFloatingText(e.x, e.y, `-${dmg}`, "#ef4444");
+        spawnFloatingText(e.x, e.y, `-${Math.round(dmg)}`, "#ef4444");
 
         if (e.hp <= 0) {
+            e.hp = 0;
+            e.dead = true;
             enemiesKilled++;
             const xpGained = e.isBoss ? 200 : 30;
             player.xp += xpGained; waveXpEarned += xpGained;
@@ -2670,7 +2993,7 @@ if (e.isBoss) {
             const coinVal = Math.floor(e.coinVal * (0.85 + Math.random() * 0.3));
             coinsList.push({ x: e.x, y: e.y, value: coinVal });
 
-            if (player.xp >= player.maxXp) {
+            while (player.xp >= player.maxXp) {
                 player.level++;
                 player.xp -= player.maxXp;
                 player.maxXp = Math.round(player.maxXp * 1.45);
@@ -3021,25 +3344,7 @@ if (player.stunTimer <= 0) {
         }
     }
 }
-                    let actualDmg = p.isTrueDmg ? p.dmg : p.dmg * (1 - player.defensePercent / 100);
-
-                    // Megamorph 0.000001% Instant Death Chance
-                    if (p.isInstaDeathChance && Math.random() < 0.00000001) {
-                        actualDmg = player.hp + 9999;
-                        spawnFloatingText(player.x, player.y, "INSTANT DEATH!", "#dc2626");
-                    }
-
-                    player.hp -= actualDmg;
-                    player.hitTimer = 0.2; screenShake = 10;
-                    sfx.play('hit');
-                    spawnFloatingText(player.x, player.y, `-${Math.round(actualDmg)}`, "#f87171");
-                    p.life = 0;
-
-                    if (player.hp <= 0) triggerGameOver();
-                }
-            }
-
-            if (p.life <= 0.65) projectiles.splice(i, 1);
+            if (p.life <= 0) projectiles.splice(i, 1);
         }
 
         // Enemies & Boss Behaviors
@@ -3402,7 +3707,7 @@ else {
                 if (player.hp <= 0) triggerGameOver();
             }
 
-            if (e.hp <= 0) enemies.splice(i, 1);
+            if (e.dead || e.hp <= 0) enemies.splice(i, 1);
         }
 
         if (enemies.length === 0 && !isIntermission) onWaveCompleted();
@@ -3737,6 +4042,25 @@ projectiles.forEach(p => {
         document.getElementById('hudBasicAttackIcon').innerText = activeWep.icon;
         document.getElementById('hudBasicDmgText').innerText = `${activeWep.dmg} DMG`;
 
+        const activeUlt = ITEMS[player.equippedUltimate || 'ult_elemental_nova'];
+        if (activeUlt) {
+            document.getElementById('hudUltIcon').innerText = activeUlt.icon;
+            document.getElementById('hudUltName').innerText = activeUlt.name;
+            const ultOverlay = document.getElementById('hudUltCdOverlay');
+            if (player.ultCooldown > 0) {
+                ultOverlay.classList.remove('hidden');
+                ultOverlay.classList.add('flex');
+                ultOverlay.innerText = `${Math.ceil(player.ultCooldown)}s`;
+            } else if (player.mana < activeUlt.mana) {
+                ultOverlay.classList.remove('hidden');
+                ultOverlay.classList.add('flex');
+                ultOverlay.innerText = `${activeUlt.mana} MP`;
+            } else {
+                ultOverlay.classList.add('hidden');
+                ultOverlay.classList.remove('flex');
+            }
+        }
+
         // Skill Slots HUD
         const slotsBar = document.getElementById('skillSlotsBar');
         slotsBar.innerHTML = '';
@@ -3844,6 +4168,7 @@ function toggleMenu() {
             if (filter !== 'all') {
                 if (filter === 'slots' && item.type !== 'slot') return;
                 if (filter === 'skill' && item.type !== 'skill') return;
+                if (filter === 'ultimate' && item.type !== 'ultimate') return;
                 if (filter === 'weapon' && item.type !== 'weapon') return;
                 if (filter === 'armor' && item.type !== 'armor') return;
             }
@@ -3973,6 +4298,9 @@ function toggleMenu() {
                         ${player.unlockedSlots.map((unlocked, idx) => unlocked ? `<option value="${idx}">Slot ${idx + 1}</option>` : '').join('')}
                     </select>
                 `;
+            } else if (item.type === 'ultimate') {
+                const isEq = player.equippedUltimate === id;
+                equipBtnHTML = `<button onclick="equipUltimate('${id}')" class="mt-2 w-full py-1 rounded text-xs font-bold ${isEq ? 'bg-fuchsia-500 text-white' : 'glass-btn text-fuchsia-300'}">${isEq ? 'SPACE Equipped' : 'Equip to SPACE'}</button>`;
             }
 
             card.innerHTML = `
@@ -4019,6 +4347,16 @@ function toggleMenu() {
         renderInventoryItems();
     }
 
+    function equipUltimate(id) {
+        const item = ITEMS[id];
+        if (!item || item.type !== 'ultimate' || !player.ownedItems.includes(id)) return;
+        player.equippedUltimate = id;
+        player.ultCooldown = 0;
+        updateHUD();
+        renderInventoryItems();
+        spawnFloatingText(player.x, player.y - 55, `${item.icon} ${item.name} EQUIPPED`, item.pColor || '#d946ef');
+    }
+
     // Modal Filters & Tabs Wire-up
     document.querySelectorAll('.shop-filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -4060,6 +4398,7 @@ function toggleMenu() {
     });
 
     document.getElementById('btnPauseToggle').addEventListener('click', togglePause);
+    document.getElementById('hudUltSlot').addEventListener('click', castUltimate);
     document.getElementById('btnResumeGame').addEventListener('click', togglePause);
     document.getElementById('btnOpenMenu').addEventListener('click', toggleMenu);
     document.getElementById('btnCloseMenu').addEventListener('click', toggleMenu);
