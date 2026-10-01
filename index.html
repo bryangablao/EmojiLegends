@@ -326,30 +326,59 @@
         </div>
     </div>
 
-    <!-- PAUSE MODAL -->
-    <div id="pauseOverlay" class="fixed inset-0 bg-black/75 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-cyan-500/40 text-center space-y-6">
-            <div>
-                <span class="text-5xl inline-block mb-1">⏸️</span>
-                <h2 class="font-cinzel text-2xl font-black text-cyan-300 tracking-wider">GAME PAUSED</h2>
-                <p class="text-xs text-gray-400">Tactical Pause Menu</p>
-            </div>
+<!-- PAUSE MODAL -->
+<div id="pauseOverlay"
+     class="fixed inset-0 bg-black/75 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
 
-            <div class="glass-panel p-4 rounded-2xl space-y-2 text-left text-xs border-white/10 bg-black/40">
-                <div class="font-cinzel font-bold text-amber-400 border-b border-white/10 pb-1.5 flex justify-between">
-                    <span>Hero Status</span>
-                    <span id="pauseHeroLevel">Level 1</span>
-                </div>
-                <div class="flex justify-between text-gray-300"><span>Current Experience:</span> <span id="pauseHeroXp" class="font-bold text-purple-300">0 / 100</span></div>
-                <div class="flex justify-between text-gray-300"><span>Total Gold Coins:</span> <span id="pauseHeroCoins" class="font-bold text-amber-300">0</span></div>
-                <div class="flex justify-between text-gray-300"><span>Current Wave:</span> <span id="pauseWaveNum" class="font-bold text-red-400">Wave 1</span></div>
-            </div>
+    <div class="glass-panel relative p-6 sm:p-8 rounded-3xl max-w-md w-full border border-cyan-500/40 text-center space-y-6">
 
-            <button id="btnResumeGame" class="w-full glass-btn py-3.5 rounded-2xl font-black text-cyan-300 text-base uppercase border-cyan-500/40">
-                ▶️ RESUME BATTLE
-            </button>
+        <!-- PAUSE LEADERBOARD SHORTCUT -->
+        <button id="btnPauseLeaderboard"
+                type="button"
+                title="View Leaderboard"
+                aria-label="View Leaderboard"
+                class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 glass-btn w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-xl border-amber-500/40 text-amber-300 hover:text-amber-100"
+                style="line-height:1;">
+            🏆
+        </button>
+
+        <div>
+            <span class="text-5xl inline-block mb-1">⏸️</span>
+            <h2 class="font-cinzel text-2xl font-black text-cyan-300 tracking-wider">
+                GAME PAUSED
+            </h2>
+            <p class="text-xs text-gray-400">Tactical Pause Menu</p>
         </div>
+
+        <div class="glass-panel p-4 rounded-2xl space-y-2 text-left text-xs border-white/10 bg-black/40">
+            <div class="font-cinzel font-bold text-amber-400 border-b border-white/10 pb-1.5 flex justify-between">
+                <span>Hero Status</span>
+                <span id="pauseHeroLevel">Level 1</span>
+            </div>
+
+            <div class="flex justify-between text-gray-300">
+                <span>Current Experience:</span>
+                <span id="pauseHeroXp" class="font-bold text-purple-300">0 / 100</span>
+            </div>
+
+            <div class="flex justify-between text-gray-300">
+                <span>Total Gold Coins:</span>
+                <span id="pauseHeroCoins" class="font-bold text-amber-300">0</span>
+            </div>
+
+            <div class="flex justify-between text-gray-300">
+                <span>Current Wave:</span>
+                <span id="pauseWaveNum" class="font-bold text-red-400">Wave 1</span>
+            </div>
+        </div>
+
+        <button id="btnResumeGame"
+                class="w-full glass-btn py-3.5 rounded-2xl font-black text-cyan-300 text-base uppercase border-cyan-500/40">
+            ▶️ RESUME BATTLE
+        </button>
+
     </div>
+</div>
 
     <!-- SANCTUARY MENU MODAL (Shop, Inventory, Guide, Settings) -->
     <div id="menuModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
@@ -4743,6 +4772,7 @@ document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
     document.getElementById('btnStartLeaderboard').addEventListener('click', openLeaderboard);
     document.getElementById('btnOpenLeaderboard').addEventListener('click', openLeaderboard);
     document.getElementById('btnGameOverLeaderboard').addEventListener('click', openLeaderboard);
+    document.getElementById('btnPauseLeaderboard').addEventListener('click', openLeaderboard);
     document.getElementById('btnCloseLeaderboard').addEventListener('click', closeLeaderboard);
     document.getElementById('leaderboardModal').addEventListener('click', e => {
         if (e.target.id === 'leaderboardModal') closeLeaderboard();
