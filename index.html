@@ -296,6 +296,11 @@
                 </div>
             </div>
 
+            <div id="bossLootReward" class="hidden bg-amber-500/10 border border-amber-400/30 rounded-2xl p-3 text-left">
+                <div class="text-[10px] uppercase tracking-wider text-amber-300 font-black">Boss Treasure</div>
+                <div id="bossLootRewardText" class="text-sm font-bold text-white mt-1">No boss loot this wave.</div>
+            </div>
+
             <p class="text-xs text-gray-300 leading-relaxed">
                 Visit the Sanctuary Shop to acquire Armor Sets, Skill Books, and Weapons before triggering the next horde!
             </p>
@@ -1598,7 +1603,31 @@ def:30,
 spd:150,
 cost:2000,
 desc:'+300 HP, +30% Def, +150 Speed'
-}
+},
+
+// =========================
+// BOSS HUNTER SHOP EXPANSION
+// Stronger gear can be bought or won from 10th-wave bosses.
+// =========================
+weapon_runeblade:{id:'weapon_runeblade',name:'Runeblade',type:'weapon',rarity:'rare',icon:'🔷',dmg:82,range:108,cost:650,desc:'Boss-hunter blade. 82 damage, 108 range.'},
+weapon_voidfang:{id:'weapon_voidfang',name:'Voidfang',type:'weapon',rarity:'epic',icon:'🗡️',dmg:125,range:120,cost:1400,desc:'Void-forged edge. 125 damage, 120 range.'},
+weapon_titanbreaker:{id:'weapon_titanbreaker',name:'Titanbreaker',type:'weapon',rarity:'legendary',icon:'🔨',dmg:195,range:132,cost:3200,desc:'Heavy legendary weapon. 195 damage, 132 range.'},
+
+helm_runic:{id:'helm_runic',name:'Runic Warhelm',type:'armor',slot:'head',rarity:'rare',icon:'🪖',hp:115,def:11,spd:14,cost:700,desc:'+115 HP, +11% Def, +14 Speed'},
+helm_void:{id:'helm_void',name:'Voidlord Mask',type:'armor',slot:'head',rarity:'legendary',icon:'👺',hp:275,def:23,spd:28,cost:3000,desc:'+275 HP, +23% Def, +28 Speed'},
+chest_runic:{id:'chest_runic',name:'Runic Battleplate',type:'armor',slot:'chest',rarity:'rare',icon:'🥋',hp:165,def:15,spd:8,cost:850,desc:'+165 HP, +15% Def, +8 Speed'},
+chest_void:{id:'chest_void',name:'Voidlord Carapace',type:'armor',slot:'chest',rarity:'legendary',icon:'🛡️',hp:430,def:32,spd:20,cost:3600,desc:'+430 HP, +32% Def, +20 Speed'},
+legs_runic:{id:'legs_runic',name:'Runic Legguards',type:'armor',slot:'legs',rarity:'rare',icon:'👖',hp:130,def:12,spd:26,cost:760,desc:'+130 HP, +12% Def, +26 Speed'},
+legs_void:{id:'legs_void',name:'Voidlord Greaves',type:'armor',slot:'legs',rarity:'legendary',icon:'🦿',hp:320,def:27,spd:48,cost:3200,desc:'+320 HP, +27% Def, +48 Speed'},
+boots_runic:{id:'boots_runic',name:'Runic Striders',type:'armor',slot:'boots',rarity:'rare',icon:'🥾',hp:90,def:8,spd:60,cost:720,desc:'+90 HP, +8% Def, +60 Speed'},
+boots_void:{id:'boots_void',name:'Voidstep Boots',type:'armor',slot:'boots',rarity:'legendary',icon:'👢',hp:220,def:20,spd:125,cost:3000,desc:'+220 HP, +20% Def, +125 Speed'},
+
+// 0.00001% jackpot tier. These are intentionally absurdly expensive in the shop.
+celestial_blade:{id:'celestial_blade',name:'Celestial Eternity Blade',type:'weapon',rarity:'mythic',icon:'🌠',dmg:420,range:170,cost:1000000,desc:'MYTHICAL JACKPOT: 420 damage and 170 range.'},
+celestial_crown:{id:'celestial_crown',name:'Celestial Crown',type:'armor',slot:'head',rarity:'mythic',icon:'🌌',hp:650,def:38,spd:60,cost:1000000,desc:'MYTHICAL JACKPOT: +650 HP, +38% Def, +60 Speed'},
+celestial_aegis:{id:'celestial_aegis',name:'Celestial Aegis',type:'armor',slot:'chest',rarity:'mythic',icon:'💫',hp:900,def:48,spd:45,cost:1000000,desc:'MYTHICAL JACKPOT: +900 HP, +48% Def, +45 Speed'},
+celestial_greaves:{id:'celestial_greaves',name:'Celestial Greaves',type:'armor',slot:'legs',rarity:'mythic',icon:'✨',hp:700,def:40,spd:80,cost:1000000,desc:'MYTHICAL JACKPOT: +700 HP, +40% Def, +80 Speed'},
+celestial_wings:{id:'celestial_wings',name:'Celestial Wingboots',type:'armor',slot:'boots',rarity:'mythic',icon:'🪽',hp:500,def:32,spd:220,cost:1000000,desc:'MYTHICAL JACKPOT: +500 HP, +32% Def, +220 Speed'}
     };
 
     // --- GAME ENGINE STATE ---
@@ -1648,6 +1677,7 @@ desc:'+300 HP, +30% Def, +150 Speed'
     let waveNumber = 1;
     let waveCoinsEarned = 0;
     let waveXpEarned = 0;
+    let lastBossLoot = null;
     let apexBossesDefeated = 0;
 
     // --- PERSISTENT HIGH SCORE / LEADERBOARD STATE ---
@@ -1959,6 +1989,7 @@ function lineParticles(x1, y1, x2, y2, color, count = 18) {
     function spawnWave() {
         isIntermission = false;
         waveCoinsEarned = 0; waveXpEarned = 0;
+        lastBossLoot = null;
         document.getElementById('btnOpenMenu').classList.add('hidden');
         document.getElementById('intermissionModal').classList.add('hidden');
 
@@ -2035,7 +2066,7 @@ if (isBossWave) {
         speed: bossSpeed,
         dmg: bossDmg,
 
-        coinVal: 150 + waveNumber * 5,
+        coinVal: Math.round(750 + waveNumber * 35 + Math.pow(waveNumber, 1.18) * 8),
 
         size: 65,
 
@@ -2740,6 +2771,17 @@ function distBetween(a, b) {
         document.getElementById('waveHeroLevel').innerText = `Lvl ${player.level}`;
         document.getElementById('intermissionTitle').innerText = `WAVE ${waveNumber} CLEARED!`;
 
+        const bossLootBox = document.getElementById('bossLootReward');
+        const bossLootText = document.getElementById('bossLootRewardText');
+        if (lastBossLoot) {
+            const rarity = RARITIES[lastBossLoot.rarity] || RARITIES.common;
+            bossLootBox.classList.remove('hidden');
+            bossLootText.style.color = rarity.color;
+            bossLootText.innerText = `${lastBossLoot.icon} ${rarity.name} ${lastBossLoot.itemName}  •  +${lastBossLoot.gold} Gold${lastBossLoot.duplicateGold ? `  •  Duplicate converted to +${lastBossLoot.duplicateGold} Gold` : ''}${lastBossLoot.mythicJackpot ? '  •  MYTHICAL JACKPOT!' : ''}`;
+        } else {
+            bossLootBox.classList.add('hidden');
+        }
+
         document.getElementById('btnOpenMenu').classList.remove('hidden');
         document.getElementById('intermissionModal').classList.remove('hidden');
     }
@@ -3023,6 +3065,95 @@ if (e.isBoss) {
         updateHUD();
     }
 
+    // --- BOSS TREASURE SYSTEM ---
+    // Every boss gives direct gold + one guaranteed useful gear item.
+    // A separate 0.00001% roll can award a Celestial Mythic jackpot item.
+    const BOSS_GEAR_POOL = Object.keys(ITEMS).filter(id => {
+        const item = ITEMS[id];
+        return (item.type === 'weapon' || item.type === 'armor') && !id.startsWith('celestial_');
+    });
+    const CELESTIAL_MYTHIC_POOL = ['celestial_blade','celestial_crown','celestial_aegis','celestial_greaves','celestial_wings'];
+
+    function bossAllowedRarities(wave) {
+        if (wave >= 150) return ['rare','epic','legendary'];
+        if (wave >= 80) return ['uncommon','rare','epic','legendary'];
+        if (wave >= 40) return ['uncommon','rare','epic'];
+        if (wave >= 20) return ['uncommon','rare'];
+        return ['common','uncommon'];
+    }
+
+    function rarityWeight(rarity, wave) {
+        const tier = Math.floor(wave / 10);
+        const weights = { common: 42, uncommon: 34, rare: 18 + Math.min(18, tier), epic: 5 + Math.min(12, tier * 0.7), legendary: 1 + Math.min(8, tier * 0.35) };
+        return weights[rarity] || 0;
+    }
+
+    function weightedBossGear(wave) {
+        const allowed = bossAllowedRarities(wave);
+        let pool = BOSS_GEAR_POOL.filter(id => allowed.includes(ITEMS[id].rarity) && !player.ownedItems.includes(id));
+        if (!pool.length) pool = BOSS_GEAR_POOL.filter(id => allowed.includes(ITEMS[id].rarity));
+        const total = pool.reduce((sum,id) => sum + rarityWeight(ITEMS[id].rarity,wave),0);
+        let roll = Math.random() * total;
+        for (const id of pool) {
+            roll -= rarityWeight(ITEMS[id].rarity,wave);
+            if (roll <= 0) return id;
+        }
+        return pool[pool.length - 1];
+    }
+
+    function grantBossRewards(e) {
+        const bossWave = Math.max(10, waveNumber);
+        const tier = Math.max(1, Math.floor(bossWave / 10));
+
+        // Massive guaranteed gold, paid instantly so the wave-clear panel never shows 0.
+        const baseGold = 700 + bossWave * 38 + Math.pow(bossWave, 1.2) * 10;
+        const bossGold = Math.round(baseGold * (0.90 + Math.random() * 0.25));
+        player.coins += bossGold;
+        waveCoinsEarned += bossGold;
+
+        // Boss XP scales as progression gets harder.
+        const bonusXp = Math.round(180 + tier * 45 + Math.pow(tier, 1.15) * 12);
+        player.xp += bonusXp;
+        waveXpEarned += bonusXp;
+
+        // Exactly 0.00001% = 1 in 10,000,000.
+        const mythicJackpot = Math.random() < 0.0000001;
+        const itemId = mythicJackpot
+            ? CELESTIAL_MYTHIC_POOL[Math.floor(Math.random() * CELESTIAL_MYTHIC_POOL.length)]
+            : weightedBossGear(bossWave);
+        const item = ITEMS[itemId];
+        const alreadyOwned = player.ownedItems.includes(itemId);
+
+        if (!alreadyOwned) player.ownedItems.push(itemId);
+
+        // Duplicate gear becomes extra gold rather than a dead reward.
+        let duplicateGold = 0;
+        if (alreadyOwned) {
+            duplicateGold = Math.max(250, Math.round((item.cost || 500) * 0.55));
+            player.coins += duplicateGold;
+            waveCoinsEarned += duplicateGold;
+        }
+
+        lastBossLoot = {
+            itemId,
+            itemName: item.name,
+            icon: item.icon,
+            rarity: item.rarity,
+            gold: bossGold,
+            duplicateGold,
+            mythicJackpot
+        };
+
+        const rarity = RARITIES[item.rarity] || RARITIES.common;
+        spawnFloatingText(e.x, e.y - 55, `BOSS TREASURE +${bossGold} GOLD`, '#facc15');
+        spawnFloatingText(e.x, e.y - 90, `${item.icon} ${rarity.name.toUpperCase()} DROP: ${item.name}`, rarity.color);
+        if (mythicJackpot) {
+            bossWarning(`🌌 0.00001% MYTHICAL JACKPOT! ${item.name}!`, '#fde047');
+            screenShake = 55;
+        }
+        updateHUD();
+    }
+
     function damageEnemy(e, dmg) {
         if (!e || e.dead) return;
         e.hp -= dmg;
@@ -3037,8 +3168,12 @@ if (e.isBoss) {
             const xpGained = e.isBoss ? 200 : 30;
             player.xp += xpGained; waveXpEarned += xpGained;
 
-            const coinVal = Math.floor(e.coinVal * (0.85 + Math.random() * 0.3));
-            coinsList.push({ x: e.x, y: e.y, value: coinVal });
+            if (e.isBoss) {
+                grantBossRewards(e);
+            } else {
+                const coinVal = Math.floor(e.coinVal * (0.85 + Math.random() * 0.3));
+                coinsList.push({ x: e.x, y: e.y, value: coinVal });
+            }
 
             while (player.xp >= player.maxXp) {
                 player.level++;
