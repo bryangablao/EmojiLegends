@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -592,6 +595,27 @@
         🏆 LEADERBOARD
     </button>
 
+    <!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+          apiKey: "AIzaSyBPSMrly3UjkePI5Da0QrFBf0-phHuEpQ4",
+          authDomain: "emojilegends.firebaseapp.com",
+          projectId: "emojilegends",
+          storageBucket: "emojilegends.firebasestorage.app",
+          messagingSenderId: "495992537504",
+          appId: "1:495992537504:web:aedfd7fd0ef687831764c5"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+
+    console.log("🔥 Firebase connected!");
+</script>
+    
     <script>
     // --- SYNTHESIZED AUDIO ENGINE ---
     class SoundFX {
@@ -3967,110 +3991,295 @@ else {
         updateHUD();
     }
 
-    // --- LEADERBOARD HELPERS ---
-    function getLeaderboard() {
-        try {
-            const parsed = JSON.parse(localStorage.getItem(LEADERBOARD_STORAGE_KEY) || '[]');
-            if (!Array.isArray(parsed)) return [];
+// ============================================================
+// FIREBASE GLOBAL LEADERBOARD
+// ============================================================
 
-            // Normalize + remove duplicate hero names, keeping only their highest wave.
-            const bestByName = new Map();
-            parsed.forEach(entry => {
-                if (!entry || typeof entry.name !== 'string') return;
-                const cleanName = entry.name.trim().slice(0, 24);
-                const wave = Number(entry.wave);
-                if (!cleanName || !Number.isFinite(wave)) return;
+const LEADERBOARD_COLLECTION = 'leaderboard';
 
-                const key = cleanName.toLocaleLowerCase();
-                const existing = bestByName.get(key);
-                if (!existing || wave > existing.wave) {
-                    bestByName.set(key, { name: cleanName, wave: Math.floor(wave) });
-                }
-            });
+let leaderboardCache = [];
+let leaderboardLoaded = false;
 
-            return [...bestByName.values()]
-                .sort((a, b) => b.wave - a.wave || a.name.localeCompare(b.name))
-                .slice(0, 10);
-        } catch (err) {
-            console.warn('Could not load leaderboard:', err);
-            return [];
-        }
-    }
+// ------------------------------------------------------------
+// Load leaderboard from Firebase
+// ------------------------------------------------------------
 
-    function saveLeaderboard(entries) {
-        localStorage.setItem(LEADERBOARD_STORAGE_KEY, JSON.stringify(entries.slice(0, 10)));
-    }
+async function loadLeaderboardFromFirebase() {
+    try {
+        const snapshot = await db.collection(LEADERBOARD_COLLECTION)
+            .orderBy('wave', 'desc')
+            .limit(10)
+            .get();
 
-    function getHighestRecordedWave() {
-        const board = getLeaderboard();
-        return board.length ? board[0].wave : 0;
-    }
+        leaderboardCache = [];
 
-    function addHighScoreRecord(name, wave) {
-        const cleanName = name.trim().slice(0, 24);
-        if (!cleanName) return false;
+        snapshot.forEach(doc => {
+            const data = doc.data();
 
-        const entries = getLeaderboard();
-        const nameKey = cleanName.toLocaleLowerCase();
-        const previous = entries.find(e => e.name.toLocaleLowerCase() === nameKey);
-
-        // If the same hero already has an equal or better record, keep that record only.
-        if (previous && previous.wave >= wave) {
-            renderLeaderboard();
-            return true;
-        }
-
-        const withoutDuplicate = entries.filter(e => e.name.toLocaleLowerCase() !== nameKey);
-        withoutDuplicate.push({ name: cleanName, wave: Math.floor(wave) });
-        withoutDuplicate.sort((a, b) => b.wave - a.wave || a.name.localeCompare(b.name));
-        saveLeaderboard(withoutDuplicate.slice(0, 10));
-        renderLeaderboard();
-        return true;
-    }
-
-    function renderLeaderboard() {
-        const rows = document.getElementById('leaderboardRows');
-        const empty = document.getElementById('leaderboardEmpty');
-        if (!rows || !empty) return;
-
-        const board = getLeaderboard();
-        rows.innerHTML = '';
-
-        if (!board.length) {
-            empty.classList.remove('hidden');
-            return;
-        }
-        empty.classList.add('hidden');
-
-        board.forEach((entry, index) => {
-            const row = document.createElement('div');
-            row.className = 'grid grid-cols-[52px_1fr_95px] gap-2 items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2.5';
-
-            const rank = document.createElement('span');
-            rank.className = `font-black ${index === 0 ? 'text-amber-300' : index === 1 ? 'text-gray-200' : index === 2 ? 'text-orange-300' : 'text-gray-400'}`;
-            rank.textContent = index === 0 ? '🥇 #1' : index === 1 ? '🥈 #2' : index === 2 ? '🥉 #3' : `#${index + 1}`;
-
-            const hero = document.createElement('span');
-            hero.className = 'font-bold text-gray-100 truncate';
-            hero.textContent = entry.name;
-
-            const wave = document.createElement('span');
-            wave.className = 'text-right font-black text-red-300';
-            wave.textContent = `Wave ${entry.wave}`;
-
-            row.append(rank, hero, wave);
-            rows.appendChild(row);
+            if (
+                data &&
+                typeof data.name === 'string' &&
+                Number.isFinite(Number(data.wave))
+            ) {
+                leaderboardCache.push({
+                    name: data.name.trim().slice(0, 24),
+                    wave: Math.floor(Number(data.wave))
+                });
+            }
         });
-    }
 
-    function openLeaderboard() {
+        leaderboardLoaded = true;
+
+        // Make sure the local UI immediately reflects Firebase.
         renderLeaderboard();
-        document.getElementById('leaderboardModal').classList.remove('hidden');
+
+        console.log('🏆 Firebase leaderboard loaded:', leaderboardCache);
+
+        return leaderboardCache;
+
+    } catch (error) {
+
+        console.error('❌ Firebase leaderboard load failed:', error);
+
+        leaderboardLoaded = false;
+
+        // Keep a local fallback so the game UI doesn't crash.
+        try {
+            const parsed = JSON.parse(
+                localStorage.getItem('emojiLegendsMythicLeaderboardV1') || '[]'
+            );
+
+            if (Array.isArray(parsed)) {
+                leaderboardCache = parsed;
+            }
+        } catch (localError) {
+            leaderboardCache = [];
+        }
+
+        renderLeaderboard();
+
+        return leaderboardCache;
+    }
+}
+
+
+// ------------------------------------------------------------
+// Get current leaderboard
+// ------------------------------------------------------------
+
+function getLeaderboard() {
+
+    return [...leaderboardCache]
+        .sort((a, b) =>
+            b.wave - a.wave ||
+            a.name.localeCompare(b.name)
+        )
+        .slice(0, 10);
+}
+
+
+// ------------------------------------------------------------
+// Get highest recorded wave
+// ------------------------------------------------------------
+
+function getHighestRecordedWave() {
+
+    const board = getLeaderboard();
+
+    return board.length
+        ? board[0].wave
+        : 0;
+}
+
+
+// ------------------------------------------------------------
+// Add / update a player's record
+// ------------------------------------------------------------
+
+async function addHighScoreRecord(name, wave) {
+
+    const cleanName = name.trim().slice(0, 24);
+
+    if (!cleanName) {
+        return false;
     }
 
-    function closeLeaderboard() {
-        document.getElementById('leaderboardModal').classList.add('hidden');
+    const numericWave = Math.floor(Number(wave));
+
+    if (!Number.isFinite(numericWave)) {
+        return false;
     }
+
+    // Create a safe Firestore document ID from the hero name.
+    const docId = encodeURIComponent(
+        cleanName.toLocaleLowerCase()
+    );
+
+    const scoreRef = db
+        .collection(LEADERBOARD_COLLECTION)
+        .doc(docId);
+
+    try {
+
+        await db.runTransaction(async transaction => {
+
+            const existingDoc = await transaction.get(scoreRef);
+
+            if (existingDoc.exists) {
+
+                const existingData = existingDoc.data();
+
+                const existingWave =
+                    Number(existingData.wave) || 0;
+
+                // Never allow a lower score to overwrite
+                // a player's existing higher score.
+                if (existingWave >= numericWave) {
+                    return;
+                }
+            }
+
+            transaction.set(scoreRef, {
+                name: cleanName,
+                wave: numericWave,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, {
+                merge: true
+            });
+        });
+
+        console.log(
+            `🏆 Saved ${cleanName} — Wave ${numericWave} to Firebase`
+        );
+
+        // Reload the global leaderboard.
+        await loadLeaderboardFromFirebase();
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            '❌ Could not save leaderboard record:',
+            error
+        );
+
+        return false;
+    }
+}
+
+
+// ------------------------------------------------------------
+// Render leaderboard
+// ------------------------------------------------------------
+
+function renderLeaderboard() {
+
+    const rows =
+        document.getElementById('leaderboardRows');
+
+    const empty =
+        document.getElementById('leaderboardEmpty');
+
+    if (!rows || !empty) {
+        return;
+    }
+
+    const board = getLeaderboard();
+
+    rows.innerHTML = '';
+
+    if (!board.length) {
+
+        empty.classList.remove('hidden');
+
+        return;
+    }
+
+    empty.classList.add('hidden');
+
+    board.forEach((entry, index) => {
+
+        const row =
+            document.createElement('div');
+
+        row.className =
+            'grid grid-cols-[52px_1fr_95px] gap-2 items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2.5';
+
+        const rank =
+            document.createElement('span');
+
+        rank.className =
+            `font-black ${
+                index === 0
+                    ? 'text-amber-300'
+                    : index === 1
+                    ? 'text-gray-200'
+                    : index === 2
+                    ? 'text-orange-300'
+                    : 'text-gray-400'
+            }`;
+
+        rank.textContent =
+            index === 0
+                ? '🥇 #1'
+                : index === 1
+                ? '🥈 #2'
+                : index === 2
+                ? '🥉 #3'
+                : `#${index + 1}`;
+
+        const hero =
+            document.createElement('span');
+
+        hero.className =
+            'font-bold text-gray-100 truncate';
+
+        hero.textContent =
+            entry.name;
+
+        const wave =
+            document.createElement('span');
+
+        wave.className =
+            'text-right font-black text-red-300';
+
+        wave.textContent =
+            `Wave ${entry.wave}`;
+
+        row.append(rank, hero, wave);
+
+        rows.appendChild(row);
+    });
+}
+
+
+// ------------------------------------------------------------
+// Open leaderboard
+// ------------------------------------------------------------
+
+async function openLeaderboard() {
+
+    const modal =
+        document.getElementById('leaderboardModal');
+
+    modal.classList.remove('hidden');
+
+    // Always refresh from Firebase when somebody opens it.
+    await loadLeaderboardFromFirebase();
+}
+
+
+// ------------------------------------------------------------
+// Close leaderboard
+// ------------------------------------------------------------
+
+function closeLeaderboard() {
+
+    document
+        .getElementById('leaderboardModal')
+        .classList.add('hidden');
+}
 
     function triggerGameOver() {
         // Prevent repeated game-over processing from overlapping damage sources.
@@ -4778,32 +4987,79 @@ document.getElementById('btnIntermissionMenu').addEventListener('click', () => {
         if (e.target.id === 'leaderboardModal') closeLeaderboard();
     });
 
-    document.getElementById('btnSaveHighScore').addEventListener('click', () => {
-        if (pendingHighScoreWave === null) return;
+document.getElementById('btnSaveHighScore').addEventListener('click', async () => {
 
-        const input = document.getElementById('highScoreHeroName');
-        const error = document.getElementById('highScoreNameError');
-        const heroName = input.value.trim();
+    if (pendingHighScoreWave === null) {
+        return;
+    }
 
-        if (!heroName) {
-            error.classList.remove('hidden');
-            input.focus();
-            return;
-        }
+    const input =
+        document.getElementById('highScoreHeroName');
 
-        error.classList.add('hidden');
-        addHighScoreRecord(heroName, pendingHighScoreWave);
-        pendingHighScoreWave = null;
-        document.getElementById('newHighScorePanel').classList.add('hidden');
-        document.getElementById('savedHighScoreNotice').classList.remove('hidden');
-        openLeaderboard();
-    });
+    const error =
+        document.getElementById('highScoreNameError');
+
+    const heroName =
+        input.value.trim();
+
+    if (!heroName) {
+
+        error.classList.remove('hidden');
+
+        input.focus();
+
+        return;
+    }
+
+    error.classList.add('hidden');
+
+    // Prevent double-clicking while Firebase saves.
+    const saveButton =
+        document.getElementById('btnSaveHighScore');
+
+    saveButton.disabled = true;
+
+    saveButton.textContent = '⏳ SAVING...';
+
+    const saved =
+        await addHighScoreRecord(
+            heroName,
+            pendingHighScoreWave
+        );
+
+    saveButton.disabled = false;
+
+    saveButton.textContent =
+        'OK — SAVE RECORD';
+
+    if (!saved) {
+
+        error.textContent =
+            'Could not save the record. Please try again.';
+
+        error.classList.remove('hidden');
+
+        return;
+    }
+
+    pendingHighScoreWave = null;
+
+    document
+        .getElementById('newHighScorePanel')
+        .classList.add('hidden');
+
+    document
+        .getElementById('savedHighScoreNotice')
+        .classList.remove('hidden');
+
+    await openLeaderboard();
+});
 
     document.getElementById('highScoreHeroName').addEventListener('keydown', e => {
         if (e.key === 'Enter') document.getElementById('btnSaveHighScore').click();
     });
 
-    renderLeaderboard();
+    loadLeaderboardFromFirebase();
 
     document.getElementById('btnSaveCertificate').addEventListener('click', () => {
         const name = document.getElementById('heroNameInput').value.trim() || 'Mythic Champion';
