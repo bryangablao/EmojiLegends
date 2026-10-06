@@ -130,6 +130,91 @@
             background-size: contain;
             background-repeat: no-repeat;
         }
+
+
+        /* ===== ENHANCED LANDSCAPE / COMPACT HUD / CAMERA ZOOM ===== */
+        #hudLevelBadge{
+            width:34px; height:34px; min-width:34px; min-height:34px;
+            padding:0 !important; border-radius:9999px !important;
+            display:inline-flex; align-items:center; justify-content:center;
+            text-align:center; line-height:1; font-size:9px !important;
+            letter-spacing:-0.02em; font-weight:900; white-space:nowrap;
+        }
+
+        #cameraZoomControls{
+            position:fixed; right:1rem; bottom:8.2rem; z-index:34;
+            display:flex; flex-direction:column; gap:.35rem; pointer-events:auto;
+        }
+        .zoom-btn{
+            width:38px; height:38px; border-radius:12px; display:flex;
+            align-items:center; justify-content:center; font-size:18px; font-weight:900;
+            background:rgba(15,23,42,.82); border:1px solid rgba(103,232,249,.35);
+            color:#cffafe; backdrop-filter:blur(10px); box-shadow:0 8px 22px rgba(0,0,0,.35);
+        }
+        #zoomReadout{
+            min-width:38px; padding:.2rem .25rem; border-radius:10px;
+            background:rgba(15,23,42,.78); border:1px solid rgba(255,255,255,.12);
+            color:#cbd5e1; font-size:9px; text-align:center; font-weight:800;
+        }
+        #rotateDeviceOverlay{ display:none; }
+
+        @media (pointer: coarse) and (orientation: portrait), (hover: none) and (orientation: portrait){
+            #rotateDeviceOverlay{
+                display:flex; position:fixed; inset:0; z-index:10000;
+                align-items:center; justify-content:center; text-align:center; padding:2rem;
+                background:radial-gradient(circle at center, rgba(8,47,73,.96), rgba(2,6,23,.99));
+                color:white;
+            }
+        }
+
+        @media (pointer: coarse) and (orientation: landscape), (hover: none) and (orientation: landscape){
+            #mobileControls{display:flex;}
+            #hud{padding:.35rem .45rem;}
+            #hud > div:first-child{gap:.35rem; align-items:flex-start;}
+            #hud > div:first-child > div:first-child{
+                width:min(42vw,275px) !important; min-width:0 !important;
+                padding:.5rem .6rem !important; gap:.3rem !important; border-radius:14px !important;
+            }
+            #playerAvatar{font-size:1.35rem !important;}
+            #hudName{font-size:10px !important; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+            #hudStateText{font-size:8px !important;}
+            #hudLevelBadge{width:28px;height:28px;min-width:28px;min-height:28px;font-size:7.5px !important;}
+            #hudCoins{font-size:11px !important;}
+            #hudHpText,#hudManaText,#hudXpText{font-size:8px !important;}
+            #hudWaveContainer{padding:.3rem .5rem !important;border-radius:12px !important;}
+            #hudWaveIcon{font-size:1.1rem !important;}
+            #hudWaveText{font-size:9px !important;}
+            #btnPauseToggle{padding:.3rem .45rem !important;border-radius:12px !important;}
+            #btnPauseToggle span:first-child{font-size:1rem !important;}
+            #btnOpenMenu{padding:.3rem .45rem !important;}
+            #hud > div:last-child{margin-bottom:.25rem !important;}
+            #hud > div:last-child > div{
+                max-width:76vw !important; padding:.28rem .36rem !important;
+                gap:.18rem !important; border-radius:16px !important;
+                transform:scale(.78); transform-origin:bottom center;
+            }
+            #skillSlotsBar{gap:.12rem !important;}
+            #btnOpenLeaderboard{left:.45rem;bottom:.4rem;padding:.32rem .5rem;font-size:9px;border-radius:10px;}
+            #movePad{left:.6rem;bottom:.55rem;width:88px;height:88px;}
+            #moveStick{left:29px;top:29px;width:30px;height:30px;}
+            #mobileActionPad{right:.6rem;bottom:.55rem;grid-template-columns:48px 48px;gap:.35rem;}
+            .mobile-action{width:48px;height:48px;font-size:20px;}
+            #mobileAttack{width:60px;height:60px;font-size:26px;}
+            #cameraZoomControls{right:.55rem;bottom:6.35rem;gap:.22rem;}
+            .zoom-btn{width:32px;height:32px;font-size:16px;border-radius:10px;}
+            #zoomReadout{min-width:32px;font-size:8px;}
+
+            #startScreenModal{padding:.5rem !important;}
+            #startScreenModal > div{max-width:92vw !important;max-height:94vh !important;padding:.7rem 1rem !important;gap:.45rem !important;}
+            #startScreenModal h1{font-size:1.05rem !important;}
+            #startScreenModal .text-5xl{font-size:1.8rem !important;}
+            #startScreenModal p,#startScreenModal div{line-height:1.25;}
+            #btnPlayGame{padding:.65rem !important;font-size:.78rem !important;}
+
+            #menuModal,#leaderboardModal,#pauseOverlay,#intermissionModal,#gameOverModal,#victoryModal{padding:.45rem !important;}
+            #menuModal > div{max-height:94vh !important;}
+        }
+
     </style>
 </head>
 <body class="bg-gray-950 text-white select-none">
@@ -197,7 +282,7 @@
                     <div><b class="text-amber-300">Computer:</b> WASD/Arrows move, mouse aims, Left Click attacks, 1 to 8 casts equipped skills, SPACE casts your equipped Ultimate, SHIFT dashes.</div>
                     <div><b class="text-emerald-300">Mobile/Tablet:</b> Use the left joystick to move. Drag/tap the battlefield to aim. Tap ⚔️ to attack, ⚡ to dash, skill icons to cast, and the purple Ultimate icon to unleash your ultimate.</div>
                 </div>
-                <div class="text-gray-400">Skill Books must be purchased, then assigned to an unlocked skill slot from Inventory & Gear.</div>
+                <div class="text-gray-400">Skill Books must be purchased, then assigned to an unlocked skill slot from Inventory & Gear. Use the ＋ / − camera buttons to zoom closer or farther during battle. Red navigator lines point toward enemies outside your current screen.</div>
             </div>
 
             <button id="btnPlayGame" class="w-full glass-btn py-4 rounded-2xl font-black text-amber-300 text-lg tracking-wider hover:text-amber-100 uppercase border-amber-500/40">
@@ -217,7 +302,7 @@
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 id="hudName" class="font-bold font-cinzel text-amber-400 text-sm leading-tight">Mythic Champion</h3>
-                                <span id="hudLevelBadge" class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 font-semibold">Lvl 1</span>
+                                <span id="hudLevelBadge" class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 font-semibold">LV 1</span>
                             </div>
                             <p id="hudStateText" class="text-[11px] text-gray-400">Status: Ready</p>
                         </div>
@@ -637,6 +722,22 @@
             <button id="mobileDash" class="mobile-action" type="button" aria-label="Dash">⚡</button>
             <button id="mobileAttack" class="mobile-action" type="button" aria-label="Basic attack">⚔️</button>
         </div>
+    </div>
+
+
+
+    <div id="rotateDeviceOverlay">
+        <div class="glass-panel rounded-3xl border border-cyan-400/30 p-6 max-w-sm space-y-3">
+            <div class="text-5xl">📱↻</div>
+            <div class="font-cinzel text-xl font-black text-cyan-300">ROTATE TO LANDSCAPE</div>
+            <p class="text-sm text-gray-300">Emoji Legends is optimized for landscape play on phones and tablets. Rotate your device sideways for the full battlefield and properly arranged controls.</p>
+        </div>
+    </div>
+
+    <div id="cameraZoomControls" aria-label="Camera zoom controls">
+        <button id="zoomInBtn" class="zoom-btn" type="button" title="Zoom in">＋</button>
+        <div id="zoomReadout">80%</div>
+        <button id="zoomOutBtn" class="zoom-btn" type="button" title="Zoom out">−</button>
     </div>
 
     <!-- FIREBASE -->
@@ -1851,7 +1952,13 @@ celestial_wings:{id:'celestial_wings',name:'Celestial Wingboots',type:'armor',sl
     // --- PERSISTENT HIGH SCORE / LEADERBOARD STATE ---
     let pendingHighScoreWave = null;
 
-    const camera = { x: 0, y: 0 };
+    const camera = { x: 0, y: 0, zoom: 0.82, minZoom: 0.55, maxZoom: 1.25 };
+
+    function isMobileLike(){ return window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 1024; }
+    function setCameraZoom(next){ camera.zoom=Math.max(camera.minZoom,Math.min(camera.maxZoom,next)); const zr=document.getElementById('zoomReadout'); if(zr) zr.textContent=`${Math.round(camera.zoom*100)}%`; }
+    function resetCameraZoomForDevice(){ setCameraZoom(isMobileLike()?0.68:0.82); }
+    function screenToWorld(sx,sy){ return {x:camera.x+(sx-screenWidth/2)/camera.zoom,y:camera.y+(sy-screenHeight/2)/camera.zoom}; }
+    function worldToScreen(wx,wy){ return {x:screenWidth/2+(wx-camera.x)*camera.zoom,y:screenHeight/2+(wy-camera.y)*camera.zoom}; }
 
     const player = {
         x: 0, y: 0,
@@ -2992,8 +3099,9 @@ function distBetween(a, b) {
         const wep = ITEMS[player.equipped.weapon || 'sword'];
         sfx.play('swing');
 
-        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
-        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
+        const aimWorld = screenToWorld(mousePos.x, mousePos.y);
+        const worldMouseX = aimWorld.x;
+        const worldMouseY = aimWorld.y;
         const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
 
         for (let i = -0.4; i <= 0.4; i += 0.2) {
@@ -3017,6 +3125,100 @@ function distBetween(a, b) {
         });
     }
 
+
+    function patternParticle(x,y,vx,vy,life,color,size,opts={}){
+        particles.push({x,y,vx,vy,life,maxLife:life,color,size,
+            emoji:opts.emoji||null,spin:opts.spin||0,rotation:opts.rotation||0,
+            gravity:opts.gravity||0,drag:opts.drag||0,shape:opts.shape||'orb',
+            pulse:opts.pulse||0,baseSize:size});
+    }
+
+    function ringPattern(x,y,color,count=28,speed=150,emoji=null,life=.9,phase=0){
+        for(let i=0;i<count;i++){const a=phase+(Math.PI*2/count)*i;patternParticle(x,y,Math.cos(a)*speed,Math.sin(a)*speed,life,color,emoji?18:4,{emoji,spin:emoji?2.5:0,rotation:a,shape:'spark',pulse:.25});}
+    }
+    function conePattern(x,y,angle,color,count=24,spread=.8,speed=260,emoji=null){
+        for(let i=0;i<count;i++){const a=angle+(Math.random()-.5)*spread;const sp=speed*(.45+Math.random()*.7);patternParticle(x,y,Math.cos(a)*sp,Math.sin(a)*sp,.45+Math.random()*.55,color,emoji?16:3+Math.random()*4,{emoji,spin:(Math.random()-.5)*4,rotation:a,drag:1.4,shape:'streak'});}
+    }
+    function inwardPattern(x,y,color,count=36,radius=180,emoji=null){
+        for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2;const r=radius*(.55+Math.random()*.55);const px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;const sp=120+Math.random()*100;patternParticle(px,py,Math.cos(a+Math.PI)*sp,Math.sin(a+Math.PI)*sp,.75+Math.random()*.35,color,emoji?18:4,{emoji,spin:3,rotation:a,drag:.8,shape:'spark'});}
+    }
+    function verticalFallPattern(x,y,color,count=26,radius=150,emoji='✨'){
+        for(let i=0;i<count;i++){const px=x+(Math.random()-.5)*radius*2,py=y-radius-Math.random()*180;patternParticle(px,py,(Math.random()-.5)*25,130+Math.random()*170,.8+Math.random()*.6,color,15+Math.random()*8,{emoji,spin:1.4,gravity:45,shape:'streak'});}
+    }
+    function helixPattern(x,y,angle,color,emoji='✨',count=28){
+        for(let i=0;i<count;i++){const t=i/(count-1),along=t*260,side=Math.sin(t*Math.PI*5)*30;const px=x+Math.cos(angle)*along+Math.cos(angle+Math.PI/2)*side,py=y+Math.sin(angle)*along+Math.sin(angle+Math.PI/2)*side;patternParticle(px,py,Math.cos(angle)*80,Math.sin(angle)*80,.55+t*.45,color,14+Math.random()*5,{emoji,spin:4,rotation:t*Math.PI*5,shape:'spark'});}
+    }
+
+    function emitSkillCastPattern(skill,effect,angle,targetX,targetY){
+        const c=skill.pColor||'#fff';
+        const sourceX=player.x,sourceY=player.y;
+        if(['burn','heavyBurn','burnAoE','ringFire','coneFire','soulBurn'].includes(effect)){conePattern(sourceX,sourceY,angle,c,30,.95,330,'🔥');ringPattern(sourceX,sourceY,'#fbbf24',14,85,'✨',.55);}
+        else if(['freeze','freezeCircle','slow','chainSlow','stormSlow'].includes(effect)){ringPattern(sourceX,sourceY,c,30,120,'❄️',1.05,performance.now()/500);ringPattern(sourceX,sourceY,'#e0f2fe',18,65,'🧊',.85,.35);}
+        else if(['poison','thornField'].includes(effect)){conePattern(sourceX,sourceY,angle,c,22,.7,230,'☣️');spiralEmojiParticles(sourceX,sourceY,'🌿',c,16,24);}
+        else if(['chain','storm','stunAoE'].includes(effect)){helixPattern(sourceX,sourceY,angle,c,'⚡',30);ringPattern(sourceX,sourceY,'#fde047',18,125,'✨',.7);}
+        else if(['pull','void','cosmic'].includes(effect)){inwardPattern(targetX,targetY,c,42,190,'🌌');ringPattern(targetX,targetY,'#c084fc',22,80,null,.75);}
+        else if(effect==='beam'){helixPattern(sourceX,sourceY,angle,c,'✨',36);lineParticles(sourceX,sourceY,targetX,targetY,c,45);}
+        else if(effect==='wave'){conePattern(sourceX,sourceY,angle,c,34,1.05,260,'💧');}
+        else if(effect==='knockback'){conePattern(sourceX,sourceY,angle,c,26,.9,300,'🌬️');}
+        else if(effect==='shatter'){ringPattern(targetX,targetY,c,36,240,'💎',.85);}
+        else if(['meteor','starfall','sun','moon'].includes(effect)){verticalFallPattern(targetX,targetY,c,effect==='starfall'?34:24,190,effect==='meteor'?'☄️':effect==='sun'?'☀️':effect==='moon'?'🌙':'🌠');}
+        else if(['nature','holyAoE','sakuraHeal','lotusHeal'].includes(effect)){spiralEmojiParticles(sourceX,sourceY,effect==='sakuraHeal'?'🌸':effect==='lotusHeal'?'🪷':effect==='nature'?'🌿':'✨',c,32,32);ringPattern(sourceX,sourceY,c,24,85,'✨',1.05);}
+        else if(effect==='bloodManipulation'||effect==='lifestealAoE'){inwardPattern(sourceX,sourceY,c,30,180,'🩸');}
+        else if(effect==='stoneBarrier'){conePattern(sourceX,sourceY,angle,c,20,.45,170,'⛰️');}
+        else if(effect==='spiritWolves'){ringPattern(sourceX,sourceY,c,18,110,'🐺',.85);}
+        else if(effect==='mirrorBurst'){ringPattern(sourceX,sourceY,c,16,95,'🪞',.75);}
+        else if(effect==='pierce'){helixPattern(sourceX,sourceY,angle,c,skill.icon||'🔱',24);}
+        else if(['blinkStrike','dashStrike'].includes(effect)){conePattern(sourceX,sourceY,angle,c,26,.35,380,'✨');}
+        else { ringPattern(sourceX,sourceY,c,18,100,skill.icon||null,.65); }
+
+        // Every Skill Book gets a small unique moving rune signature derived from its ID.
+        // This keeps two skills in the same element family from looking exactly identical.
+        let hash=0; for(const ch of (skill.id||skill.name||'')) hash=(hash*31+ch.charCodeAt(0))>>>0;
+        const runeCount=5+(hash%5), runeRadius=22+(hash%28), runeSpeed=45+(hash%70), reverse=(hash&1)?1:-1;
+        for(let i=0;i<runeCount;i++){
+            const a=(Math.PI*2/runeCount)*i+(hash%17)*.11;
+            patternParticle(sourceX+Math.cos(a)*runeRadius,sourceY+Math.sin(a)*runeRadius,
+                Math.cos(a+reverse*Math.PI/2)*runeSpeed,Math.sin(a+reverse*Math.PI/2)*runeSpeed,
+                .55+(hash%7)*.045,c,9+(hash%6),{emoji:(hash%3===0?skill.icon:null),spin:reverse*(1.5+(hash%5)*.4),rotation:a,shape:hash%2?'spark':'streak',pulse:.15});
+        }
+    }
+
+    function emitSkillImpactPattern(skill,effect,x,y,angle){
+        const c=skill.pColor||'#fff';
+        if(['burn','heavyBurn','burnAoE','ringFire','coneFire','soulBurn'].includes(effect)){ringPattern(x,y,c,28,220,'🔥',.8);verticalFallPattern(x,y,'#f59e0b',12,75,'✨');}
+        else if(['freeze','freezeCircle','slow','chainSlow','stormSlow'].includes(effect)){ringPattern(x,y,c,36,170,'❄️',1.15);ringPattern(x,y,'#dbeafe',16,85,'🧊',1);}
+        else if(effect==='poison'){ringPattern(x,y,c,22,120,'☣️',1);spiralEmojiParticles(x,y,'🟢',c,12,18);}
+        else if(effect==='knockback'){conePattern(x,y,angle,c,18,.9,210,'🌬️');}
+        else if(effect==='shatter'){ringPattern(x,y,c,40,270,'💎',.85);}
+        else if(['pull','void','cosmic'].includes(effect)){inwardPattern(x,y,c,30,140,'🌌');}
+        else if(['chain','storm','stunAoE'].includes(effect)){ringPattern(x,y,c,20,210,'⚡',.65);}
+        else {skillBurst(x,y,c,18,150,4);}
+    }
+
+    function emitUltimatePattern(ult,cx,cy,angle){
+        const c=ult.pColor||'#d946ef';
+        switch(ult.style){
+            case 'dragonstorm': for(let r=0;r<3;r++)ringPattern(player.x,player.y,r===0?'#ef4444':r===1?'#fb923c':'#fde047',22+r*6,150+r*70,r===1?'🐉':'🔥',1.2,r*.22); break;
+            case 'singularity': inwardPattern(cx,cy,c,70,310,'🌌'); break;
+            case 'thunder': for(let i=0;i<6;i++)helixPattern(player.x,player.y,angle+i*Math.PI/3,c,'⚡',18); break;
+            case 'phoenix': ringPattern(player.x,player.y,'#fb923c',46,280,'🔥',1.25);verticalFallPattern(player.x,player.y,'#fde047',28,160,'🪶'); break;
+            case 'chrono': for(let r=0;r<4;r++)ringPattern(player.x,player.y,r%2?'#67e8f9':'#22d3ee',26,80+r*55,'⏳',1.15,r*.15); break;
+            case 'abyss': inwardPattern(player.x,player.y,c,80,340,'🌌'); break;
+            case 'prism': ['🔴','🟠','🟡','🟢','🔵','🟣'].forEach((e,i)=>ringPattern(player.x,player.y,['#ef4444','#f97316','#fde047','#22c55e','#3b82f6','#a855f7'][i],12,120+i*25,e,.9,i*.18)); break;
+            case 'meteor': verticalFallPattern(cx,cy,'#fb923c',50,280,'☄️'); break;
+            case 'worldbreaker': for(let r=0;r<5;r++)ringPattern(player.x,player.y,r%2?'#dc2626':'#f97316',28,130+r*75,'🌋',1.1,r*.12); break;
+            case 'bloodmoon': inwardPattern(player.x,player.y,'#be123c',70,330,'🩸');ringPattern(player.x,player.y,'#fb7185',34,170,'🌕',1.3); break;
+            case 'frozenThrone': for(let r=0;r<4;r++)ringPattern(player.x,player.y,'#7dd3fc',34,95+r*55,r%2?'❄️':'🧊',1.35,r*.16); break;
+            case 'sakuraEternity': for(let r=0;r<5;r++)spiralEmojiParticles(player.x,player.y,'🌸','#fb7185',24,20+r*22); break;
+            case 'titanWall': ringPattern(player.x,player.y,'#a16207',30,135,'🏔️',1.2); break;
+            case 'seraph': verticalFallPattern(player.x,player.y,'#fde68a',55,330,'✨'); break;
+            case 'leviathan': for(let i=-2;i<=2;i++)conePattern(player.x,player.y,angle+i*.16,'#0ea5e9',18,.28,320,'🌊'); break;
+            case 'necropolis': ringPattern(player.x,player.y,'#6b21a8',44,150,'🪦',1.3); break;
+            case 'cosmicCrown': inwardPattern(player.x,player.y,'#d946ef',90,380,'🌌');ringPattern(player.x,player.y,'#f0abfc',48,230,'👑',1.4); break;
+            default: for(let r=0;r<3;r++)ringPattern(player.x,player.y,c,24,130+r*70,'✨',.9,r*.18);
+        }
+    }
+
     function skillBurst(x, y, color, count = 26, force = 180, size = 5) {
         burstParticles(x, y, color, count, force, size);
         burstParticles(x, y, '#ffffff', Math.max(5, Math.floor(count / 5)), force * 0.55, Math.max(2, size * 0.55));
@@ -3038,7 +3240,7 @@ function distBetween(a, b) {
     function skillImpact(skill, e, x, y, angle) {
         const effect = skill.effect || 'projectile';
         const color = skill.pColor || '#ffffff';
-        skillBurst(x, y, color, 30, 190, 5);
+        emitSkillImpactPattern(skill,effect,x,y,angle);
 
         if (effect === 'freezeCircle') {
             const radius=skill.radiusEffect||190;
@@ -3147,12 +3349,14 @@ function distBetween(a, b) {
 
         player.mana -= skill.mana;
         player.skillCooldowns[index] = skill.cd;
-        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
-        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
+        const aimWorld = screenToWorld(mousePos.x, mousePos.y);
+        const worldMouseX = aimWorld.x;
+        const worldMouseY = aimWorld.y;
         const angle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
         const effect = skill.effect || (skill.heal ? 'heal' : 'projectile');
         const color = skill.pColor || '#ffffff';
         sfx.play(skill.heal ? 'heal' : 'fireball');
+        emitSkillCastPattern(skill,effect,angle,worldMouseX,worldMouseY);
 
         if (castSignatureSkill(skill,effect,angle,worldMouseX,worldMouseY)) { updateHUD(); return; }
 
@@ -3257,9 +3461,11 @@ function distBetween(a, b) {
         sfx.play('fireball');
         screenShake = 18;
 
-        const worldMouseX = mousePos.x + camera.x - screenWidth / 2;
-        const worldMouseY = mousePos.y + camera.y - screenHeight / 2;
+        const aimWorld = screenToWorld(mousePos.x, mousePos.y);
+        const worldMouseX = aimWorld.x;
+        const worldMouseY = aimWorld.y;
         const aimAngle = Math.atan2(worldMouseY - player.y, worldMouseX - player.x);
+        emitUltimatePattern(ult,worldMouseX,worldMouseY,aimAngle);
 
         const radialProjectiles = (count, speed, dmg, icon, color, angleOffset = 0, radius = 17, life = 2.0) => {
             for (let i = 0; i < count; i++) {
@@ -3698,8 +3904,14 @@ if (player.stunTimer <= 0) {
             if (p.isPlayer && p.skillId) {
                 p.trailTimer = (p.trailTimer || 0) - dt;
                 if (p.trailTimer <= 0) {
-                    p.trailTimer = 0.035;
-                    particles.push({x:p.x,y:p.y,vx:(Math.random()-0.5)*45,vy:(Math.random()-0.5)*45,life:0.35,maxLife:0.35,color:p.color || '#fff',size:3+Math.random()*4});
+                    const sk=ITEMS[p.skillId]||{}, ef=sk.effect||p.skillEffect||'projectile', c=p.color||sk.pColor||'#fff';
+                    p.trailTimer = ['heavyBurn','burn','coneFire','ringFire'].includes(ef) ? 0.025 : ['freeze','freezeCircle','slow'].includes(ef) ? 0.055 : 0.04;
+                    if(['burn','heavyBurn','coneFire','ringFire','soulBurn'].includes(ef)) patternParticle(p.x,p.y,-p.vx*.05+(Math.random()-.5)*35,-p.vy*.05+(Math.random()-.5)*35,.45,c,13,{emoji:'🔥',spin:3,gravity:-18});
+                    else if(['freeze','freezeCircle','slow','chainSlow'].includes(ef)) patternParticle(p.x,p.y,(Math.random()-.5)*28,(Math.random()-.5)*28,.7,c,12,{emoji:Math.random()<.5?'❄️':'🧊',spin:2});
+                    else if(ef==='poison') patternParticle(p.x,p.y,(Math.random()-.5)*25,18+Math.random()*28,.6,c,12,{emoji:'☣️',spin:2,gravity:18});
+                    else if(ef==='pierce') patternParticle(p.x,p.y,-p.vx*.07,-p.vy*.07,.35,c,10,{emoji:'✨',shape:'streak'});
+                    else if(ef==='spiritWolves') patternParticle(p.x,p.y,-p.vx*.035+(Math.random()-.5)*18,-p.vy*.035+(Math.random()-.5)*18,.5,c,11,{emoji:'🌫️',spin:1});
+                    else patternParticle(p.x,p.y,(Math.random()-.5)*38,(Math.random()-.5)*38,.4,c,3+Math.random()*4,{shape:'spark',pulse:.25});
                 }
             }
 
@@ -4350,6 +4562,8 @@ else {
         // Particles & Floating Text
         for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
+            if(p.gravity) p.vy += p.gravity*dt;
+            if(p.drag){const drag=Math.max(0,1-p.drag*dt);p.vx*=drag;p.vy*=drag;}
             p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
             if (p.rotation !== undefined) p.rotation += (p.spin||0)*dt;
             if (p.life <= 0) particles.splice(i, 1);
@@ -4664,6 +4878,22 @@ function closeLeaderboard() {
     }
 
     // --- CANVAS RENDER ENGINE ---
+
+    function drawEnemyNavigator(){
+        if(!gameStarted || isPaused || isMenuOpen || isIntermission || isGameOver) return;
+        const margin=54, center={x:screenWidth/2,y:screenHeight/2};
+        const off=enemies.filter(e=>!e.dead).map(e=>({e,s:worldToScreen(e.x,e.y),d:Math.hypot(e.x-player.x,e.y-player.y)}))
+            .filter(o=>o.s.x<margin||o.s.x>screenWidth-margin||o.s.y<margin||o.s.y>screenHeight-margin)
+            .sort((a,b)=>a.d-b.d).slice(0,4);
+        off.forEach((o,idx)=>{
+            const dx=o.s.x-center.x,dy=o.s.y-center.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;
+            const tx=(screenWidth/2-margin)/Math.max(Math.abs(ux),1e-6),ty=(screenHeight/2-margin)/Math.max(Math.abs(uy),1e-6),t=Math.min(tx,ty);
+            const ex=center.x+ux*t,ey=center.y+uy*t;
+            ctx.save();ctx.globalAlpha=.9-idx*.12;ctx.strokeStyle=o.e.isBoss?'#facc15':'#ef4444';ctx.fillStyle=o.e.isBoss?'#facc15':'#ef4444';ctx.lineWidth=o.e.isBoss?3:2;ctx.setLineDash([8,7]);ctx.beginPath();ctx.moveTo(center.x+ux*52,center.y+uy*52);ctx.lineTo(ex-ux*18,ey-uy*18);ctx.stroke();ctx.setLineDash([]);
+            ctx.translate(ex,ey);ctx.rotate(Math.atan2(uy,ux));ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(-9,-8);ctx.lineTo(-9,8);ctx.closePath();ctx.fill();ctx.rotate(-Math.atan2(uy,ux));ctx.font=`${o.e.isBoss?'20':'16'}px ${EMOJI_FONT_STACK}`;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(o.e.icon||'👹',0,-12);ctx.font='bold 9px Outfit';ctx.fillStyle='#fff';ctx.fillText(`${Math.round(o.d)}m`,0,24);ctx.restore();
+        });
+    }
+
     function render() {
         ctx.save();
         ctx.fillStyle = '#06050a';
@@ -4672,14 +4902,17 @@ function closeLeaderboard() {
         let shakeX = (Math.random() - 0.5) * screenShake;
         let shakeY = (Math.random() - 0.5) * screenShake;
 
-        ctx.translate(screenWidth / 2 - camera.x + shakeX, screenHeight / 2 - camera.y + shakeY);
+        ctx.translate(screenWidth / 2 + shakeX, screenHeight / 2 + shakeY);
+        ctx.scale(camera.zoom, camera.zoom);
+        ctx.translate(-camera.x, -camera.y);
 
         // Grid Background
         const tileSize = 64;
-        const startX = Math.floor((camera.x - screenWidth) / tileSize) * tileSize;
-        const endX = Math.ceil((camera.x + screenWidth) / tileSize) * tileSize;
-        const startY = Math.floor((camera.y - screenHeight) / tileSize) * tileSize;
-        const endY = Math.ceil((camera.y + screenHeight) / tileSize) * tileSize;
+        const viewHalfW=(screenWidth/2)/camera.zoom, viewHalfH=(screenHeight/2)/camera.zoom;
+        const startX = Math.floor((camera.x - viewHalfW - tileSize) / tileSize) * tileSize;
+        const endX = Math.ceil((camera.x + viewHalfW + tileSize) / tileSize) * tileSize;
+        const startY = Math.floor((camera.y - viewHalfH - tileSize) / tileSize) * tileSize;
+        const endY = Math.ceil((camera.y + viewHalfH + tileSize) / tileSize) * tileSize;
 
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
         ctx.lineWidth = 1;
@@ -4912,9 +5145,12 @@ projectiles.forEach(p => {
 
         // Particles
         particles.forEach(p => {
-            ctx.save(); ctx.globalAlpha=Math.max(0,p.life/p.maxLife);
-            if(p.emoji){ctx.translate(p.x,p.y);ctx.rotate(p.rotation||0);ctx.font=`${p.size}px ${EMOJI_FONT_STACK}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.emoji,0,0);}
-            else {ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}
+            ctx.save(); const ratio=Math.max(0,p.life/p.maxLife); ctx.globalAlpha=ratio;
+            const pulse=p.pulse?1+Math.sin(performance.now()/70+(p.rotation||0))*p.pulse:1;
+            if(p.emoji){ctx.translate(p.x,p.y);ctx.rotate(p.rotation||0);ctx.font=`${p.size*pulse}px ${EMOJI_FONT_STACK}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowBlur=10;ctx.shadowColor=p.color||'#fff';ctx.fillText(p.emoji,0,0);}
+            else if(p.shape==='streak'){ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1,p.size*.65);ctx.shadowBlur=10;ctx.shadowColor=p.color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*.06,p.y-p.vy*.06);ctx.stroke();}
+            else if(p.shape==='spark'){ctx.translate(p.x,p.y);ctx.rotate(p.rotation||0);ctx.strokeStyle=p.color;ctx.lineWidth=1.5;ctx.shadowBlur=8;ctx.shadowColor=p.color;ctx.beginPath();ctx.moveTo(-p.size*pulse,0);ctx.lineTo(p.size*pulse,0);ctx.moveTo(0,-p.size*pulse);ctx.lineTo(0,p.size*pulse);ctx.stroke();}
+            else {ctx.fillStyle=p.color;ctx.shadowBlur=7;ctx.shadowColor=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size*pulse,0,Math.PI*2);ctx.fill();}
             ctx.restore();
         });
 
@@ -4943,6 +5179,7 @@ projectiles.forEach(p => {
         });
 
         ctx.restore();
+        drawEnemyNavigator();
     }
 
     let lastTime = performance.now();
@@ -4966,7 +5203,7 @@ projectiles.forEach(p => {
 
         document.getElementById('hudXpText').innerText = `${player.xp} / ${player.maxXp}`;
         document.getElementById('hudXpBar').style.width = `${(player.xp / player.maxXp) * 100}%`;
-        document.getElementById('hudLevelBadge').innerText = `Lvl ${player.level}`;
+        document.getElementById('hudLevelBadge').innerText = `LV ${player.level}`;
 
         const activeWep = ITEMS[player.equipped.weapon || 'sword'];
         document.getElementById('hudBasicAttackIcon').innerText = activeWep.icon;
@@ -5334,8 +5571,20 @@ function toggleMenu() {
         canvas.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'&&gameStarted){mousePos.x=e.clientX;mousePos.y=e.clientY;}});
     })();
 
+
+    (function setupCameraControls(){
+        const zin=document.getElementById('zoomInBtn'),zout=document.getElementById('zoomOutBtn');
+        if(zin) zin.addEventListener('click',()=>setCameraZoom(camera.zoom+0.08));
+        if(zout) zout.addEventListener('click',()=>setCameraZoom(camera.zoom-0.08));
+        canvas.addEventListener('wheel',e=>{if(!gameStarted)return;e.preventDefault();setCameraZoom(camera.zoom+(e.deltaY<0?0.06:-0.06));},{passive:false});
+        resetCameraZoomForDevice();
+        window.addEventListener('resize',()=>{const zr=document.getElementById('zoomReadout');if(zr)zr.textContent=`${Math.round(camera.zoom*100)}%`;});
+    })();
+
     // Event Listeners for UI Buttons
-    document.getElementById('btnPlayGame').addEventListener('click', () => {
+    document.getElementById('btnPlayGame').addEventListener('click', async () => {
+        try { if(isMobileLike() && screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch(e) {}
+        resetCameraZoomForDevice();
         document.getElementById('startScreenModal').classList.add('hidden');
         gameStarted = true;
         initGame();
